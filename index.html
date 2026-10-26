@@ -120,8 +120,8 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .key{height:56px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-family:var(--f-num);font-size:22px;font-weight:700}
 .key:active{transform:translateY(1px)}
 .key.ok{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-family:var(--f-body);font-size:17px}
-.key.mic{font-family:var(--f-body);font-size:14px}
-.key.mic.on{background:var(--bad);color:#fff;border-color:var(--bad)}
+.key.mic{display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.key.mic.on{background:var(--bad);color:var(--on-mood);border-color:var(--bad);animation:listen 1.1s ease-in-out infinite}
 .choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .choices button{height:64px;border-radius:14px;background:var(--surface);border:2px solid var(--accent);font-family:var(--f-num);font-size:24px;font-weight:700}
 
@@ -359,10 +359,7 @@ function askAnswer(){
   G.phase="answer"; G.input=""; G.t0=performance.now();
   const box = document.getElementById("box");
   box.innerHTML = `<p class="hint">¿Cuánto da?</p><div class="answer empty" id="ans">?</div>
-    <button class="micbtn" data-key="mic" aria-label="Responder por voz">
-      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>
-    </button>
-    <p class="hint" id="micst">Tocá el micrófono y decí el resultado</p>
+    <p class="hint" id="micst">Escribí el resultado o tocá el micrófono</p>
     <div class="timer" id="timer" style="width:100%"><i id="tbar"></i></div>`;
   renderBottom();
   const tick = () => {
@@ -386,7 +383,7 @@ function renderBottom(){
     main = `<div class="pad">
       ${k(1)}${k(2)}${k(3)}${k("del","⌫")}
       ${k(4)}${k(5)}${k(6)}${k("neg","±")}
-      ${k(7)}${k(8)}${k(9)}${k("clr","C")}
+      ${k(7)}${k(8)}${k(9)}<button class="key mic" data-key="mic" aria-label="Responder por voz"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg></button>
       ${k(0)}<button class="key ok" data-key="ok" style="grid-column:span 3">Listo</button>
     </div>`;
   }
@@ -504,7 +501,7 @@ function startMic(btn){
       toast("No entendí el número. Probá de nuevo.");
     };
     rec.onerror = () => toast("No se pudo usar el micrófono en esta vista. Usá el teclado.");
-    rec.onend = () => { btn && btn.classList.remove("on"); rec=null; micStatus("Tocá el micrófono y decí el resultado"); };
+    rec.onend = () => { btn && btn.classList.remove("on"); rec=null; micStatus("Escribí el resultado o tocá el micrófono"); };
     rec.start(); btn.classList.add("on"); micStatus("Escuchando… decí el número");
   }catch(e){ toast("No se pudo usar el micrófono en esta vista. Usá el teclado."); }
 }

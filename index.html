@@ -203,7 +203,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 <div class="app" id="app"></div>
 <div class="toast" id="toast" hidden></div>
 
-<script>window.__escondida=[];window.__escondidaAdd=function(w,a,b){window.__escondida.push([w,a,b]);};</script>
+<script>window.__escondida=[];window.__escondidaAdd=function(w,a,b){window.__escondida.push([w,a,b]);};window.__vocab=[];window.__vocabAdd=function(t){window.__vocab.push(t);};</script>
 <script>
 // Palabra escondida — datos de cercanía (niveles 1–20)
 // Formato: P(palabra, cercanas en orden, relacionadas en orden)
@@ -402,6 +402,197 @@ P("verdad",
 `verdades verdadero verdadera cierto cierta realidad real hecho hechos sinceridad sincero honestidad honesto franqueza veracidad mentira mentiras mentir falsedad falso engaño confesar confesión evidencia prueba`,
 `justicia juez juicio testigo ley ciencia conocimiento saber filosofía razón lógica duda fe creencia opinión noticia periodismo secreto misterio conciencia valor valores`);
 })(window.__escondidaAdd);
+
+</script>
+<script>
+// Palabra escondida — niveles 61 en adelante, de menor a mayor dificultad.
+// Estas palabras no tienen lista a mano: su cercanía sale solo de las categorías del vocabulario,
+// así que son más difíciles (las palabras de una misma subcategoría quedan muy parejas).
+window.__escondidaExtra = `
+tigre ballena mariposa tomate sopa helado chocolate camisa sombrero ventana
+heladera escalera puente barco bicicleta colegio estrella tormenta volcán isla
+desierto río pelota piano teatro payaso abuela bombero maestra policía
+corazón diente ojo mano fiebre vacuna carta foto regalo navidad
+colibrí pingüino pulpo hormiga cocodrilo jirafa cactus girasol palta ajo
+canela empanada alfajor mate vino martillo ladrillo espejo almohada paraguas
+anillo bufanda cueva cascada arcoíris eclipse cometa otoño medianoche domingo
+calendario robot internet auriculares bandoneón tango museo novela ajedrez barrilete
+medalla árbitro laboratorio átomo triángulo kilómetro carnaval circo murciélago lechuza
+alegría tristeza nostalgia esperanza envidia vergüenza soledad paciencia confianza lealtad
+justicia igualdad mentira destino suerte éxito fracaso secreto misterio sorpresa
+idea imaginación inteligencia duda decisión conciencia olvido muerte nacimiento eternidad
+pasado futuro guerra paz democracia alma fe economía inflación jubilación
+pobreza riqueza comercio contaminación naturaleza ciencia conocimiento educación conversación respeto
+`;
+
+</script>
+<script>
+// Vocabulario de Palabra escondida — parte 1: seres vivos, comida, cuerpo
+// Formato de cada línea:  dominio/categoría/subcategoría|etiqueta,etiqueta: palabras en orden de parecido
+// Las palabras vecinas en una misma línea se consideran más cercanas entre sí.
+window.__vocabAdd(`
+animales/mamíferos/mascotas|animal,hogar,mascota: perro cachorro perra gato gatito gata hámster cobayo conejo hurón chinchilla mascota
+animales/mamíferos/razas|animal,hogar,mascota: caniche labrador ovejero dogo bulldog rottweiler chihuahua beagle salchicha galgo siamés persa angora
+animales/mamíferos/granja|animal,campo,granja: vaca toro ternero buey oveja cordero carnero cabra chivo cerdo chancho lechón caballo yegua potro burro mula llama alpaca guanaco vicuña
+animales/mamíferos/felinos|animal,salvaje,selva: león leona tigre leopardo pantera jaguar puma lince guepardo yaguareté ocelote
+animales/mamíferos/salvajes|animal,salvaje: lobo zorro coyote oso panda koala canguro elefante jirafa cebra hipopótamo rinoceronte búfalo bisonte ciervo venado alce reno antílope gacela camello dromedario
+animales/mamíferos/pequeños|animal: ratón rata ardilla castor topo erizo murciélago mapache zorrino comadreja nutria liebre vizcacha carpincho armadillo mulita hurón
+animales/mamíferos/primates|animal,selva: mono gorila chimpancé orangután babuino mandril lémur simio
+animales/mamíferos/marinos|animal,mar,agua: ballena delfín orca foca lobo marino morsa manatí cachalote
+animales/aves/comunes|animal,aire,cielo: pájaro ave pajarito gorrión paloma golondrina hornero zorzal calandria benteveo tero colibrí picaflor canario jilguero cardenal mirlo
+animales/aves/rapaces|animal,aire,salvaje: águila halcón cóndor buitre gavilán carancho chimango búho lechuza
+animales/aves/acuáticas|animal,agua,mar: pato ganso cisne gaviota pelícano flamenco garza cigüeña pingüino albatros cormorán
+animales/aves/granja|animal,campo,granja: gallina gallo pollito pollo pavo codorniz ñandú avestruz
+animales/aves/coloridas|animal,selva: loro cotorra papagayo guacamayo tucán pavo real
+animales/peces/peces|animal,agua,mar: pez peces pescado trucha salmón merluza atún sardina dorado surubí pejerrey bagre tiburón raya pez espada anguila carpa piraña
+animales/mar/invertebrados|animal,mar,agua: pulpo calamar medusa estrella cangrejo langosta langostino camarón almeja mejillón ostra caracol coral erizo esponja
+animales/insectos/insectos|animal,campo,pequeño: insecto hormiga abeja avispa mosca mosquito mariposa polilla escarabajo vaquita grillo saltamontes langosta cucaracha libélula luciérnaga pulga piojo garrapata chinche termita
+animales/insectos/otros|animal,pequeño: araña alacrán escorpión gusano lombriz ciempiés babosa caracol
+animales/reptiles/reptiles|animal,salvaje: serpiente víbora culebra boa anaconda cobra yarará lagarto lagartija iguana camaleón cocodrilo yacaré caimán tortuga dinosaurio dragón
+animales/anfibios/anfibios|animal,agua: rana sapo renacuajo salamandra
+animales/partes/partes|animal,cuerpo: pata patas cola hocico pico ala alas pluma plumas pelaje melena garra garras pezuña casco cuerno cuernos colmillo escama escamas aleta branquias caparazón trompa joroba bigote
+animales/acciones/sonidos|animal,ruido: ladrar ladrido maullar maullido ronronear rugir rugido aullar aullido relinchar mugir balar cacarear piar trinar zumbar croar gruñir
+animales/lugares/lugares|animal,lugar: zoológico granja establo corral gallinero chiquero caballeriza colmena hormiguero nido cueva madriguera acuario jaula pecera perrera veterinaria
+plantas/árboles/árboles|planta,naturaleza,bosque: árbol pino roble sauce eucalipto ombú jacarandá palmera álamo ceibo fresno olmo cedro abeto plátano lapacho tala algarrobo quebracho araucaria nogal arce
+plantas/flores/flores|planta,naturaleza,color: flor rosa margarita girasol tulipán clavel jazmín lirio orquídea violeta lavanda azucena amapola hortensia geranio camelia magnolia petunia
+plantas/partes/partes|planta,naturaleza: hoja hojas rama ramas tronco raíz raíces tallo pétalo pétalos semilla semillas brote capullo espina espinas corteza savia polen néctar fruto
+plantas/otras/plantas|planta,naturaleza: planta plantas arbusto pasto césped hierba yuyo musgo helecho cactus enredadera hiedra junco caña bambú hongo hongos alga trébol maleza
+plantas/frutas/frutas|comida,planta,dulce: fruta manzana pera banana naranja mandarina limón pomelo uva frutilla cereza durazno ciruela damasco kiwi ananá piña mango melón sandía higo membrillo frambuesa arándano mora coco palta granada
+plantas/verduras/verduras|comida,planta: verdura tomate lechuga zanahoria papa batata cebolla ajo morrón pimiento zapallo calabaza zapallito berenjena pepino espinaca acelga brócoli coliflor repollo apio remolacha rabanito choclo arveja chaucha
+plantas/granos/granos|comida,planta,campo: trigo maíz arroz avena cebada centeno soja girasol lenteja garbanzo poroto frijol maní nuez almendra avellana castaña semilla cereal
+plantas/hierbas/hierbas|comida,planta: perejil albahaca orégano romero tomillo menta cilantro laurel ciboulette salvia manzanilla cedrón yerba
+comida/platos/argentina|comida,hogar,fiesta: asado empanada milanesa locro choripán pizza fideos ravioles ñoquis guiso puchero tarta matambre provoleta humita tamal sorrentinos canelones lasaña
+comida/platos/general|comida: comida plato sopa caldo ensalada hamburguesa sándwich sanguche pancho tostado omelette tortilla arroz pasta estofado puré salsa
+comida/panadería/panadería|comida,dulce: pan factura medialuna medialunas bizcocho tostada galleta galletita budín torta tarta masa harina levadura grisín baguette rosca vigilante
+comida/dulces/dulces|comida,dulce,niños: dulce postre chocolate caramelo golosina chupetín chicle alfajor helado flan mousse merengue crema dulce de leche mermelada miel azúcar bombón turrón gelatina pochoclo churro panqueque waffle
+comida/lácteos/lácteos|comida: leche queso manteca yogur crema ricota mozzarella muzzarella parmesano roquefort leche condensada
+comida/carnes/carnes|comida: carne pollo vacío bife lomo costilla chorizo morcilla salchicha jamón salame mortadela panceta hamburguesa pescado mariscos huevo huevos fiambre
+comida/bebidas/bebidas|comida,agua: bebida agua jugo gaseosa soda refresco limonada licuado café té mate leche chocolatada infusión
+comida/bebidas/alcohol|comida,fiesta: vino cerveza fernet whisky vodka ron champán sidra licor aperitivo cóctel trago
+comida/condimentos/condimentos|comida,cocina: sal pimienta aceite vinagre mostaza mayonesa ketchup salsa condimento especia comino pimentón ají canela vainilla nuez moscada
+comida/momentos/comidas|comida,tiempo,hogar: desayuno almuerzo merienda cena picada brunch banquete menú
+comida/cocina/utensilios|comida,cocina,hogar: olla sartén cacerola cuchillo cuchara tenedor cucharón espátula plato platos vaso taza jarra fuente bandeja colador rallador batidor tabla abrelatas sacacorchos termo mate bombilla pava
+comida/cocina/acciones|comida,cocina: cocinar hervir freír hornear asar picar cortar pelar rallar batir mezclar amasar condimentar probar servir comer beber tomar masticar tragar
+comida/cualidades/sabores|comida,sentido: sabor rico delicioso sabroso dulce salado amargo ácido picante agrio insípido crocante jugoso tierno
+comida/lugares/lugares|comida,ciudad,lugar: restaurante restorán parrilla bodegón cafetería confitería bar pizzería heladería panadería carnicería verdulería almacén supermercado kiosco feria mercado rotisería
+cuerpo/partes/cabeza|cuerpo: cabeza cara rostro frente ojo ojos nariz boca labio labios lengua diente dientes oreja orejas oído mejilla cachete mentón barbilla ceja cejas pestaña pestañas pelo cabello barba bigote cuello nuca
+cuerpo/partes/tronco|cuerpo: cuerpo pecho espalda hombro hombros cintura panza barriga vientre ombligo cadera cola trasero
+cuerpo/partes/extremidades|cuerpo: brazo brazos codo muñeca mano manos dedo dedos uña uñas pulgar puño pierna piernas rodilla tobillo pie pies talón muslo
+cuerpo/órganos/órganos|cuerpo,salud: corazón pulmón pulmones cerebro hígado riñón estómago intestino sangre hueso huesos esqueleto músculo músculos piel nervio nervios vena venas arteria columna cráneo costilla
+cuerpo/sentidos/sentidos|cuerpo,mente: vista visión oído olfato gusto tacto mirar ver escuchar oír oler tocar sentir sabor olor sonido mirada
+salud/enfermedad/enfermedades|salud,cuerpo: enfermedad gripe resfrío resfriado fiebre tos dolor herida lesión fractura alergia infección virus bacteria cáncer diabetes asma covid pandemia epidemia contagio síntoma mareo vómito náusea migraña
+salud/medicina/medicina|salud: medicina remedio medicamento pastilla jarabe vacuna inyección vendaje venda curita receta tratamiento cirugía operación terapia análisis radiografía diagnóstico chequeo internación
+salud/lugares/lugares|salud,ciudad,lugar: hospital clínica sanatorio consultorio farmacia guardia ambulancia quirófano laboratorio
+salud/estado/estado|salud,vida: salud sano enfermo bienestar cansancio cansado sueño hambre sed energía fuerza debilidad
+`);
+
+</script>
+<script>
+// Vocabulario de Palabra escondida — parte 2: personas, hogar, ropa, lugares, transporte
+window.__vocabAdd(`
+personas/familia/familia|familia,hogar,amor: familia padre madre papá mamá hijo hija hijos hermano hermana abuelo abuela nieto nieta tío tía primo prima sobrino sobrina esposo esposa marido pareja novio novia bebé suegro suegra cuñado cuñada padrino madrina pariente
+personas/edades/edades|vida,tiempo: bebé niño niña nene nena chico chica infancia niñez adolescente adolescencia joven juventud adulto adulta anciano anciana viejo vieja vejez edad
+personas/gente/gente|sociedad: persona gente hombre mujer señor señora vecino vecina amigo amiga compañero compañera desconocido extranjero turista ciudadano habitante pueblo multitud público
+personas/profesiones/salud|trabajo,salud: médico médica doctor doctora enfermero enfermera dentista odontólogo pediatra cirujano psicólogo psicóloga farmacéutico veterinario kinesiólogo
+personas/profesiones/educación|trabajo,escuela: maestro maestra profesor profesora docente director directora alumno alumna estudiante preceptor bibliotecario investigador científico
+personas/profesiones/oficios|trabajo,hogar: albañil carpintero plomero electricista mecánico pintor herrero jardinero cerrajero gasista costurera modista zapatero panadero carnicero verdulero almacenero
+personas/profesiones/servicios|trabajo,ciudad: cocinero cocinera chef mozo moza camarero cajero cajera vendedor vendedora repartidor cartero chofer taxista colectivero peluquero barbero recepcionista
+personas/profesiones/oficina|trabajo,dinero: abogado abogada contador contadora ingeniero ingeniera arquitecto arquitecta programador secretaria gerente jefe jefa empleado empleada empresario comerciante banquero economista administrativo
+personas/profesiones/seguridad|trabajo,ley: policía bombero soldado militar guardia vigilador detective juez jueza fiscal guardaparques salvavidas guardavidas
+personas/profesiones/arte|trabajo,arte: artista pintor pintora escultor músico músicos cantante cantor actor actriz bailarín bailarina escritor escritora poeta fotógrafo director periodista locutor diseñador
+personas/profesiones/campo|trabajo,campo: granjero agricultor campesino gaucho peón pescador pastor leñador apicultor viñatero
+personas/profesiones/otros|trabajo: piloto azafata astronauta marinero capitán deportista futbolista entrenador árbitro sacerdote cura monja político presidente ministro diputado senador intendente gobernador rey reina príncipe princesa
+hogar/habitaciones/habitaciones|hogar,casa: casa hogar habitación cuarto dormitorio living comedor cocina baño pasillo patio jardín terraza balcón garaje sótano altillo lavadero quincho galería entrada
+hogar/partes/partes|hogar,casa,construcción: puerta ventana pared paredes techo piso suelo escalera escalón columna chimenea reja portón tejado cielorraso persiana
+hogar/muebles/muebles|hogar,casa: mueble mesa silla sillón sofá cama cucheta ropero placard armario estante estantería biblioteca escritorio cómoda mesita banco banqueta taburete aparador vitrina cuna hamaca
+hogar/objetos/objetos|hogar,casa: lámpara velador espejo cuadro cortina alfombra almohada colchón sábana frazada manta acolchado almohadón florero maceta reloj llave llavero percha caja canasto vela adorno
+hogar/electrodomésticos/electro|hogar,tecnología,casa: heladera freezer lavarropas secarropas horno microondas cocina licuadora batidora tostadora cafetera pava eléctrica plancha aspiradora ventilador aire acondicionado estufa calefactor televisor
+hogar/limpieza/limpieza|hogar,limpieza: limpieza limpiar escoba trapo balde lampazo plumero detergente jabón lavandina esponja cepillo secador basura tacho barrer lavar fregar ordenar desinfectar
+hogar/baño/baño|hogar,limpieza,cuerpo: ducha bañera inodoro lavatorio toalla jabón champú shampoo acondicionador pasta dental cepillo peine desodorante perfume papel higiénico
+construcción/materiales/materiales|construcción,trabajo: ladrillo cemento arena cal hierro madera vidrio piedra mármol cerámica azulejo teja chapa yeso pintura clavo tornillo tuerca
+construcción/herramientas/herramientas|construcción,trabajo: herramienta martillo destornillador pinza alicate llave inglesa serrucho sierra taladro lija cinta métrica nivel pala pico rastrillo carretilla escalera hacha
+ropa/prendas/superior|ropa: ropa remera camiseta camisa blusa buzo suéter pulóver campera abrigo saco chaleco tapado sobretodo piloto impermeable chaqueta
+ropa/prendas/inferior|ropa: pantalón jean bermuda short pollera falda vestido calza jogging enterito mono
+ropa/prendas/interior|ropa: ropa interior bombacha calzoncillo corpiño medias media soquete pijama camisón bata malla bikini traje de baño
+ropa/calzado/calzado|ropa: zapato zapatos zapatilla zapatillas bota botas sandalia sandalias ojota ojotas pantufla mocasín taco tacos
+ropa/accesorios/accesorios|ropa: sombrero gorra gorro bufanda guantes cinturón corbata moño pañuelo cartera bolso mochila billetera paraguas anteojos lentes reloj
+ropa/joyas/joyas|ropa,dinero: joya anillo collar pulsera aros aro cadena colgante dije diamante perla oro plata brillante
+ropa/telas/telas|ropa: tela algodón lana seda cuero jean denim lino hilo aguja botón cierre costura tejer coser bordado
+lugares/ciudad/ciudad|ciudad,lugar: ciudad pueblo barrio calle avenida esquina cuadra vereda plaza parque centro suburbio capital metrópolis aldea villa
+lugares/edificios/edificios|ciudad,lugar: edificio rascacielos torre casa departamento oficina fábrica galpón hotel hostel iglesia catedral templo castillo palacio estadio
+lugares/servicios/públicos|ciudad,lugar,sociedad: escuela colegio universidad hospital municipalidad comisaría cárcel tribunal correo banco biblioteca museo teatro cine estación aeropuerto puerto terminal cementerio
+lugares/comercios/comercios|ciudad,lugar,dinero: tienda negocio local shopping supermercado almacén kiosco farmacia librería ferretería zapatería juguetería peluquería lavadero gomería
+lugares/naturaleza/tierra|naturaleza,lugar: montaña cerro sierra cordillera volcán valle colina meseta llanura pampa campo pradera desierto selva bosque jungla monte isla península cueva acantilado quebrada barranco duna
+lugares/naturaleza/agua|naturaleza,lugar,agua: mar océano río lago laguna arroyo cascada catarata playa costa orilla bahía golfo pantano estero delta manantial charco
+lugares/mundo/mundo|lugar,viaje: mundo país nación provincia región continente frontera territorio mapa planeta tierra norte sur este oeste
+lugares/países/países|lugar,viaje: argentina uruguay chile brasil paraguay bolivia perú méxico españa italia francia alemania inglaterra china japón estados unidos rusia india
+lugares/recreación/recreación|lugar,fiesta,viaje: club pileta piscina gimnasio cancha plazoleta calesita parque de diversiones circo boliche discoteca camping quinta estancia
+transporte/tierra/vehículos|transporte,viaje,ciudad: auto coche carro vehículo camioneta camión colectivo ómnibus micro taxi remis moto motocicleta bicicleta bici patineta monopatín tractor ambulancia patrullero
+transporte/rieles/trenes|transporte,viaje: tren subte metro tranvía locomotora vagón ferrocarril vía andén estación
+transporte/aire/aviones|transporte,viaje,aire,cielo: avión avioneta helicóptero globo aerostático planeador cohete nave dron paracaídas aeropuerto vuelo piloto
+transporte/agua/barcos|transporte,viaje,agua,mar: barco buque lancha velero bote canoa kayak balsa crucero yate submarino ferry ancla puerto muelle remo vela timón
+transporte/partes/partes|transporte: rueda ruedas volante motor freno acelerador asiento cinturón baúl capó neumático goma nafta combustible batería patente espejo bocina
+transporte/vías/vías|transporte,viaje,ciudad: ruta camino carretera autopista calle avenida puente túnel semáforo peaje rotonda estacionamiento tránsito tráfico
+transporte/acciones/acciones|transporte,viaje: viajar manejar conducir pasear caminar correr volar navegar remar pedalear estacionar llegar salir partir frenar acelerar
+`);
+
+</script>
+<script>
+// Vocabulario de Palabra escondida — parte 3: naturaleza, tiempo, tecnología, cultura, sociedad, mente
+window.__vocabAdd(`
+naturaleza/clima/clima|naturaleza,clima,cielo: clima tiempo lluvia llover llovizna tormenta tempestad viento brisa huracán tornado ciclón nube nubes niebla neblina granizo nieve nevada helada escarcha rocío relámpago rayo trueno arcoíris sequía inundación temperatura humedad pronóstico
+naturaleza/cielo/astronomía|naturaleza,cielo,noche,ciencia: cielo sol luna estrella estrellas planeta tierra marte venus júpiter saturno mercurio galaxia universo espacio cometa meteorito asteroide eclipse órbita satélite constelación agujero negro astronauta telescopio
+naturaleza/elementos/elementos|naturaleza,ciencia: fuego agua aire tierra luz sombra calor frío humo vapor hielo lava ceniza polvo barro
+naturaleza/materiales/minerales|naturaleza,ciencia,dinero: piedra roca mineral metal oro plata cobre hierro acero bronce aluminio diamante cristal sal carbón petróleo gas arena arcilla
+naturaleza/estaciones/estaciones|naturaleza,tiempo,clima: estación verano otoño invierno primavera calor frío vacaciones
+naturaleza/ambiente/ambiente|naturaleza,sociedad: naturaleza ambiente ecología contaminación reciclar reciclaje basura residuos energía paisaje ecosistema especie extinción
+tiempo/unidades/unidades|tiempo: tiempo segundo minuto hora día semana mes año década siglo milenio época era momento instante rato
+tiempo/momentos/día|tiempo,luz: mañana tarde noche madrugada mediodía medianoche amanecer atardecer anochecer alba ocaso
+tiempo/calendario/días|tiempo: lunes martes miércoles jueves viernes sábado domingo feriado fin de semana
+tiempo/calendario/meses|tiempo: enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre
+tiempo/medición/objetos|tiempo,objeto: reloj despertador cronómetro calendario agenda almanaque reloj de arena alarma
+tiempo/conceptos/conceptos|tiempo,mente: pasado presente futuro antes después ahora ayer hoy mañana pronto tarde temprano siempre nunca eternidad historia recuerdo destino
+tecnología/informática/informática|tecnología: computadora notebook laptop tablet pantalla monitor teclado mouse impresora programa software aplicación app archivo carpeta internet web página wifi red servidor nube datos código algoritmo robot inteligencia artificial videojuego consola
+tecnología/comunicación/comunicación|tecnología,comunicación: teléfono celular mensaje llamada correo mail email carta sobre telegrama radio televisión televisor antena cámara foto video micrófono parlante auriculares cable cargador batería enchufe
+tecnología/máquinas/máquinas|tecnología,trabajo: máquina motor aparato dispositivo herramienta engranaje mecanismo generador batería pila electricidad corriente imán
+cultura/música/música|música,arte,ruido: música canción melodía ritmo armonía sonido nota acorde letra coro voz cantar canto tocar escuchar disco álbum concierto recital banda orquesta grupo festival
+cultura/música/instrumentos|música,arte: instrumento guitarra piano violín violonchelo contrabajo batería tambor bombo flauta trompeta saxofón clarinete trombón arpa acordeón bandoneón charango ukelele órgano teclado bajo
+cultura/música/géneros|música,arte,fiesta: tango folklore rock pop jazz cumbia cuarteto reggaetón rap blues ópera clásica chacarera zamba salsa murga
+cultura/arte/visual|arte,color: arte pintura cuadro dibujo dibujar pintar pincel lienzo paleta acuarela óleo escultura estatua mural grabado fotografía museo galería exposición obra artista
+cultura/literatura/literatura|arte,escuela,mente: libro novela cuento poema poesía verso rima relato historia leyenda mito fábula biografía diario carta capítulo página autor escritor lector lectura leer escribir biblioteca
+cultura/espectáculo/espectáculo|arte,fiesta: cine película serie teatro obra actor actriz escenario telón función estreno entrada butaca circo payaso mago magia show espectáculo danza baile ballet
+cultura/fiestas/fiestas|fiesta,familia,alegría: fiesta cumpleaños casamiento boda aniversario navidad año nuevo carnaval pascua bautismo graduación egreso celebración festejo regalo torta velas globo brindis
+cultura/juegos/juegos|juego,niños,diversión: juego juguete muñeca pelota trompo barrilete cometa rompecabezas puzle dado dados naipes cartas ajedrez damas dominó ludo bingo lotería escondida mancha rayuela tablero ficha
+deporte/deportes/deportes|deporte,juego: deporte fútbol básquet tenis vóley rugby hockey natación atletismo boxeo ciclismo golf polo pádel esgrima gimnasia judo karate surf esquí patinaje maratón
+deporte/elementos/elementos|deporte,juego: pelota arco red raqueta palo bate guante casco camiseta botines cancha estadio pista tribuna gol punto partido torneo campeonato copa medalla trofeo olimpíadas
+deporte/personas/personas|deporte: jugador jugadora equipo arquero delantero defensor capitán árbitro entrenador técnico hincha campeón rival atleta deportista
+deporte/acciones/acciones|deporte,cuerpo: correr saltar nadar patear lanzar atrapar ganar perder empatar entrenar competir jugar
+educación/escuela/escuela|escuela,niños: escuela colegio aula clase recreo pizarrón tiza banco pupitre cuaderno carpeta mochila lápiz lapicera birome goma regla compás tijera pegamento cartuchera guardapolvo útiles tarea examen prueba nota boletín
+educación/materias/materias|escuela,ciencia,mente: matemática matemáticas lengua historia geografía ciencia biología química física música dibujo inglés filosofía economía informática
+educación/conceptos/conceptos|escuela,mente: educación enseñanza aprendizaje estudio estudiar aprender enseñar saber conocimiento lección curso carrera título diploma universidad facultad
+ciencia/ciencia/ciencia|ciencia,mente: ciencia científico laboratorio experimento investigación teoría hipótesis átomo molécula célula gen adn energía fuerza gravedad física química biología microscopio fórmula
+matemática/números/números|ciencia,escuela: número cero uno dos tres cuatro cinco seis siete ocho nueve diez cien mil millón suma resta multiplicación división cuenta cálculo calculadora fracción porcentaje
+matemática/formas/formas|ciencia,arte: forma círculo cuadrado triángulo rectángulo esfera cubo línea punto ángulo curva espiral estrella corazón
+colores/colores/colores|color,arte: color rojo azul amarillo verde naranja violeta morado rosa rosado negro blanco gris marrón celeste lila dorado plateado turquesa beige
+medidas/medidas/medidas|ciencia: medida metro centímetro kilómetro kilo gramo litro tamaño peso altura distancia velocidad grande pequeño chico largo corto alto bajo ancho angosto
+sociedad/política/política|sociedad,ley: política gobierno estado país nación presidente congreso elección elecciones voto votar democracia dictadura partido ministro diputado senador ley constitución república patria bandera himno
+sociedad/justicia/justicia|sociedad,ley: justicia ley leyes derecho derechos juez juicio tribunal abogado delito crimen ladrón robo policía cárcel prisión preso culpa culpable inocente castigo multa sentencia
+sociedad/economía/economía|dinero,sociedad,trabajo: dinero plata billete moneda peso dólar banco cuenta tarjeta crédito préstamo deuda ahorro inversión precio costo pago sueldo salario impuesto inflación economía mercado comercio negocio empresa riqueza pobreza
+sociedad/trabajo/trabajo|trabajo,sociedad,dinero: trabajo empleo laburo oficina empresa jefe empleado sueldo horario jornada reunión proyecto tarea contrato despido renuncia jubilación sindicato huelga
+sociedad/guerra/guerra|sociedad,miedo,muerte: guerra batalla ejército soldado arma armas pistola fusil espada escudo bomba tanque combate ataque defensa victoria derrota paz tregua enemigo héroe
+sociedad/religión/religión|sociedad,fe: religión dios iglesia templo misa oración rezar fe creencia cielo infierno ángel demonio alma espíritu biblia santo virgen milagro pecado
+sociedad/comunicación/comunicación|sociedad,comunicación: noticia diario periódico revista periodismo prensa radio televisión publicidad propaganda rumor opinión
+mente/emociones/positivas|emoción,mente,alegría: alegría felicidad feliz contento risa sonrisa reír amor cariño ternura entusiasmo esperanza ilusión orgullo calma paz tranquilidad placer satisfacción gratitud emoción
+mente/emociones/negativas|emoción,mente,miedo: tristeza triste llanto llorar lágrima miedo temor terror pánico susto enojo ira bronca rabia odio envidia celos culpa vergüenza angustia ansiedad nervios preocupación soledad aburrimiento nostalgia dolor sufrimiento
+mente/pensamiento/pensamiento|mente: mente pensamiento pensar idea ideas razón lógica memoria recuerdo recordar olvido olvidar imaginación imaginar sueño soñar creatividad inteligencia conciencia atención concentración duda decisión opinión creer saber entender
+mente/valores/valores|mente,sociedad: verdad mentira honestidad respeto libertad justicia igualdad solidaridad amistad lealtad confianza responsabilidad valentía coraje paciencia humildad generosidad bondad maldad egoísmo
+mente/conceptos/vida|vida,mente: vida muerte nacimiento destino suerte azar fortuna éxito fracaso problema solución cambio comienzo final principio fin secreto misterio sorpresa
+mente/cualidades/cualidades|mente: bueno malo lindo hermoso bello feo fácil difícil rápido lento fuerte débil nuevo viejo rico pobre limpio sucio caliente frío claro oscuro alegre serio inteligente tonto
+comunicación/lenguaje/lenguaje|comunicación,escuela,mente: idioma lengua lenguaje palabra palabras letra letras frase oración pregunta respuesta conversación charla diálogo grito susurro silencio voz habla hablar decir contar explicar traducir
+acciones/movimiento/movimiento|cuerpo: caminar correr saltar bailar nadar trepar subir bajar entrar salir empujar tirar levantar caer sentarse pararse acostarse girar
+acciones/cotidianas/cotidianas|hogar,cuerpo: dormir despertar levantarse bañarse vestirse peinarse comer desayunar almorzar cenar descansar trabajar estudiar jugar mirar comprar vender pagar
+acciones/relaciones/relaciones|sociedad,amor: amar querer abrazar besar beso abrazo saludar ayudar compartir regalar perdonar pelear discutir enamorarse casarse visitar extrañar
+`);
 
 </script>
 
@@ -721,56 +912,120 @@ function confetti(){
 }
 
 /* ---------- Palabra escondida ---------- */
-const W_STAGES = ["Cosas de todos los días","Lugares y objetos","Ideas y emociones","Más difícil"];
+const W_STAGES = ["Cosas de todos los días","Lugares y objetos","Ideas y emociones","Animales y comida","Casa y ciudad","Más específicas","Naturaleza y cultura","Sentimientos","Grandes ideas","Expertos"];
 const STOP = new Set("de del la las el los y o u e en a al un una unos unas con por para que se su sus lo le les mi tu".split(" "));
 const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z]/g,"");
-function wAddTo(map, t, r){
-  const n = norm(t);
-  if(n.length<2 || STOP.has(n) || map.has(n)) return false;
-  // singular y plural cuentan como la misma palabra
-  if(map.has(n.replace(/es$/,"")) && n.endsWith("es") || map.has(n.replace(/s$/,"")) && n.endsWith("s") || map.has(n+"s") || map.has(n+"es")) return false;
-  map.set(n, {w:t, r}); return true;
+const plurals = n => [n+"s", n+"es"];
+const singulars = n => { const c=[]; if(n.endsWith("es")) c.push(n.slice(0,-2)); if(n.endsWith("s")) c.push(n.slice(0,-1)); return c; };
+
+/* vocabulario: cada palabra con sus subcategorías (dominio/categoría/sub + posición) y etiquetas */
+const VOCAB = []; const VIDX = new Map();
+function vFind(n){
+  if(VIDX.has(n)) return VIDX.get(n);
+  for(const k of singulars(n)) if(VIDX.has(k)) return VIDX.get(k);
+  for(const k of plurals(n)) if(VIDX.has(k)) return VIDX.get(k);
+  return -1;
 }
-const WDATA = (window.__escondida||[]).map(([w,a,b])=>{
-  const map = new Map(); map.set(norm(w), {w, r:1});
-  const top = []; let r = 2;
-  for(const t of a.split(/\s+/)) if(wAddTo(map, t, r)){ top.push({w:t,r}); r++; }
-  let rb = Math.max(150, r+40);
-  for(const t of b.split(/\s+/)) if(wAddTo(map, t, rb)) rb += 3;
-  return {w, map, top};
-});
-// índice global: en qué listas aparece cada palabra
-const WGLOBAL = new Map();
-WDATA.forEach((lv,i)=>{ for(const [n,v] of lv.map){ if(!WGLOBAL.has(n)) WGLOBAL.set(n,[]); WGLOBAL.get(n).push({i, r:v.r, w:v.w}); } });
-function wForms(g){
-  const n = norm(g); if(!n) return [];
-  const c = [n];
-  if(n.endsWith("es")) c.push(n.slice(0,-2));
-  if(n.endsWith("s")) c.push(n.slice(0,-1));
-  c.push(n+"s", n+"es");
-  return c;
+function vAdd(w, mem, tags){
+  const n = norm(w); if(n.length<2 || STOP.has(n)) return -1;
+  let i = vFind(n);
+  if(i<0){ i = VOCAB.length; VOCAB.push({w, n, mem:[], tags:new Set()}); VIDX.set(n, i); }
+  const e = VOCAB[i];
+  if(mem && !e.mem.some(m=>m.s===mem.s)) e.mem.push(mem);
+  if(tags) tags.forEach(t=>e.tags.add(t));
+  return i;
 }
-function wLookup(lv, g){
-  const forms = wForms(g);
-  for(const k of forms) if(lv.map.has(k)) return lv.map.get(k);
-  // no está en la lista: estimar la distancia pasando por otra palabra escondida que sí esté
-  let best = null;
-  for(const k of forms){
-    for(const ref of (WGLOBAL.get(k)||[])){
-      const via = lv.map.get(norm(WDATA[ref.i].w));
-      if(!via) continue;
-      const est = Math.min(999, 300 + via.r + ref.r);
-      if(!best || est < best.r) best = {w:ref.w, r:est};
-    }
+(window.__vocab||[]).forEach(text=>{
+  for(const line of text.split("\n")){
+    const m = line.match(/^\s*([^|#]+)\|([^:]+):\s*(.+)$/); if(!m) continue;
+    const path = m[1].trim().split("/"), tags = m[2].split(",").map(t=>t.trim()).filter(Boolean);
+    const sKey = path.join("/"), cKey = path.slice(0,2).join("/"), dKey = path[0];
+    m[3].trim().split(/\s+/).forEach((w,pos)=>vAdd(w, {d:dKey, c:cKey, s:sKey, pos}, tags));
   }
-  return best;
+});
+
+/* niveles con listas a mano (cercanas y relacionadas) */
+function listIdx(text){ const out=[]; const seen=new Set();
+  for(const t of text.split(/\s+/)){ const i = vAdd(t); if(i<0 || seen.has(i)) continue; seen.add(i); out.push(i); } return out; }
+const WDATA = (window.__escondida||[]).map(([w,a,b])=>{
+  const si = vAdd(w); const A = listIdx(a).filter(i=>i!==si), B = listIdx(b).filter(i=>i!==si&&!A.includes(i));
+  return {w:VOCAB[si].w, si, A, B};
+});
+String(window.__escondidaExtra||"").trim().split(/\s+/).forEach(w=>{
+  const i = vFind(norm(w)); if(i<0 || WDATA.some(l=>l.si===i)) return;
+  WDATA.push({w:VOCAB[i].w, si:i, A:[], B:[]});
+});
+const CURATED = new Map(); WDATA.forEach(l=>{ if(l.A.length) CURATED.set(l.si, l); });
+
+// palabras sueltas de las listas a mano: heredan la categoría (no la subcategoría) de la palabra escondida donde aparecen
+CURATED.forEach(T=>{ const sec = VOCAB[T.si];
+  [...T.A, ...T.B].forEach(i=>{ const x = VOCAB[i]; if(x.inferred===undefined) x.inferred = !x.mem.length;
+    if(!x.inferred) return;
+    sec.mem.forEach(m=>{ if(!x.mem.some(q=>q.s===m.s+"~")) x.mem.push({d:m.d, c:m.c, s:m.s+"~", pos:999}); });
+    sec.tags.forEach(t=>x.tags.add(t));
+  }); });
+// dominios que tienen que ver entre sí
+const AFIN = {animales:"plantas naturaleza lugares comida", plantas:"animales naturaleza comida", comida:"plantas hogar cuerpo salud",
+  cuerpo:"salud acciones ropa deporte", salud:"cuerpo personas", personas:"sociedad mente hogar", hogar:"construcción comida ropa personas",
+  construcción:"hogar lugares", ropa:"cuerpo hogar", lugares:"naturaleza transporte sociedad", transporte:"lugares tecnología",
+  naturaleza:"lugares animales plantas tiempo colores", tiempo:"naturaleza mente", tecnología:"comunicación ciencia transporte",
+  cultura:"deporte mente educación sociedad", deporte:"cultura cuerpo", educación:"ciencia cultura comunicación", ciencia:"educación matemática tecnología naturaleza",
+  matemática:"ciencia educación medidas", colores:"cultura naturaleza", medidas:"matemática ciencia", sociedad:"personas mente cultura",
+  mente:"sociedad comunicación personas", comunicación:"mente tecnología sociedad", acciones:"cuerpo personas"};
+const near = (a,b) => (AFIN[a]||"").split(" ").includes(b) || (AFIN[b]||"").split(" ").includes(a);
+// palabras que nombran la categoría o una etiqueta de la escondida ("animal", "ave", "fruta", "selva"…)
+function namesOf(sec){ const set = new Map();
+  const add = (w, v) => { const i = vFind(norm(w)); if(i>=0 && (set.get(i)||0) < v) set.set(i, v); };
+  sec.mem.forEach(m=>{ const p = m.s.replace("~","").split("/"); add(p[0], 110); add(p[1], 140); add(p[2], 160); });
+  sec.tags.forEach(t=>add(t, 110));
+  return set; }
+function hash(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return (h>>>0); }
+function wScore(sec, x, salt, nameBonus){
+  let s = 0, same = false;
+  for(const a of sec.mem) for(const b of x.mem){
+    let v = 0;
+    if(a.s===b.s){ v = 300 + Math.max(0, 60 - Math.abs(a.pos-b.pos)*3); same = true; }
+    else if(a.c===b.c) v = 180; else if(a.d===b.d) v = 90; else if(near(a.d,b.d)) v = 40;
+    if(v>s) s=v;
+  }
+  for(const t of x.tags) if(sec.tags.has(t)) s += 45;
+  if(x.tags.has(sec.n)) s += 120;
+  if(!same) s += nameBonus||0;   // "animal", "ave"… suman solo si no están ya en la misma subcategoría
+  return s + (hash(salt + x.n) % 25);
 }
-const tierOf = r => r===null ? "bad" : r<=50 ? "good" : r<=300 ? "warn" : "bad";
+/* calcula el puesto de TODAS las palabras del vocabulario para un nivel */
+function wRanking(lv){
+  const sec = VOCAB[lv.si], salt = sec.n + "|";
+  const posA = new Map(lv.A.map((i,k)=>[i,k])), posB = new Map(lv.B.map((i,k)=>[i,k]));
+  // vía otras palabras escondidas con lista: si X está cerca de T y T está cerca de la escondida
+  const names = namesOf(sec);
+  const via = new Map();
+  for(const [ti, T] of CURATED){
+    const rt = posA.has(ti) ? posA.get(ti) : posB.has(ti) ? 60 + posB.get(ti) : null;
+    if(rt===null) continue;
+    T.A.forEach((xi,k)=>{ const v = 260 - (rt + k)*2; if(v>(via.get(xi)||0)) via.set(xi, v); });
+  }
+  const keyed = [];
+  VOCAB.forEach((x,i)=>{
+    if(i===lv.si) return;
+    let k;
+    if(posA.has(i)) k = 1e6 - posA.get(i);
+    else if(posB.has(i)) k = 5e5 - posB.get(i);
+    else k = wScore(sec, x, salt, names.get(i)) + (via.get(i)||0);
+    keyed.push([k, i]);
+  });
+  keyed.sort((a,b)=>b[0]-a[0]);
+  const rank = new Map([[lv.si, 1]]); const order = [lv.si];
+  keyed.forEach(([,i],j)=>{ rank.set(i, j+2); order.push(i); });
+  return {rank, order};
+}
+const tierOf = r => r<=50 ? "good" : r<=300 ? "warn" : "bad";
+const wDiff = L => L<=60 ? {s3:12, s2:30, name:"fácil"} : L<=120 ? {s3:18, s2:40, name:"intermedio"} : L<=160 ? {s3:24, s2:50, name:"difícil"} : {s3:30, s2:60, name:"experto"};
 
 function wlevels(){
-  levelMap({title:"Palabra escondida", desc:"Escribí palabras. Cuanto más chico el número, más cerca estás. La escondida es la número 1.",
+  levelMap({title:"Palabra escondida", desc:`Escribí palabras. Cada una tiene su puesto entre las ${VOCAB.length.toLocaleString("es-AR")} del juego. La escondida es la número 1.`,
     store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv",
-    label:s=>`${Math.min(20, WDATA.length-s*20)} palabras · ${s===0?"fáciles":s===1?"intermedias":"difíciles"}`});
+    label:s=>{ const d = wDiff(s*20+1); return `nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
 }
 
 let W = null;
@@ -778,10 +1033,11 @@ const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" str
 function wplay(L){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  W = {L, lv:WDATA[L-1], guesses:[], last:null, hints:0, done:false};
+  const lv = WDATA[L-1];
+  W = Object.assign({L, lv, guesses:[], last:null, hints:0, done:false}, wRanking(lv));
   $app.innerHTML = `${topBar("wlevels")}
   <div class="wplay">
-    <div class="hud"><span>Nivel <b>${L}</b></span><span>Intentos: <b id="wcount">0</b></span></div>
+    <div class="hud"><span>Nivel <b>${L}</b></span><span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
     <form class="wform" id="wform" autocomplete="off">
       <input id="wguess" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Escribí una palabra" aria-label="Tu palabra">
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
@@ -791,7 +1047,7 @@ function wplay(L){
     <div class="legend"><span class="t-good"><i></i>1–50 muy cerca</span><span class="t-warn"><i></i>51–300 cerca</span><span class="t-bad"><i></i>más de 300 lejos</span></div>
     <div id="wlast"></div>
     <div class="whelps">
-      <button class="help" data-whelp>Pista<small><span class="coin"></span>30</small></button>
+      <button class="help" data-whelp id="whelpbtn">Pista<small><span class="coin"></span><span id="whcost">${HINT_COST[0]}</span></small></button>
       <button class="help" data-wgive>Rendirse<small>ver la palabra</small></button>
     </div>
     <div class="wsec" id="wsec" hidden>Tus palabras, de la más cercana a la más lejana</div>
@@ -804,17 +1060,17 @@ function wplay(L){
 }
 function wRow(g, last){
   const t = tierOf(g.r);
-  const pct = g.r===null ? 3 : Math.max(4, (1 - Math.log(g.r)/Math.log(1000))*100);
+  const pct = Math.max(3, (1 - Math.log(g.r)/Math.log(VOCAB.length))*100);
   return `<li class="wrow t-${t} ${last?"last":""}"><span class="wbar" style="width:${pct}%"></span>
     <span class="wword">${esc(g.word)}</span>${g.hint?`<span class="wtag">pista</span>`:""}
-    <span class="wrank num">${g.r===null?"+1000":g.r}</span></li>`;
+    <span class="wrank num">${g.r}</span></li>`;
 }
 function wRender(){
   document.getElementById("wcount").textContent = W.guesses.length;
   const last = document.getElementById("wlast");
   last.innerHTML = W.last ? `<ol class="wlist">${wRow(W.last,true)}</ol>`
     : `<div class="wempty">Probá con cualquier palabra para empezar. Por ejemplo: <b>casa</b>, <b>animal</b> o <b>comida</b>.</div>`;
-  const sorted = [...W.guesses].sort((a,b)=>(a.r??1e9)-(b.r??1e9));
+  const sorted = [...W.guesses].sort((a,b)=>a.r-b.r);
   document.getElementById("wlist").innerHTML = sorted.map(g=>wRow(g,false)).join("");
   document.getElementById("wsec").hidden = W.guesses.length < 2;
 }
@@ -828,30 +1084,34 @@ function wGuess(text){
   const raw = String(text).trim().split(/\s+/)[0] || "";
   const n = norm(raw);
   const inp = document.getElementById("wguess");
+  const clear = () => { if(inp){ inp.value=""; inp.focus(); } };
   if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
-  const hit = wLookup(W.lv, raw);
-  const key = hit ? norm(hit.w) : n;
-  const dup = W.guesses.find(g=>g.key===key);
-  if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r===null?"+1000":dup.r}.`); if(inp){inp.value=""; inp.focus();} return; }
-  wAdd({word: hit ? hit.w : raw.toLowerCase(), r: hit ? hit.r : null, key, hint:false});
-  if(inp){ inp.value=""; inp.focus(); }
+  const i = vFind(n);
+  if(i<0){ toast(`No conozco "${raw}". Probá con otra palabra; este intento no cuenta.`); clear(); return; }
+  const dup = W.guesses.find(g=>g.i===i);
+  if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r}.`); clear(); return; }
+  wAdd({word: VOCAB[i].w, r: W.rank.get(i), i, hint:false});
+  clear();
 }
+const HINT_COST = [30, 50, 80, 120];
 function wHint(){
   if(!W || W.done) return;
-  if(S.coins < 30){ toast("Necesitás 30 monedas para una pista."); return; }
-  const best = Math.min(...W.guesses.map(g=>g.r??Infinity), Infinity);
-  if(best <= 2){ toast("Ya estás a un paso. ¡Vos podés!"); return; }
-  const target = best > 120 ? 60 : Math.max(2, Math.floor(best/2));
-  const used = new Set(W.guesses.map(g=>g.key));
-  let pick = null;
-  for(const v of W.lv.map.values()){
-    if(v.r<=1 || v.r>=best || used.has(norm(v.w))) continue;
-    if(!pick || Math.abs(v.r-target) < Math.abs(pick.r-target)) pick = v;
-  }
-  if(!pick){ toast("No hay más pistas para esta palabra."); return; }
-  S.coins -= 30; W.hints++; save();
+  const cost = HINT_COST[Math.min(W.hints, HINT_COST.length-1)];
+  if(S.coins < cost){ toast(`Necesitás ${cost} monedas para esta pista.`); return; }
+  const best = Math.min(...W.guesses.map(g=>g.r), Infinity);
+  if(best <= 10){ toast("Ya estás muy cerca: esta vez no hay pista. ¡Vos podés!"); return; }
+  // la pista te acerca un poco, nunca demasiado
+  const target = best===Infinity ? 250 : best > 300 ? Math.round(best*0.6) : best > 50 ? Math.round(best*0.75) : best - Math.max(2, Math.round(best*0.25));
+  const floor = Math.max(8, Math.min(target, best-1));
+  const used = new Set(W.guesses.map(g=>g.i));
+  let pick = -1;
+  for(let r = Math.max(target, 8); r < Math.min(best, W.order.length+1); r++){ const i = W.order[r-1]; if(!used.has(i)){ pick = i; break; } }
+  if(pick<0) for(let r = Math.max(target, 8)-1; r >= floor; r--){ const i = W.order[r-1]; if(!used.has(i)){ pick = i; break; } }
+  if(pick<0){ toast("No hay más pistas para esta palabra."); return; }
+  S.coins -= cost; W.hints++; save();
   document.querySelector(".coins .num").textContent = S.coins;
-  wAdd({word:pick.w, r:pick.r, key:norm(pick.w), hint:true});
+  const hc = document.getElementById("whcost"); if(hc) hc.textContent = HINT_COST[Math.min(W.hints, HINT_COST.length-1)];
+  wAdd({word:VOCAB[pick].w, r:W.rank.get(pick), i:pick, hint:true});
 }
 function wGiveUp(btn){
   if(!W || W.done) return;
@@ -864,7 +1124,7 @@ function wEnd(ok){
   const n = W.guesses.length;
   let stars=0, coins=0, xp=0;
   if(ok){
-    stars = n<=10 ? 3 : n<=25 ? 2 : 1;
+    const d = wDiff(W.L); stars = n<=d.s3 ? 3 : n<=d.s2 ? 2 : 1;
     if(W.hints) stars = Math.min(stars, 2);
     const prev = S.games.escondida[W.L]||0;
     coins = stars*4 + (prev?0:6) + Math.floor(W.L/10);
@@ -873,7 +1133,7 @@ function wEnd(ok){
     S.coins += coins; S.xp += xp; save();
     beep(880,.12); setTimeout(()=>beep(1175,.15),130);
   } else beep(220,.25);
-  const chips = W.lv.top.slice(0,10).map((t,i)=>`<span class="wchip" style="--i:${i}"><b>${t.r}</b>${esc(t.w)}</span>`).join("");
+  const chips = W.order.slice(1,11).map((vi,i)=>`<span class="wchip" style="--i:${i}"><b>${i+2}</b>${esc(VOCAB[vi].w)}</span>`).join("");
   $app.innerHTML = `${topBar("wlevels")}
   <div class="result mood-${ok?"good":"bad"}">
     <div class="verdict">
@@ -883,7 +1143,7 @@ function wEnd(ok){
       ${ok?`<div class="stars" aria-label="${stars} de 3 estrellas">${"★".repeat(stars)}<span class="off">${"★".repeat(3-stars)}</span></div>`:""}
     </div>
     ${ok?`<div class="gains"><span><span class="coin"></span>+<span class="num">${coins}</span></span><span>+<span class="num">${xp}</span> XP</span></div>`:""}
-    ${ok?`<p class="hint">3 estrellas: hasta 10 intentos · 2: hasta 25 · con pistas, máximo 2</p>`:""}
+    ${ok?`<p class="hint">Nivel ${wDiff(W.L).name}: 3 estrellas con hasta ${wDiff(W.L).s3} intentos, 2 con hasta ${wDiff(W.L).s2}. Con pistas, máximo 2.</p>`:""}
     <div class="chainbox"><h2>Las más cercanas</h2><div class="wchips">${chips}</div></div>
     <div class="actions">
       ${ok && W.L<WDATA.length?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}

@@ -47,31 +47,43 @@ Abajo se muestra la cuenta completa: cada número en su círculo y el signo de l
 
 ## Palabra escondida
 
-Escribís (o decís) una palabra y el juego le asigna un **puesto**: la palabra escondida es la número 1, y cuanto más chico es el número, más cerca estás. Todas tus palabras quedan ordenadas de la más cercana a la más lejana.
+Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre las ~3.300 palabras del vocabulario: la escondida es la número 1, y cuanto más chico es el número, más cerca estás. Todas tus palabras quedan ordenadas de la más cercana a la más lejana.
 
-- **Colores:** verde para los puestos 1 a 50 (muy cerca), amarillo para 51 a 300 (cerca) y rojo para más de 300 (lejos).
+- **Colores:** verde para los puestos 1 a 50, amarillo para 51 a 300 y rojo para más de 300.
 - **Singular y plural** cuentan como la misma palabra, y no importan los acentos ni las mayúsculas.
-- **Pista (30 monedas):** agrega una palabra que está a mitad de camino entre tu mejor intento y la escondida.
+- Si escribís una palabra que el juego no conoce, te avisa y **ese intento no cuenta**.
+- **Pistas con costo creciente** (30, 50, 80 y 120 monedas). Cada pista te acerca solo un poco: si estás lejos, te lleva al 60 % de tu mejor puesto; si estás cerca, avanza unos pocos puestos. Con tu mejor intento entre los 10 primeros ya no hay pistas.
 - **Rendirse:** muestra la palabra (hay que tocar dos veces).
-- **Estrellas:** 3 con hasta 10 intentos, 2 con hasta 25 y 1 con más. Con pistas, el máximo es 2.
 - Al terminar se muestran las 10 palabras más cercanas.
 
-### Cómo se calcula la cercanía
+### Niveles y dificultad
 
-Hay 60 niveles en `data/escondida-*.js`. Cada nivel tiene dos listas escritas a mano:
+Son 200 niveles, en 10 etapas de 20:
 
-1. **Cercanas**, en orden: reciben los puestos 2, 3, 4…
-2. **Relacionadas**, en orden: reciben los puestos 150, 153, 156…
+| Niveles | Dificultad | 3 estrellas | 2 estrellas |
+|---|---|---|---|
+| 1–60 | Fácil: palabras concretas, con listas de cercanía escritas a mano | hasta 12 intentos | hasta 30 |
+| 61–120 | Intermedio: animales, objetos y lugares más específicos | hasta 18 | hasta 40 |
+| 121–160 | Difícil: palabras poco comunes y de cultura | hasta 24 | hasta 50 |
+| 161–200 | Experto: emociones, valores e ideas abstractas | hasta 30 | hasta 60 |
 
-Si una palabra no está en ninguna de las dos listas pero sí aparece en la lista de otra palabra escondida que está relacionada, el juego **estima** su puesto (entre 300 y 999). Si no hay ninguna relación, se muestra "+1000".
+Con pistas, el máximo es 2 estrellas.
 
-**Próximo paso recomendado:** generar los puestos con un modelo de vectores de palabras en español (por ejemplo fastText o spaCy `es_core_news_lg`), ordenando todo un vocabulario por similitud con cada palabra escondida. Así cada palabra recibe un número exacto, como en Contexto. Las listas a mano sirven para el prototipo.
+### Cómo se calcula el puesto
+
+- `data/vocab-*.js` tiene el vocabulario, organizado en **dominio / categoría / subcategoría** (por ejemplo `animales/mamíferos/felinos`) y con etiquetas temáticas (`campo`, `frío`, `fiesta`…). Dentro de cada subcategoría, las palabras vecinas se consideran más parecidas.
+- Para cada palabra escondida se ordena **todo** el vocabulario según un puntaje. Suma puntos compartir subcategoría (y estar cerca dentro de ella), compartir categoría o dominio, que los dominios estén relacionados (por ejemplo comida y plantas), compartir etiquetas y ser el nombre de la categoría (como "ave" para colibrí).
+- En los niveles 1 a 60, las listas a mano de `data/escondida-*.js` fijan los primeros puestos.
+
+**Próximo paso recomendado:** reemplazar este puntaje por la similitud de un modelo de vectores de palabras en español (por ejemplo fastText o spaCy `es_core_news_lg`). Hoy, más allá de los primeros ~300 puestos, el orden se vuelve bastante parejo.
 
 ## Estructura del proyecto
 
 - `src/app.html`: la app (pantallas, Cadena, estilos).
 - `src/escondida.js`: la lógica de Palabra escondida.
-- `data/escondida-*.js`: las palabras de cada nivel.
+- `data/vocab-*.js`: el vocabulario con categorías.
+- `data/escondida-*.js`: las listas a mano de los niveles 1 a 60.
+- `data/niveles-extra.js`: las palabras de los niveles 61 a 200.
 - `tools/build.py`: arma `index.html` juntando todo. Correlo después de cada cambio con `python3 tools/build.py`.
 
 ## Cómo probarlo

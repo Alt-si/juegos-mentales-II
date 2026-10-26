@@ -5,7 +5,7 @@ Uso:  python3 tools/build.py [ruta_extra_sin_envoltorio.html]
 
 - src/app.html      página (sin <html>/<head>/<body>)
 - src/escondida.js  lógica de Palabra escondida (se inserta en @@WGAME@@)
-- data/escondida-*.js  listas de cercanía (se insertan en <!--ESCONDIDA_DATA-->)
+- data/*.js  vocabulario, listas de cercanía y niveles (se insertan en <!--ESCONDIDA_DATA-->)
 """
 import glob, os, sys
 
@@ -16,7 +16,7 @@ body = rd("src/app.html")
 body = body.replace("@@WGAME@@", rd("src/escondida.js"))
 data = "".join(
     "<script>\n" + open(f, encoding="utf-8").read() + "\n</script>\n"
-    for f in sorted(glob.glob(os.path.join(ROOT, "data", "escondida-*.js")))
+    for f in sorted(glob.glob(os.path.join(ROOT, "data", "*.js")))
 )
 body = body.replace("<!--ESCONDIDA_DATA-->", data)
 

@@ -89,6 +89,12 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .big .op{color:var(--accent);font-size:.6em}
 .big.pop{animation:pop .22s ease-out}
 @keyframes pop{from{transform:scale(.82);opacity:.2}to{transform:none;opacity:1}}
+.disc{width:clamp(150px,52vw,208px);height:clamp(150px,52vw,208px);border-radius:50%;display:grid;place-items:center;
+  background:var(--surface);border:7px solid var(--accent);color:var(--ink);font-size:clamp(64px,22vw,96px);letter-spacing:-.04em;
+  box-shadow:0 0 0 10px color-mix(in srgb, var(--accent) 14%, transparent), 0 14px 34px color-mix(in srgb, var(--accent) 30%, transparent)}
+.disc.len3{font-size:clamp(48px,16vw,72px)}
+.disc.len4{font-size:clamp(38px,13vw,56px)}
+.opsign{font-family:var(--f-num);font-weight:700;font-size:clamp(90px,30vw,140px);line-height:1;color:var(--accent)}
 .dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:100%}
 .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
 .dots i.on{background:var(--accent)}
@@ -313,16 +319,26 @@ function showSequence(){
   box.innerHTML = `<div class="big" id="big"><span class="num">¿Listo?</span></div><div class="dots">${G.items.map(()=>"<i></i>").join("")}</div>`;
   const big = document.getElementById("big"); big.style.fontSize="48px";
   let i = 0; const sp = G.cfg.speed;
+  const opT = Math.round(sp*0.38);
+  const showNum = (it, idx) => {
+    const len = String(it.n).length;
+    big.style.fontSize="";
+    big.innerHTML = `<span class="disc num len${Math.min(len,4)}">${it.n}</span>`;
+    big.classList.remove("pop"); void big.offsetWidth; big.classList.add("pop");
+    box.querySelectorAll(".dots i")[idx].classList.add("on");
+    beep(520 + idx*25);
+    const t = idx===0 ? sp : sp-opT;
+    timers.push(setTimeout(()=>{ big.innerHTML="&nbsp;"; timers.push(setTimeout(step, 110)); }, t-110));
+  };
   const step = () => {
     if(i >= G.items.length){ askAnswer(); return; }
-    const it = G.items[i];
+    const it = G.items[i], idx = i; i++;
+    if(!it.op){ showNum(it, idx); return; }
     big.style.fontSize="";
-    big.innerHTML = (it.op?`<span class="op">${it.op}</span>`:"") + `<span class="num">${it.n}</span>`;
+    big.innerHTML = `<span class="opsign">${it.op==="-"?"−":it.op}</span>`;
     big.classList.remove("pop"); void big.offsetWidth; big.classList.add("pop");
-    box.querySelectorAll(".dots i")[i].classList.add("on");
-    beep(520 + i*25);
-    i++;
-    timers.push(setTimeout(()=>{ big.innerHTML="&nbsp;"; timers.push(setTimeout(step, 130)); }, sp-130));
+    beep(330,.04);
+    timers.push(setTimeout(()=>showNum(it, idx), opT));
   };
   timers.push(setTimeout(step, 900));
 }

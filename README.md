@@ -13,6 +13,8 @@ App de juegos de cálculo mental para celulares. Cada juego suma experiencia a u
 
 ## Cadena: progresión de niveles
 
+Durante la secuencia, cada número aparece dentro de un círculo y el signo de la operación se muestra solo, entre un número y el siguiente (1, +, 2, −, 1…).
+
 Son 300 niveles, agrupados en etapas de 20. La cuenta se resuelve en orden, como en una calculadora (5 + 6 × 2 = 22).
 
 | Niveles | Operaciones | Rango de números |

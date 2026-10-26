@@ -197,6 +197,18 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .wchip{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600;
   animation:land .4s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(var(--i) * 50ms)}
 .wchip b{min-width:28px;height:28px;padding:0 6px;border-radius:999px;background:var(--good);color:var(--on-mood);display:grid;place-items:center;font-size:12px;font-family:var(--f-num)}
+.duelcard{background:var(--surface);border:2px solid var(--accent);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.duelcard p{margin:0;color:var(--muted)}
+.duelhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.duelhead h2{font-size:22px}
+.duelcard .wform input{height:48px;font-size:15px}
+.duelcard .wsend{height:48px}
+.share{width:100%;display:flex;flex-direction:column;gap:10px;text-align:left}
+.share h2{font-size:20px}
+.share textarea{width:100%;min-height:110px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:14px/1.4 var(--f-body);padding:10px 12px;resize:none;box-sizing:border-box}
+.sharebtns{display:flex;gap:8px}
+.sharebtns .btn{flex:1}
+.who .mark{font-size:11px;text-transform:none;letter-spacing:0;font-weight:500}
 @media (prefers-reduced-motion: reduce){.big.pop,.ball,.chain .sign,.wrow,.wordball,.wchip{animation:none!important}.bar i{transition:none}}
 </style>
 
@@ -1030,14 +1042,14 @@ function wlevels(){
 
 let W = null;
 const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>`;
-function wplay(L){
+function wplay(L, duel){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
   const lv = WDATA[L-1];
-  W = Object.assign({L, lv, guesses:[], last:null, hints:0, done:false}, wRanking(lv));
+  W = Object.assign({L, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null}, wRanking(lv));
   $app.innerHTML = `${topBar("wlevels")}
   <div class="wplay">
-    <div class="hud"><span>Nivel <b>${L}</b></span><span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
+    <div class="hud">${duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
     <form class="wform" id="wform" autocomplete="off">
       <input id="wguess" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Escribí una palabra" aria-label="Tu palabra">
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
@@ -1121,6 +1133,7 @@ function wGiveUp(btn){
 }
 function wEnd(ok){
   W.done = true; clearTimers();
+  if(W.duel) return duelEnd(ok);
   const n = W.guesses.length;
   let stars=0, coins=0, xp=0;
   if(ok){
@@ -1155,6 +1168,209 @@ function wEnd(ok){
   if(ok) confetti();
 }
 
+/* ---------- Duelo: desafiar a un rival con la misma palabra ---------- */
+// El desafío viaja en un código (o link) que incluye la palabra (como número de nivel) y la marca de cada jugador.
+const DUEL_KEY = "mentecuenta-duelo";
+S.duel = Object.assign({w:0, e:0, l:0, seen:[]}, S.duel);
+function duelEncode(p){
+  const bytes = new TextEncoder().encode(JSON.stringify(p));
+  let bin = ""; bytes.forEach((b,i)=>{ bin += String.fromCharCode(b ^ DUEL_KEY.charCodeAt(i % DUEL_KEY.length)); });
+  return "duelo-" + btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function duelDecode(text){
+  const m = String(text||"").match(/duelo-([A-Za-z0-9_-]+)/); if(!m) return null;
+  try{
+    const bin = atob(m[1].replace(/-/g,"+").replace(/_/g,"/"));
+    const bytes = Uint8Array.from(bin, (c,i)=>c.charCodeAt(0) ^ DUEL_KEY.charCodeAt(i % DUEL_KEY.length));
+    const p = JSON.parse(new TextDecoder().decode(bytes));
+    if(p.v!==1 || !WDATA[p.w] || !p.a) return null;
+    return p;
+  }catch(e){ return null; }
+}
+const canLink = (()=>{ try{ return window.top === window && /^https?:$/.test(location.protocol); }catch(e){ return false; } })();
+function duelLink(token){ return canLink ? location.origin + location.pathname + "#" + token : ""; }
+// gana quien la encontró; entre dos que la encontraron, menos intentos; si empatan, menos pistas
+function duelCompare(a, b){
+  if(a.ok && !b.ok) return 1; if(!a.ok && b.ok) return -1; if(!a.ok && !b.ok) return 0;
+  if(a.t !== b.t) return a.t < b.t ? 1 : -1;
+  if(a.h !== b.h) return a.h < b.h ? 1 : -1;
+  return 0;
+}
+const markTxt = x => x.ok ? `${x.t} ${x.t===1?"intento":"intentos"}${x.h?` y ${x.h} ${x.h===1?"pista":"pistas"}`:""}` : "no la encontró";
+
+function duelCard(){
+  const d = S.duel;
+  return `<div class="duelcard">
+    <div class="duelhead"><h2>Duelo</h2><span class="hint">Ganados <b class="num">${d.w}</b> · Empates <b class="num">${d.e}</b> · Perdidos <b class="num">${d.l}</b></span></div>
+    <p>Jugá una palabra al azar y desafiá a un rival con la misma palabra. Gana quien la adivine en menos intentos.</p>
+    <button class="btn primary" data-duel="new">Desafiar a un rival</button>
+    <form class="wform" id="duelopen" autocomplete="off">
+      <input id="duelcode" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Pegá el código que te mandaron" aria-label="Código de desafío">
+      <button type="submit" class="wsend">Abrir</button>
+    </form>
+  </div>`;
+}
+const _wlevels = wlevels;
+wlevels = function(){
+  _wlevels();
+  const h = $app.querySelector(".hello"); if(h) h.insertAdjacentHTML("afterend", duelCard());
+  const f = document.getElementById("duelopen");
+  if(f) f.addEventListener("submit", e=>{ e.preventDefault(); duelOpen(document.getElementById("duelcode").value); });
+};
+
+function duelAskName(next){
+  clearTimers();
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="hello"><h1>¿Cómo te llamás?</h1><p>Tu rival va a ver este nombre en el desafío.</p></div>
+  <form class="wform" id="nameform" autocomplete="off">
+    <input id="pname" type="text" maxlength="16" placeholder="Tu nombre" aria-label="Tu nombre" value="${esc(S.name||"")}">
+    <button type="submit" class="wsend">Seguir</button>
+  </form>`;
+  const inp = document.getElementById("pname"); inp.focus();
+  document.getElementById("nameform").addEventListener("submit", e=>{
+    e.preventDefault(); const n = inp.value.trim().replace(/\s+/g," ").slice(0,16);
+    if(!n){ toast("Escribí tu nombre."); return; }
+    S.name = n; save(); next();
+  });
+}
+function duelNew(){
+  if(!S.name) return duelAskName(duelNew);
+  const i = Math.floor(Math.random()*WDATA.length);
+  wplay(i+1, {role:"a", id: Math.random().toString(36).slice(2,8)});
+}
+function duelOpen(text){
+  const p = duelDecode(text);
+  if(!p){ toast("Ese código no es válido. Revisá que esté completo."); return; }
+  if(p.b) return duelShowResult(p);
+  if(!S.name) return duelAskName(()=>duelInvite(p));
+  duelInvite(p);
+}
+function duelInvite(p){
+  clearTimers();
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="result mood-warn">
+    <div class="verdict">
+      <h1>${esc(p.a.n)} te desafía</h1>
+      <p>${p.a.ok?`Encontró la palabra escondida en <b>${markTxt(p.a)}</b>.`:"No pudo encontrar la palabra escondida."} ¿Podés hacerlo mejor?</p>
+      <div class="ball hero">${p.a.ok?p.a.t:"✕"}</div>
+    </div>
+    <p class="hint">Es la misma palabra que jugó ${esc(p.a.n)}. Gana quien la encuentre en menos intentos; si empatan, gana quien usó menos pistas.</p>
+    <div class="actions">
+      <button class="btn primary" data-duel="accept">Aceptar el desafío</button>
+      <button class="btn" data-go="wlevels">Ahora no</button>
+    </div>
+  </div>`;
+  duelPending = p;
+}
+let duelPending = null;
+
+function shareBox(text, title){
+  return `<div class="share">
+    <h2>${title}</h2>
+    <textarea id="sharetxt" readonly aria-label="Mensaje para compartir">${esc(text)}</textarea>
+    <div class="sharebtns">
+      <button class="btn primary" data-duel="copy">Copiar mensaje</button>
+      ${navigator.share?`<button class="btn" data-duel="share">Compartir</button>`:""}
+    </div>
+    <p class="hint">${canLink?"Tu rival abre el link y juega la misma palabra.":"Tu rival pega el código en Palabra escondida → Duelo → Abrir."}</p>
+  </div>`;
+}
+function duelEnd(ok){
+  const me = {n:S.name, t:W.guesses.length, h:W.hints, ok};
+  const word = esc(W.lv.w);
+  if(W.duel.role==="a"){
+    const p = {v:1, id:W.duel.id, w:W.L-1, a:me};
+    const token = duelEncode(p), link = duelLink(token);
+    const text = `${S.name} te desafía en Palabra escondida (MenteCuenta): ${ok?`encontré la palabra en ${markTxt(me)}`:"no pude encontrar la palabra"}. ¿Podés con menos?\n${link?link+"\n":""}Código: ${token}`;
+    if(ok){ S.coins += 5; save(); }
+    $app.innerHTML = `${topBar("wlevels")}
+    <div class="result mood-${ok?"good":"bad"}">
+      <div class="verdict">
+        <h1>${ok?"¡La encontraste!":"Te rendiste"}</h1>
+        <p>${ok?`Tu marca: <b>${markTxt(me)}</b>`:"La palabra era"}</p>
+        <div class="wordball">${word}</div>
+      </div>
+      ${shareBox(text, "Ahora desafiá a tu rival")}
+      <div class="actions"><button class="btn" data-duel="new">Otro duelo</button><button class="btn" data-go="wlevels">Volver</button></div>
+    </div>`;
+    if(ok) confetti();
+    return;
+  }
+  // respuesta al desafío
+  const p = Object.assign({}, W.duel.p, {b:me});
+  const res = duelCompare(me, p.a);
+  if(!S.duel.seen.includes(p.id+"b")){
+    S.duel.seen.push(p.id+"b"); S.duel.seen = S.duel.seen.slice(-200);
+    if(res>0){ S.duel.w++; S.coins += 20; } else if(res<0){ S.duel.l++; if(ok) S.coins += 3; } else { S.duel.e++; S.coins += 8; }
+    save();
+  }
+  const token = duelEncode(p), link = duelLink(token);
+  const verdict = res>0 ? "¡Ganaste el duelo!" : res<0 ? `Ganó ${esc(p.a.n)}` : "¡Empate!";
+  const text = `Duelo de Palabra escondida: ${S.name} ${ok?`la encontró en ${markTxt(me)}`:"no la encontró"} y ${p.a.n} ${p.a.ok?`en ${markTxt(p.a)}`:"no la encontró"}. ${res>0?`Ganó ${S.name}.`:res<0?`Ganó ${p.a.n}.`:"Empate."}\n${link?link+"\n":""}Código: ${token}`;
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
+    <div class="verdict">
+      <h1>${verdict}</h1>
+      <p>La palabra era <b>${word}</b></p>
+      ${duelVs(me, p.a, res)}
+    </div>
+    ${shareBox(text, `Mandale el resultado a ${esc(p.a.n)}`)}
+    <div class="actions"><button class="btn primary" data-duel="new">Revancha con otra palabra</button><button class="btn" data-go="wlevels">Volver</button></div>
+  </div>`;
+  if(res>0) confetti();
+}
+function duelVs(me, rival, res){
+  const col = r => r>0 ? "var(--good)" : r<0 ? "var(--bad)" : "var(--warn)";
+  const on = r => r===0 ? "var(--on-warn)" : "var(--on-mood)";
+  const ball = (x, r) => `<div class="ball hero" style="--m:${col(r)};--on-m:${on(r)}">${x.ok?x.t:"✕"}</div>`;
+  return `<div class="duel">
+    <div class="who">${ball(me,res)}${esc(me.n)}<small class="mark">${markTxt(me)}</small></div>
+    <div class="who">${ball(rival,-res)}${esc(rival.n)}<small class="mark">${markTxt(rival)}</small></div>
+  </div>`;
+}
+function duelShowResult(p){
+  clearTimers();
+  const iAmA = S.name && p.a.n === S.name;
+  const me = iAmA ? p.a : p.b, rival = iAmA ? p.b : p.a;
+  const res = duelCompare(me, rival);
+  if(iAmA && !S.duel.seen.includes(p.id+"a")){
+    S.duel.seen.push(p.id+"a"); S.duel.seen = S.duel.seen.slice(-200);
+    if(res>0){ S.duel.w++; S.coins += 20; } else if(res<0) S.duel.l++; else { S.duel.e++; S.coins += 8; }
+    save();
+  }
+  const verdict = res>0 ? (iAmA?"¡Ganaste el duelo!":`Ganó ${esc(me.n)}`) : res<0 ? `Ganó ${esc(rival.n)}` : "¡Empate!";
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
+    <div class="verdict">
+      <h1>${verdict}</h1>
+      <p>La palabra era <b>${esc(WDATA[p.w].w)}</b></p>
+      ${duelVs(me, rival, res)}
+    </div>
+    <div class="actions"><button class="btn primary" data-duel="new">Revancha con otra palabra</button><button class="btn" data-go="wlevels">Volver</button></div>
+  </div>`;
+  if(res>0 && iAmA) confetti();
+}
+function duelAction(a, btn){
+  if(a==="new") return duelNew();
+  if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(p.w+1, {role:"b", p}); }
+  if(a==="copy"){
+    const ta = document.getElementById("sharetxt"); if(!ta) return;
+    const fallback = () => { ta.focus(); ta.select(); toast("Seleccioné el mensaje: copialo con el menú del teclado."); };
+    try{ navigator.clipboard.writeText(ta.value).then(()=>toast("Mensaje copiado. Pegalo en WhatsApp o donde quieras."), fallback); }catch(e){ fallback(); }
+    return;
+  }
+  if(a==="share"){
+    const ta = document.getElementById("sharetxt");
+    try{ navigator.share({text: ta.value}).catch(()=>{}); }catch(e){ toast("No se pudo abrir el menú de compartir. Usá Copiar."); }
+  }
+}
+function duelFromHash(){
+  let h = ""; try{ h = location.hash; }catch(e){}
+  if(!/duelo-/.test(h)) return false;
+  try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){}
+  duelOpen(h); return true;
+}
+window.addEventListener("hashchange", duelFromHash);
 
 /* ---------- micrófono ---------- */
 let rec=null;
@@ -1194,6 +1410,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.whelp!==undefined){ wHint(); return; }
   if(t.dataset.wgive!==undefined){ wGiveUp(t); return; }
+  if(t.dataset.duel!==undefined){ duelAction(t.dataset.duel, t); return; }
   if(t.dataset.wmic!==undefined){ rec?stopMic():startMic(t, alts=>{ const w=(alts[0]||"").trim().split(/\s+/).pop()||""; const inp=document.getElementById("wguess"); if(inp) inp.value=w; wGuess(w); }, "Escribí una palabra o tocá el micrófono", "Escuchando… decí una palabra"); return; }
   if(t.dataset.lv){ play(+t.dataset.lv); return; }
   if(!G || G.phase!=="answer") { if(t.dataset.help==="replay"){} return; }
@@ -1216,6 +1433,7 @@ document.addEventListener("keydown", e => {
 });
 
 home();
+duelFromHash();
 })();
 </script>
 

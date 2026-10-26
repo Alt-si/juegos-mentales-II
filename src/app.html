@@ -187,6 +187,18 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .wchip{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600;
   animation:land .4s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(var(--i) * 50ms)}
 .wchip b{min-width:28px;height:28px;padding:0 6px;border-radius:999px;background:var(--good);color:var(--on-mood);display:grid;place-items:center;font-size:12px;font-family:var(--f-num)}
+.duelcard{background:var(--surface);border:2px solid var(--accent);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.duelcard p{margin:0;color:var(--muted)}
+.duelhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.duelhead h2{font-size:22px}
+.duelcard .wform input{height:48px;font-size:15px}
+.duelcard .wsend{height:48px}
+.share{width:100%;display:flex;flex-direction:column;gap:10px;text-align:left}
+.share h2{font-size:20px}
+.share textarea{width:100%;min-height:110px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:14px/1.4 var(--f-body);padding:10px 12px;resize:none;box-sizing:border-box}
+.sharebtns{display:flex;gap:8px}
+.sharebtns .btn{flex:1}
+.who .mark{font-size:11px;text-transform:none;letter-spacing:0;font-weight:500}
 @media (prefers-reduced-motion: reduce){.big.pop,.ball,.chain .sign,.wrow,.wordball,.wchip{animation:none!important}.bar i{transition:none}}
 </style>
 
@@ -549,6 +561,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.whelp!==undefined){ wHint(); return; }
   if(t.dataset.wgive!==undefined){ wGiveUp(t); return; }
+  if(t.dataset.duel!==undefined){ duelAction(t.dataset.duel, t); return; }
   if(t.dataset.wmic!==undefined){ rec?stopMic():startMic(t, alts=>{ const w=(alts[0]||"").trim().split(/\s+/).pop()||""; const inp=document.getElementById("wguess"); if(inp) inp.value=w; wGuess(w); }, "Escribí una palabra o tocá el micrófono", "Escuchando… decí una palabra"); return; }
   if(t.dataset.lv){ play(+t.dataset.lv); return; }
   if(!G || G.phase!=="answer") { if(t.dataset.help==="replay"){} return; }
@@ -571,5 +584,6 @@ document.addEventListener("keydown", e => {
 });
 
 home();
+duelFromHash();
 })();
 </script>

@@ -77,6 +77,20 @@ Con pistas, el máximo es 2 estrellas.
 
 **Próximo paso recomendado:** reemplazar este puntaje por la similitud de un modelo de vectores de palabras en español (por ejemplo fastText o spaCy `es_core_news_lg`). Hoy, más allá de los primeros ~300 puestos, el orden se vuelve bastante parejo.
 
+### Duelo contra un rival
+
+Desde la pantalla de Palabra escondida se puede **desafiar a un rival**. No hace falta servidor: el desafío viaja en un mensaje.
+
+1. Tocás **Desafiar a un rival** (la primera vez te pide tu nombre). Jugás una palabra al azar.
+2. Al terminar, el juego arma un mensaje con tu marca, un **link** y un **código**. Lo copiás o lo compartís (por ejemplo, por WhatsApp). La palabra no se ve en el mensaje.
+3. Tu rival abre el link, o pega el código en **Duelo → Abrir**, y juega **la misma palabra**.
+4. **Gana quien la encuentre en menos intentos.** Si empatan en intentos, gana quien usó menos pistas. Si alguien se rinde, pierde contra quien la encontró.
+5. Tu rival te devuelve el resultado con otro código, y los dos ven quién ganó. Se puede pedir revancha con otra palabra.
+
+Premios: 20 monedas por ganar, 8 por empatar y 3 por encontrar la palabra aunque pierdas. La app lleva la cuenta de duelos ganados, empatados y perdidos.
+
+**Limitaciones:** el código está ofuscado pero no firmado, así que alguien con conocimientos técnicos podría modificarlo. Para duelos en tiempo real, rankings y resultados verificados hace falta un servidor (por ejemplo, Firebase o Supabase).
+
 ## Estructura del proyecto
 
 - `src/app.html`: la app (pantallas, Cadena, estilos).

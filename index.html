@@ -94,6 +94,8 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
   box-shadow:0 0 0 10px color-mix(in srgb, var(--accent) 14%, transparent), 0 14px 34px color-mix(in srgb, var(--accent) 30%, transparent)}
 .disc.len3{font-size:clamp(48px,16vw,72px)}
 .disc.len4{font-size:clamp(38px,13vw,56px)}
+.cue{font-family:var(--f-display);font-weight:800;font-size:clamp(38px,12vw,52px);letter-spacing:-.01em;color:var(--muted)}
+.cue.go{color:var(--accent);font-size:clamp(48px,15vw,64px)}
 .opsign{font-family:var(--f-num);font-weight:700;font-size:clamp(90px,30vw,140px);line-height:1;color:var(--accent)}
 .dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:100%}
 .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
@@ -316,7 +318,7 @@ function showSequence(){
   G.phase="show";
   const box = document.getElementById("box");
   document.getElementById("bottom").innerHTML = `<p class="hint">Mirá y calculá en tu cabeza…</p>`;
-  box.innerHTML = `<div class="big" id="big"><span class="num">¿Listo?</span></div><div class="dots">${G.items.map(()=>"<i></i>").join("")}</div>`;
+  box.innerHTML = `<div class="big" id="big"><span class="cue">Preparado…</span></div><div class="dots">${G.items.map(()=>"<i></i>").join("")}</div>`;
   const big = document.getElementById("big"); big.style.fontSize="48px";
   let i = 0; const sp = G.cfg.speed;
   const opT = Math.round(sp*0.38);
@@ -340,7 +342,13 @@ function showSequence(){
     beep(330,.04);
     timers.push(setTimeout(()=>showNum(it, idx), opT));
   };
-  timers.push(setTimeout(step, 900));
+  timers.push(setTimeout(()=>{
+    big.style.fontSize="";
+    big.innerHTML = `<span class="cue go">¡Listo!</span>`;
+    big.classList.remove("pop"); void big.offsetWidth; big.classList.add("pop");
+    beep(440,.08);
+    timers.push(setTimeout(()=>{ big.innerHTML="&nbsp;"; timers.push(setTimeout(step, 150)); }, 750));
+  }, 1100));
 }
 function askAnswer(){
   G.phase="answer"; G.input=""; G.t0=performance.now();

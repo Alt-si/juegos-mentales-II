@@ -167,11 +167,243 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);
   padding:10px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);z-index:20}
-@media (prefers-reduced-motion: reduce){.big.pop,.ball,.chain .sign{animation:none!important}.bar i{transition:none}}
+/* palabra escondida */
+.wplay{display:flex;flex-direction:column;gap:12px}
+.wform{display:flex;gap:8px}
+.wform input{flex:1;min-width:0;height:54px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:600 18px var(--f-body);padding:0 16px}
+.wform input:focus{outline:none;border-color:var(--accent)}
+.wmic{width:54px;height:54px;border-radius:16px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.wmic.on{background:var(--bad);color:var(--on-mood);animation:listen 1.1s ease-in-out infinite}
+.wsend{height:54px;padding:0 16px;border-radius:16px;background:var(--ink);color:var(--bg);font-weight:700;flex:none}
+.whelps{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wsec{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:4px 0 -4px}
+.wlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.wrow{position:relative;display:flex;align-items:center;gap:10px;height:48px;border-radius:14px;background:var(--surface);border:1px solid var(--line);padding:0 6px 0 14px;overflow:hidden}
+.wrow.last{border:2px solid var(--tc);animation:land .35s cubic-bezier(.2,1.5,.4,1) both}
+.wbar{position:absolute;left:0;top:0;bottom:0;background:color-mix(in srgb, var(--tc) 24%, transparent)}
+.wword{position:relative;flex:1;min-width:0;font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wtag{position:relative;font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 7px;background:var(--surface)}
+.wrank{position:relative;min-width:42px;height:36px;padding:0 9px;border-radius:999px;display:grid;place-items:center;background:var(--tc);color:var(--on-tc);font-weight:700;font-size:14px}
+.t-good{--tc:var(--good);--on-tc:var(--on-mood)}
+.t-warn{--tc:var(--warn);--on-tc:var(--on-warn)}
+.t-bad{--tc:var(--bad);--on-tc:var(--on-mood)}
+.wempty{text-align:center;color:var(--muted);font-size:14px;padding:18px 8px;border:1px dashed var(--line);border-radius:14px}
+.legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:50%;background:var(--tc)}
+.wordball{padding:16px 30px;border-radius:999px;font-family:var(--f-display);font-weight:800;font-size:clamp(30px,10vw,44px);line-height:1.1;background:var(--good);color:var(--on-mood);max-width:100%;overflow-wrap:anywhere;
+  box-shadow:0 0 0 7px color-mix(in srgb, var(--good) 26%, transparent), 0 12px 30px color-mix(in srgb, var(--good) 40%, transparent);animation:land .55s cubic-bezier(.2,1.6,.4,1) both}
+.wchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.wchip{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600;
+  animation:land .4s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(var(--i) * 50ms)}
+.wchip b{min-width:28px;height:28px;padding:0 6px;border-radius:999px;background:var(--good);color:var(--on-mood);display:grid;place-items:center;font-size:12px;font-family:var(--f-num)}
+@media (prefers-reduced-motion: reduce){.big.pop,.ball,.chain .sign,.wrow,.wordball,.wchip{animation:none!important}.bar i{transition:none}}
 </style>
 
 <div class="app" id="app"></div>
 <div class="toast" id="toast" hidden></div>
+
+<script>window.__escondida=[];window.__escondidaAdd=function(w,a,b){window.__escondida.push([w,a,b]);};</script>
+<script>
+// Palabra escondida — datos de cercanía (niveles 1–20)
+// Formato: P(palabra, cercanas en orden, relacionadas en orden)
+// "cercanas" reciben los puestos 2, 3, 4…; "relacionadas" van del puesto 150 en adelante.
+(function(P){
+P("perro",
+`perros cachorro can mascota perrito ladrido ladrar gato perra hueso correa collar raza labrador caniche ovejero pastor dogo bulldog rottweiler chihuahua beagle salchicha caniche cucha veterinario pulga garrapata cola hocico olfato pata lamer morder mordida jauría lobo zorro coyote animal mamífero doméstico fiel amigo compañero adiestrar paseo pasear paseador guardián vacuna canino canina pelaje pelo oreja trufa croqueta alimento balanceado perrera adopción callejero rescate`,
+`gato gatito felino conejo hámster loro tortuga caballo vaca oveja chancho cerdo burro mono león tigre oso ratón rata pájaro pez animales zoológico granja campo jardín patio casa familia niño juguete pelota palo hueso carne comida plato agua lengua cola orejas nariz diente dientes pata uña garra piel lana bigote ladra aullar aullido gruñir gruñido jugar correr saltar dormir cuidar alimentar bañar cepillar policía rastreo ciego lazarillo trineo caza cazador`);
+P("casa",
+`hogar vivienda casas departamento edificio residencia domicilio techo puerta ventana habitación cuarto living comedor cocina baño dormitorio pared paredes piso jardín patio terraza balcón garaje chalet cabaña mansión rancho choza construcción mudanza alquiler inquilino propietario dueño vecino barrio calle dirección llave cerradura timbre escalera sótano altillo ladrillo cemento arquitecto albañil inmobiliaria hipoteca familia refugio morada`,
+`mueble muebles sillón sofá mesa silla cama ropero heladera lavarropas horno televisor lámpara cortina alfombra estante biblioteca planta maceta perro gato vecindario ciudad pueblo campo country hotel hostel oficina escuela tienda negocio departamento torre pintura limpieza orden decoración diseño plano obra ladrillos teja madera vidrio luz gas electricidad agua factura impuesto mudar vivir habitar dormir comer descansar visita invitado fiesta reunión`);
+P("sol",
+`estrella luz calor rayo rayos solar soleado amanecer atardecer ocaso sol luna cielo día mediodía brillo brillar resplandor sombra verano bronceado protector bronceador quemadura insolación anteojos sombrilla eclipse órbita sistema planeta tierra galaxia energía fotón radiación ultravioleta calentar iluminar dorado amarillo naranja horizonte salida puesta claridad astro cielo despejado nublado`,
+`luna estrellas nube nubes lluvia viento clima tiempo temperatura calor playa arena mar vacaciones pileta piscina sombrero gorra crema piel verano primavera mañana tarde mañanas cielo azul espacio universo cometa meteorito mercurio venus marte júpiter saturno telescopio astronomía astronauta nasa cohete fuego llama vela lámpara foco lámpara electricidad panel paneles fotosíntesis planta plantas flor girasol dios mitología`);
+P("agua",
+`líquido beber tomar sed hidratación mineral potable canilla grifo botella vaso jarra lluvia río mar lago océano laguna arroyo manantial fuente pozo cascada hielo vapor gota gotas mojado mojar húmedo humedad líquida dulce salada h2o hidrógeno oxígeno charco ola ola corriente inundación sequía riego regar ducha baño lavar limpiar nadar natación sumergir pileta`,
+`jugo leche gaseosa soda refresco café té vino cerveza bebida sopa caldo nube nieve granizo tormenta clima lluvioso playa barco pez peces delfín ballena pescado isla costa puerto puente represa tanque cañería caño plomero desagüe cloaca botellón dispensador filtro purificar planta flores vida cuerpo salud sudor lágrima sangre orina fuego tierra aire elemento elementos naturaleza ambiente contaminación`);
+P("pan",
+`panes panadería panadero harina masa levadura horno hornear miga corteza baguette flauta mignon pebete lactal tostada tostadas sándwich sandwich bizcocho factura facturas medialuna medialunas galleta galletitas trigo cereal tostar rebanada rodaja manteca mermelada desayuno merienda torta budín pizza grisín grisines integral salvado amasar fermentar tostadora sanguche hamburguesa pancho alimento comida`,
+`leche café mate té queso jamón salame huevo huevos azúcar sal aceite manteca dulce chocolate fruta frutas carne pollo arroz fideos pasta papa ensalada sopa almuerzo cena comer comida cocina cocinero receta mesa plato cuchillo canasta bolsa mercado almacén supermercado kiosco precio trigal campo molino agricultura granja hambre pobreza iglesia misa hostia`);
+P("auto",
+`autos coche carro vehículo automóvil camioneta camión manejar conducir conductor chofer volante motor rueda ruedas neumático goma llanta freno frenos acelerador embrague nafta combustible gasolina estacionar estacionamiento garaje ruta autopista calle tránsito tráfico semáforo licencia registro patente seguro taller mecánico batería caja cambios marcha velocidad kilómetros carrocería baúl capó paragolpes espejo puerta asiento cinturón airbag`,
+`moto motocicleta bicicleta colectivo ómnibus micro taxi remis uber tren subte avión barco viaje viajar paseo vacaciones choque accidente multa policía peaje esquina avenida camino carretera puente túnel nafta estación servicio gomería lavadero repuesto mecánica industria fábrica marca modelo carrera piloto fórmula rally deporte velocidad rápido eléctrico híbrido contaminación humo ruido bocina`);
+P("árbol",
+`árboles planta tronco rama ramas hoja hojas raíz raíces corteza copa madera bosque selva arbusto pino roble sauce eucalipto ombú jacarandá palmera palmeras álamo ceibo fresno olmo cedro abeto plátano lapacho tala sombra fruto frutos semilla semillas savia anillos podar talar plantar verde vegetal vegetación forestal leña follaje nido`,
+`flor flores pasto césped jardín parque plaza campo naturaleza montaña río tierra suelo sol agua lluvia aire oxígeno fotosíntesis clorofila primavera otoño invierno verano pájaro pájaros ardilla mono insecto hormiga leñador hacha sierra motosierra mesa silla mueble papel lápiz cuaderno carpintero carpintería genealogía familia navidad casita tronco frutal manzana naranja limón cereza`);
+P("libro",
+`libros novela lectura leer lector página páginas hoja tapa capítulo autor escritor escritora biblioteca librería cuento cuentos texto relato poesía poema edición editorial publicar imprimir impreso ejemplar tomo volumen enciclopedia diccionario manual biografía historia literatura título índice prólogo epílogo marcador encuadernado lectora literario literaria bestseller saga trilogía narrador personaje`,
+`revista diario periódico cuaderno carpeta apunte apuntes papel lápiz birome pluma tinta letra letras palabra palabras escritura escribir estudiar estudio escuela colegio universidad profesor maestro alumno clase tarea examen conocimiento sabiduría cultura arte cine película serie teatro guion idioma lengua traducción traductor kindle tablet electrónico pantalla estante estantería feria`);
+P("playa",
+`arena mar costa orilla ola olas balneario vacaciones verano sol sombrilla reposera toalla traje malla bikini bronceado bronceador protector nadar bañista guardavidas castillo médano médanos duna dunas mar del plata caracol caracoles concha almeja bahía litoral isla océano marea surf surfista parador muelle acantilado palmera pileta`,
+`montaña lago río laguna campo sierra bosque hotel cabaña camping viaje viajar turismo turista excursión crucero barco lancha velero pesca pescador pescado gaviota cangrejo pez delfín ballena tiburón medusa agua sal salado calor clima sol luna atardecer amanecer helado choclo pelota paleta frisbee gorra sombrero anteojos ojotas sandalias descanso feriado verano enero febrero`);
+P("escuela",
+`colegio escuelas aula clase alumno alumna alumnos estudiante maestra maestro profesor profesora docente directora director recreo pizarrón tiza banco pupitre cuaderno carpeta mochila útiles guardapolvo uniforme tarea deberes examen prueba boletín nota notas materia lección enseñanza aprender aprendizaje educación primaria secundaria jardín grado curso año lectivo inscripción egresado egreso acto bandera`,
+`universidad facultad instituto academia escuelita biblioteca libro libros lápiz goma regla birome lapicera mapa globo terráqueo matemática lengua historia geografía ciencia ciencias música dibujo gimnasia educación física compañero amigo amigos niño niños chico chicos infancia adolescencia padres familia reunión estudio estudiar leer escribir sumar recreo patio timbre comedor vacaciones`);
+P("gato",
+`gatos gatito felino minino michi gata maullido maullar ronronear ronroneo bigote bigotes garra garras uña arañar arena piedritas mascota doméstico perro ratón cazar pelaje pelo cola ojos siamés persa angora callejero tigre león pantera leopardo puma jaguar lince felinos ovillo lana caja dormir siesta saltar tejado techo noche`,
+`perro cachorro conejo hámster loro pájaro pez tortuga animal animales mamífero zoológico veterinario vacuna comida alimento balanceado leche pescado ratón rata pulga garrapata juguete pelota plumero casa sillón sofá ventana patio jardín jugar lamer limpiar curioso independiente perezoso suerte negro brujería egipto mascotas adopción refugio`);
+P("lluvia",
+`llover llovizna lluvioso aguacero chaparrón tormenta temporal diluvio precipitación nube nubes gota gotas agua mojado mojarse paraguas piloto impermeable botas charco charcos relámpago rayo trueno granizo nublado gris humedad húmedo inundación inundaciones goteo goteras arcoíris pronóstico meteorología clima tiempo otoño llueve garúa`,
+`nieve viento frío invierno sol calor cielo niebla neblina vapor río arroyo cauce mar lago laguna tierra barro planta plantas cosecha sequía campo agricultor jardín flores ventana vidrio techo tejado cama dormir siesta tristeza melancolía nostalgia canción poema libro película taxi colectivo tráfico accidente`);
+P("cama",
+`camas colchón almohada sábana sábanas frazada manta acolchado edredón dormitorio dormir descansar acostarse acostado siesta sueño cucheta litera cuna sommier respaldo mesita mesa luz velador pijama noche despertar despertador levantarse matrimonial individual plaza dos plazas tender hacer roncar soñar almohadón funda`,
+`sillón sofá silla mesa ropero placard mueble muebles casa habitación cuarto hotel hospital enfermo enfermedad gripe fiebre descanso cansancio cansado vago pereza lectura libro televisión celular película pareja amor bebé niño cuento oso peluche luz lámpara ventana cortina persiana mañana`);
+P("fútbol",
+`futbol pelota gol goles arco arquero jugador jugadores equipo club partido cancha estadio hinchada hincha camiseta botines delantero defensor mediocampista árbitro penal córner tiro libre offside campeonato torneo liga copa mundial selección messi maradona boca river técnico entrenador entrenamiento pase gambeta cabezazo tribuna clásico`,
+`básquet tenis rugby vóley hockey deporte deportes natación atletismo boxeo olimpíadas pelota red silbato tarjeta amarilla roja medalla trofeo copa campeón ganar perder empatar resultado tabla posiciones domingo televisión transmisión relator periodista radio barrio potrero amigos picado ejercicio correr`);
+P("manzana",
+`manzanas fruta frutas fruto pera durazno ciruela membrillo cereza frutilla naranja banana uva uvas mandarina kiwi sidra compota tarta strudel jugo cáscara semilla corazón carozo roja verde deliciosa manzano huerto cosecha ácida dulce mordisco crocante pomo`,
+`limón pomelo ananá piña mango melón sandía frutal árbol planta comida postre torta ensalada verdura verduras tomate papa zanahoria mercado verdulería feria supermercado vitamina salud nutrición dieta merienda snack newton gravedad adán eva paraíso pecado blancanieves bruja apple computadora`);
+P("tren",
+`trenes ferrocarril vía vías estación andén locomotora vagón vagones maquinista boleto pasaje viaje pasajero pasajeros riel rieles durmiente subte metro tranvía ferroviario ferroviaria terminal retiro constitución once barrera paso nivel silbato vapor carbón eléctrico ramal trocha horario expreso`,
+`colectivo ómnibus micro auto avión barco bicicleta taxi transporte público viajar viajero turismo ciudad pueblo campo puente túnel ruta camino mapa equipaje valija carga mercadería minería industria revolución carbón humo juguete maqueta película película vía láctea`);
+P("hospital",
+`clínica sanatorio hospitales médico médica enfermera enfermero paciente pacientes guardia emergencia urgencia ambulancia internación internado cirugía quirófano operación cirujano camilla sala terapia intensiva consultorio turno diagnóstico tratamiento enfermedad salud remedio medicamento análisis radiografía inyección suero alta`,
+`farmacia doctor odontólogo dentista psicólogo veterinario laboratorio vacuna vacunación virus bacteria gripe fiebre dolor herida accidente sangre vida muerte nacimiento bebé parto maternidad embarazo cuidado cuidar curar sanar obra social seguro prepaga edificio pasillo espera`);
+P("música",
+`canción canciones melodía ritmo armonía sonido nota notas instrumento instrumentos guitarra piano violín batería bajo flauta trompeta saxofón cantar cantante cantor banda grupo orquesta concierto recital disco álbum tema compositor músico músicos partitura acorde acordes rock tango jazz folklore cumbia pop clásica escuchar oído auriculares`,
+`baile bailar danza fiesta boliche radio spotify parlante volumen silencio ruido voz coro escenario festival arte artista pintura teatro cine poesía letra letras verso poema emoción alegría tristeza nostalgia canto pájaro clase escuela conservatorio`);
+P("mar",
+`océano mares agua salada sal ola olas playa costa orilla marea profundo profundidad barco barcos navegar marinero puerto bahía isla golfo pez peces pescado ballena delfín tiburón pulpo medusa coral algas atlántico pacífico mediterráneo horizonte azul tormenta naufragio buque velero submarino`,
+`lago río laguna arroyo agua playa arena verano vacaciones viaje crucero pesca pescador red caña ancla faro gaviota cangrejo caracol concha sirena pirata tesoro mapa brújula viento nube cielo sol luna atardecer azul turquesa naturaleza planeta contaminación`);
+P("teléfono",
+`celular teléfonos móvil llamada llamar llamado número marcar línea fijo inalámbrico smartphone pantalla mensaje mensajes whatsapp chat contestar atender hablar conversación auricular parlante batería cargador señal antena compañía tarjeta sim operadora tono timbre teclado contacto contactos agenda`,
+`computadora tablet notebook internet wifi red aplicación app redes sociales instagram foto fotos cámara video correo mail carta telegrama radio televisión tecnología comunicación comunicar mensajero voz oído número código cable enchufe aviso alarma reloj despertador`);
+})(window.__escondidaAdd);
+
+</script>
+<script>
+// Palabra escondida — datos de cercanía (niveles 21–40)
+(function(P){
+P("montaña",
+`montañas cerro cerros sierra sierras cordillera pico cumbre cima ladera falda valle volcán nevado nieve roca rocas piedra escalar escalada alpinismo andinismo montañista alpinista trekking sendero refugio altura altitud aconcagua andes himalaya everest precipicio barranco quebrada meseta colina loma glaciar mirador bastones campamento`,
+`bosque selva lago río arroyo cascada pino árboles naturaleza paisaje viaje aventura excursión mochila carpa campamento camping frío viento aire oxígeno cielo nube nubes águila cóndor cabra llama guanaco esquí esquiar snowboard invierno vacaciones bariloche mendoza salta patagonia mapa brújula`);
+P("cocina",
+`cocinar cocinero cocinera chef receta recetas horno hornalla anafe heladera mesada olla sartén cacerola cuchillo cuchara tenedor cucharón espátula tabla plato platos vaso vasos fuente comida almuerzo cena ingredientes freír hervir hornear asar picar cortar condimento sal pimienta aceite gas microondas licuadora batidora alacena pileta lavar`,
+`comedor living baño dormitorio casa departamento restaurante restorán parrilla asado mesa silla mantel servilleta delantal gorro hambre comer probar sabor gusto rico delicioso dieta mercado supermercado verdura carne pollo pescado pasta fideos arroz pan postre torta`);
+P("invierno",
+`frío helado helada nieve nevada escarcha abrigo campera bufanda guantes gorro estufa calefacción calefactor chimenea leña junio julio agosto estación estaciones otoño primavera verano temperatura bajo cero gripe resfrío resfriado lluvia viento polar invernal vacaciones esquí frazada`,
+`clima tiempo pronóstico nube nubes niebla neblina tormenta granizo sol calor diciembre enero febrero marzo año mes chocolate café té sopa guiso locro mate abrazar abrazo cama manta montaña bariloche oso pingüino polo sur norte`);
+P("pájaro",
+`pájaros ave aves pajarito volar vuelo ala alas pluma plumas pico nido huevo huevos canto cantar trinar trino gorrión paloma golondrina hornero zorzal colibrí picaflor loro cotorra canario águila halcón búho lechuza cóndor pingüino gaviota pato jaula alpiste migración bandada`,
+`mariposa abeja insecto murciélago avión cielo aire nube árbol rama árboles bosque selva campo jardín parque plaza animal animales mamífero pez reptil serpiente gato cazador libertad libre volador mañana amanecer`);
+P("dinero",
+`plata dinero efectivo billete billetes moneda monedas peso pesos dólar dólares euro euros ahorro ahorrar gastar gasto pago pagar cobrar sueldo salario ingreso ingresos banco cuenta tarjeta crédito débito préstamo deuda deudas interés inversión invertir riqueza rico ricos pobre caro barato precio costo compra comprar vender venta billetera`,
+`economía mercado inflación impuesto impuestos trabajo empleo negocio empresa comercio tienda cajero cajera caja fuerte tesoro oro lotería apuesta casino suerte fortuna millonario herencia avaricia codicia poder lujo propina factura cuenta`);
+P("avión",
+`aviones avioneta aeronave vuelo volar piloto azafata tripulación pasajero pasajeros aeropuerto pista despegue despegar aterrizaje aterrizar ala alas motor turbina cabina asiento pasaje boleto equipaje valija embarque escala aerolínea ezeiza aeroparque altura nubes cielo jet helicóptero`,
+`tren barco auto colectivo viaje viajar vacaciones turismo turista destino país exterior extranjero pasaporte aduana migraciones hotel avión papel cometa pájaro aire viento cohete nave espacio astronauta guerra militar`);
+P("fuego",
+`llama llamas fogata hoguera incendio arder quemar quemadura quemado calor caliente brasa brasas ceniza cenizas humo chispa chispas leña madera fósforo encendedor encender prender apagar bombero bomberos matafuego extintor vela antorcha carbón parrilla asado chimenea estufa rojo naranja`,
+`sol luz energía calor temperatura agua tierra aire elemento elementos volcán lava explosión bomba dragón infierno peligro alarma emergencia sirena destrucción pasión amor ira enojo fénix campamento campo bosque forestal`);
+P("reloj",
+`relojes hora horas minuto minutos segundo segundos tiempo aguja agujas manecilla esfera pulsera muñeca despertador alarma cronómetro tic tac tictac cucú pared péndulo digital analógico pila cuerda relojería relojero puntual puntualidad atraso hora exacta`,
+`calendario agenda día semana mes año fecha horario cita turno tarde temprano apuro prisa mañana noche medianoche mediodía celular teléfono pulsera anillo joya joyería oro plata torre campana campanario arena`);
+P("queso",
+`quesos lácteo lácteos leche crema manteca yogur mozzarella muzzarella rallado parmesano roquefort azul cremoso fresco untable dambo gruyere cheddar fontina provolone ricota sardo tybo queso quesería fondue tabla fiambre jamón vaca cabra oveja rallador`,
+`pan pizza pasta fideos ravioles lasaña sándwich tostado hamburguesa empanada empanadas vino picada ratón ratones agujero suiza francia italia comida sabor olor salado cocina receta heladera`);
+P("bosque",
+`bosques selva arboleda árboles árbol monte pinar arbusto arbustos follaje hojas ramas tronco troncos claro sendero naturaleza verde musgo hongos hongo leña leñador madera forestal guardabosques parque nacional ciervo zorro lobo oso ardilla búho jabalí`,
+`montaña lago río arroyo cascada campo pradera llanura sierra camping carpa excursión caminata aventura cuento lobo caperucita hada hadas duende bruja misterio oscuro oscuridad noche silencio incendio`);
+P("zapato",
+`zapatos calzado zapatilla zapatillas bota botas sandalia sandalias ojota ojotas mocasín tacón taco tacos suela cordón cordones pie pies talle número horma cuero zapatería zapatero lustrar pomada betún par calzar caminar plantilla`,
+`media medias pantalón ropa vestido pollera camisa remera saco campera abrigo moda tienda vidriera comprar marca elegante cenicienta cristal piso suelo baile bailar correr cansancio dolor ampolla`);
+P("luna",
+`lunas luna llena creciente menguante nueva cuarto lunar satélite noche cielo estrella estrellas cráter cráteres eclipse marea mareas órbita astronauta alunizaje apolo armstrong luz brillo plateado sol tierra planeta`,
+`sol galaxia universo espacio cometa telescopio astronomía cohete nave nasa oscuridad sueño sueños lobo hombre lobo romance romántico poema poesía canción miel noches dormir mes calendario`);
+P("café",
+`cafés cafetería cafetera taza tazas espresso cortado lágrima capuchino latte grano granos molido tostado aroma cafeína amargo azúcar leche desayuno merienda barista bar confitería saquito instantáneo negro filtro colombia brasil`,
+`té mate chocolate cacao leche jugo agua bebida bebidas vaso medialuna medialunas tostada factura galletitas despertar energía mañana trabajo oficina charla amigos encuentro cita sillón`);
+P("ciudad",
+`ciudades urbano urbana metrópolis capital pueblo localidad municipio barrio barrios calle calles avenida esquina cuadra edificio edificios rascacielos plaza tránsito tráfico centro microcentro suburbio afueras habitantes población vecinos intendente municipalidad`,
+`campo país provincia nación mundo mapa turismo viaje viajar subte colectivo taxi tren auto ruido contaminación luces noche shopping comercio negocio tienda trabajo oficina hospital escuela universidad museo teatro`);
+P("médico",
+`médica médicos doctor doctora clínico pediatra cirujano especialista medicina consultorio consulta paciente pacientes enfermera hospital clínica guardia estetoscopio receta diagnóstico tratamiento remedio medicamento turno chequeo revisión salud enfermedad`,
+`farmacia farmacéutico dentista odontólogo psicólogo veterinario abogado ingeniero profesor bombero policía profesión universidad facultad estudio título guardapolvo bata ambulancia dolor fiebre gripe virus vacuna`);
+P("guitarra",
+`guitarras guitarrista cuerda cuerdas acorde acordes púa mástil traste trastes clavija clavijas caja diapasón afinar afinación criolla eléctrica acústica amplificador rasguear punteo arpegio bajo ukelele charango tocar instrumento`,
+`piano violín batería flauta trompeta saxofón música músico banda rock folklore tango canción canciones cantar cantante recital concierto escenario disco melodía ritmo nota notas fogón serenata`);
+P("nieve",
+`nevada nevar nevado copo copos blanco blanca hielo helado frío escarcha granizo invierno muñeco esquí esquiar snowboard trineo bola bolas avalancha alud ventisca tormenta montaña cerro glaciar pista bariloche polar`,
+`lluvia agua vapor nube nubes clima temperatura frío abrigo guantes gorro bufanda campera botas montaña cumbre pingüino oso iglú navidad postal paisaje vacaciones`);
+P("caballo",
+`caballos yegua potro potrillo equino montar jinete monta galope galopar trote trotar relincho relinchar crin crines herradura montura silla estribo rienda riendas establo caballeriza cuadra pony poni corcel gaucho criollo polo carrera hipódromo`,
+`vaca toro oveja burro mula cebra camello animal animales campo estancia granja rancho pasto heno avena cowboy vaquero western caballero rey ajedrez carro carreta`);
+P("computadora",
+`computadoras ordenador pc notebook laptop portátil escritorio pantalla monitor teclado mouse ratón procesador memoria disco programa programas software hardware sistema windows linux internet archivo archivos carpeta impresora encender apagar usb cable`,
+`celular teléfono tablet tecnología informática programador programación código datos red wifi correo mail videojuego juego trabajo oficina estudio escuela calculadora máquina robot inteligencia virus`);
+P("flor",
+`flores florecer flor pétalo pétalos tallo hoja hojas rosa rosas margarita girasol tulipán clavel jazmín lirio orquídea violeta lavanda ramo ramito florero florería florista jardín polen néctar aroma perfume primavera brote capullo semilla`,
+`planta plantas árbol árboles pasto césped verde maceta tierra regar agua sol abeja mariposa colibrí colores color rojo rosado amarillo regalo amor novia boda cumpleaños naturaleza campo`);
+})(window.__escondidaAdd);
+
+</script>
+<script>
+// Palabra escondida — datos de cercanía (niveles 41–60)
+(function(P){
+P("cumpleaños",
+`cumple aniversario fiesta festejo festejar celebración celebrar torta velas vela soplar regalo regalos sorpresa globo globos invitados invitación cotillón piñata bonete deseo deseos edad años felicidades feliz saludo saludos tarjeta souvenir animadora payaso`,
+`navidad año nuevo casamiento boda bautismo graduación egreso reunión familia amigos amigo niño niños infancia bebé música baile canción comida bebida gaseosa sándwich chocolate caramelo caramelos golosinas alegría diversión juego juegos`);
+P("viaje",
+`viajes viajar viajero viajera turismo turista vacaciones excursión travesía recorrido paseo itinerario destino ruta camino valija maleta mochila equipaje pasaje pasaporte boleto reserva hotel hostel alojamiento aventura escapada mochilero crucero vuelo`,
+`avión tren barco auto colectivo micro aeropuerto estación mapa guía cámara foto fotos recuerdo souvenir país países extranjero exterior idioma cultura playa montaña ciudad descanso feriado distancia kilómetros partida llegada`);
+P("sueño",
+`sueños soñar dormir dormido dormida descansar descanso cama noche pesadilla pesadillas siesta insomnio despertar despierto almohada roncar sonámbulo fantasía imaginación ilusión deseo anhelo meta inconsciente bostezo cansancio`,
+`noche luna estrella estrellas oscuridad mente cerebro memoria recuerdo psicología freud surrealismo realidad verdad mentira futuro esperanza objetivo proyecto plan vida amor`);
+P("familia",
+`familias familiar familiares padre madre papá mamá hijo hija hijos hermano hermana hermanos abuelo abuela abuelos tío tía primo prima sobrino sobrina nieto nieta parientes pariente esposo esposa marido mujer casamiento hogar casa parentesco linaje herencia apellido`,
+`amigo amigos amistad amor cariño unión vínculo reunión domingo almuerzo asado navidad cumpleaños fiesta foto álbum recuerdo infancia niñez bebé nacimiento crianza educar educación valores comunidad sociedad`);
+P("trabajo",
+`trabajos trabajar trabajador trabajadora empleo empleado empleada laburo laburar oficina empresa jefe jefa patrón compañero compañeros sueldo salario cargo puesto tarea tareas profesión oficio carrera horario jornada contrato despido renuncia currículum entrevista`,
+`dinero plata ahorro esfuerzo cansancio estrés vacaciones feriado licencia jubilación sindicato huelga paro industria fábrica comercio negocio economía producción reunión proyecto computadora escritorio`);
+P("miedo",
+`temor terror pánico susto asustado asustar espanto pavor fobia ansiedad angustia nervios nervioso inseguridad peligro amenaza cobardía cobarde valentía coraje temblar gritar grito pesadilla fantasma fantasmas monstruo oscuridad`,
+`emoción emociones sentimiento sentimientos tristeza alegría enojo ira sorpresa vergüenza culpa noche película terror horror suspenso bruja zombie vampiro muerte peligro accidente araña serpiente altura`);
+P("tiempo",
+`tiempos hora horas minuto minutos segundo segundos reloj día días semana semanas mes meses año años siglo siglos época era momento instante duración pasado presente futuro calendario temporada eternidad rapidez lento demora espera`,
+`clima lluvia sol nube viento temperatura pronóstico meteorología historia memoria recuerdo edad vejez juventud cambio vida muerte espacio universo física einstein relatividad apuro prisa tarde temprano`);
+P("amistad",
+`amigo amiga amigos amigas compañero compañera compañerismo confianza lealtad cariño afecto apoyo compañía unión vínculo relación camaradería fraternidad solidaridad complicidad hermandad compinche cómplice amor`,
+`familia pareja novio novia hermano hermana grupo equipo reunión juntada charla risa alegría secreto secretos ayuda consejo escuela colegio infancia recuerdo traición pelea perdón`);
+P("idioma",
+`idiomas lengua lenguas lenguaje habla hablar dialecto acento palabra palabras vocabulario gramática traducción traducir traductor intérprete español inglés francés portugués italiano alemán chino bilingüe nativo extranjero comunicación expresión`,
+`escribir escritura leer lectura libro diccionario escuela clase profesor aprender estudiar curso viaje país países cultura voz sonido letra letras alfabeto signo señas`);
+P("ley",
+`leyes norma normas regla reglas legal ilegal legislación legislar código constitución derecho derechos justicia juez jueza tribunal abogado abogada congreso diputado senador decreto artículo sanción sancionar obligación prohibición`,
+`gobierno estado política presidente policía cárcel delito crimen castigo multa juicio sentencia culpable inocente orden autoridad poder democracia libertad igualdad ciudadano sociedad contrato`);
+P("historia",
+`historias historiador historiadora pasado antiguo antigüedad edad media moderno época siglo siglos acontecimiento hecho hechos guerra revolución imperio civilización prócer independencia documento archivo cronología relato cuento narración memoria`,
+`libro museo arqueología arqueólogo ruinas pirámide egipto roma grecia colón descubrimiento fecha fechas bandera patria escuela clase materia profesor tiempo leyenda mito`);
+P("salud",
+`sano sana saludable bienestar enfermedad enfermo médico medicina hospital clínica prevención cuidado cuidarse vacuna chequeo dieta alimentación nutrición ejercicio deporte descanso higiene curar cura sanar remedio tratamiento`,
+`vida cuerpo mente corazón pulmón sangre presión fiebre dolor virus gripe farmacia doctor enfermera seguro obra social prepaga estrés sueño agua fruta verdura gimnasio yoga`);
+P("juego",
+`juegos jugar jugador jugadores juguete juguetes diversión divertido entretenimiento partida partido competencia ganar perder ganador perdedor regla reglas turno dado dados naipes cartas ajedrez tablero ficha fichas videojuego consola`,
+`deporte fútbol pelota equipo niño niños infancia recreo plaza parque fiesta azar suerte apuesta casino premio puntos nivel niveles estrategia mente diversión risa amigos`);
+P("color",
+`colores colorear pintar pintura tono tonos matiz paleta rojo azul amarillo verde naranja violeta rosa negro blanco gris marrón celeste lila tinte crayón crayones lápices témpera acuarela arcoíris claro oscuro brillante`,
+`arte artista cuadro dibujo dibujar pincel lienzo luz sombra ojo vista mirada flor flores ropa moda diseño decoración pared casa naturaleza bandera`);
+P("silencio",
+`silencioso silenciosa callado callada callar calma quietud tranquilidad paz sosiego mudo muda susurro susurrar murmullo sordo sorda pausa ruido sonido shh biblioteca meditación reposo serenidad`,
+`noche oscuridad soledad descanso dormir sueño iglesia templo hospital campo montaña nieve misterio secreto palabra palabras voz grito música nota respiración`);
+P("memoria",
+`memorias recuerdo recuerdos recordar acordarse olvido olvidar olvidarse mente cerebro pensamiento nostalgia evocación retener memorizar aprender aprendizaje amnesia alzheimer neurona neuronas lucidez reminiscencia`,
+`pasado historia infancia niñez foto fotos álbum diario carta cartas inteligencia atención concentración estudio examen computadora disco almacenamiento datos archivo usb`);
+P("energía",
+`energética enérgico fuerza potencia vigor vitalidad electricidad eléctrica corriente voltaje batería pila combustible petróleo gas nafta solar eólica nuclear renovable carbón calor movimiento trabajo motor`,
+`luz sol viento agua represa central panel paneles cable enchufe factura consumo ahorro física ciencia átomo cuerpo comida alimento ejercicio cansancio descanso sueño`);
+P("libertad",
+`libre libres independencia autonomía emancipación liberación liberar liberarse derecho derechos democracia igualdad justicia elección voluntad expresión opinión prensa esclavitud esclavo cárcel preso prisión opresión dictadura`,
+`paz patria bandera himno revolución independencia guerra lucha sueño vida pájaro volar viaje camino decisión responsabilidad respeto ley constitución estado gobierno`);
+P("arte",
+`artes artista artistas obra obras pintura pintor pintora escultura escultor cuadro dibujo museo galería exposición creatividad creación belleza estética música teatro danza cine literatura poesía fotografía diseño talento`,
+`color colores pincel lienzo tela marco paleta escuela taller clase cultura historia renacimiento picasso dalí da vinci mona lisa emoción expresión imaginación inspiración`);
+P("verdad",
+`verdades verdadero verdadera cierto cierta realidad real hecho hechos sinceridad sincero honestidad honesto franqueza veracidad mentira mentiras mentir falsedad falso engaño confesar confesión evidencia prueba`,
+`justicia juez juicio testigo ley ciencia conocimiento saber filosofía razón lógica duda fe creencia opinión noticia periodismo secreto misterio conciencia valor valores`);
+})(window.__escondidaAdd);
+
+</script>
 
 <script>
 (function(){
@@ -190,6 +422,7 @@ const HELPS = {
 /* ---------- guardado ---------- */
 let S = {coins:100, xp:0, games:{cadena:{}}};
 try{ const raw = localStorage.getItem("mentecuenta"); if(raw) S = Object.assign(S, JSON.parse(raw)); }catch(e){}
+S.games = Object.assign({cadena:{}, escondida:{}}, S.games);
 function save(){ try{ localStorage.setItem("mentecuenta", JSON.stringify(S)); }catch(e){} }
 
 function rankInfo(){
@@ -199,7 +432,7 @@ function rankInfo(){
   return {name:cur[0], n:i+1, pct, next:nxt};
 }
 const cleared = () => S.games.cadena;
-function highest(){ let h=0; for(const k in cleared()) h=Math.max(h,+k); return h; }
+function highest(store){ store = store || cleared(); let h=0; for(const k in store) h=Math.max(h,+k); return h; }
 
 /* ---------- generador de niveles ---------- */
 function cfg(L){
@@ -279,30 +512,38 @@ function home(){
       <div><div class="tag">Cálculo mental</div><h3>Cadena</h3><p>Los números aparecen de a uno. Cuando termina, tenés ${ANSWER_TIME} segundos para el resultado.</p></div>
       <div class="prog"><span class="num">${h}</span>/${TOTAL_LEVELS}</div>
     </button>
-    <button class="game" disabled><div class="ic">7?</div><div><div class="tag">Memoria</div><h3>Dígitos</h3><p>Recordá una serie de dígitos cada vez más larga.</p></div><div class="prog">Pronto</div></button>
+    <button class="game live" data-go="wlevels">
+      <div class="ic">?</div>
+      <div><div class="tag">Palabras</div><h3>Palabra escondida</h3><p>Probá palabras: cada una recibe un número según qué tan cerca está de la escondida.</p></div>
+      <div class="prog"><span class="num">${highest(S.games.escondida)}</span>/${WDATA.length}</div>
+    </button>
     <button class="game" disabled><div class="ic">×</div><div><div class="tag">Velocidad</div><h3>Tablas relámpago</h3><p>Resolvé todas las multiplicaciones que puedas en 60 segundos.</p></div><div class="prog">Pronto</div></button>
     <button class="game" disabled><div class="ic">&lt;&gt;</div><div><div class="tag">Comparar</div><h3>Mayor o menor</h3><p>Elegí qué cuenta da más antes de que se acabe el tiempo.</p></div><div class="prog">Pronto</div></button>
   </div>
   <p class="note">Tu progreso se guarda en este dispositivo.</p>`;
 }
 
-function levels(){
+function levelMap(o){
   clearTimers();
-  const h = highest(); const stages = TOTAL_LEVELS/20;
-  let html = `${topBar("home")}<div class="hello"><h1>Cadena</h1><p>La cuenta se resuelve en orden, como en una calculadora: 5 + 6 × 2 = 22.</p></div><div class="levels">`;
+  const h = highest(o.store); const stages = Math.ceil(o.total/20);
+  let html = `${topBar("home")}<div class="hello"><h1>${o.title}</h1><p>${o.desc}</p></div><div class="levels">`;
   for(let s=0;s<stages;s++){
     if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} a ${stages}</h2><span>Se desbloquean a medida que avanzás</span></div></div>`; break; }
-    html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${STAGE_NAMES[s]||"Etapa"}</h2><span>${stageLabel(s)}</span></div><div class="grid">`;
-    for(let L=s*20+1; L<=s*20+20; L++){
-      const st = cleared()[L];
-      if(st) html += `<button class="lv" data-lv="${L}">${L}<span class="st">${"★".repeat(st)}</span></button>`;
-      else if(L===h+1) html += `<button class="lv next" data-lv="${L}" aria-label="Nivel ${L}, siguiente">${L}<span class="st"></span></button>`;
+    html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s]||"Etapa"}</h2><span>${o.label(s)}</span></div><div class="grid">`;
+    for(let L=s*20+1; L<=Math.min(o.total, s*20+20); L++){
+      const st = o.store[L];
+      if(st) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${"★".repeat(st)}</span></button>`;
+      else if(L===h+1) html += `<button class="lv next" data-${o.attr}="${L}" aria-label="Nivel ${L}, siguiente">${L}<span class="st"></span></button>`;
       else html += `<button class="lv lock" disabled aria-label="Nivel ${L} bloqueado">${L}<span class="st"></span></button>`;
     }
     html += `</div></div>`;
   }
   $app.innerHTML = html + `</div>`;
   const nx = $app.querySelector(".lv.next"); if(nx) nx.scrollIntoView({block:"center"});
+}
+function levels(){
+  levelMap({title:"Cadena", desc:"La cuenta se resuelve en orden, como en una calculadora: 5 + 6 × 2 = 22.",
+    store:S.games.cadena, total:TOTAL_LEVELS, names:STAGE_NAMES, label:stageLabel, attr:"lv"});
 }
 
 /* ---------- partida ---------- */
@@ -479,6 +720,182 @@ function confetti(){
   })(t0);
 }
 
+/* ---------- Palabra escondida ---------- */
+const W_STAGES = ["Cosas de todos los días","Lugares y objetos","Ideas y emociones","Más difícil"];
+const STOP = new Set("de del la las el los y o u e en a al un una unos unas con por para que se su sus lo le les mi tu".split(" "));
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z]/g,"");
+function wAddTo(map, t, r){
+  const n = norm(t);
+  if(n.length<2 || STOP.has(n) || map.has(n)) return false;
+  // singular y plural cuentan como la misma palabra
+  if(map.has(n.replace(/es$/,"")) && n.endsWith("es") || map.has(n.replace(/s$/,"")) && n.endsWith("s") || map.has(n+"s") || map.has(n+"es")) return false;
+  map.set(n, {w:t, r}); return true;
+}
+const WDATA = (window.__escondida||[]).map(([w,a,b])=>{
+  const map = new Map(); map.set(norm(w), {w, r:1});
+  const top = []; let r = 2;
+  for(const t of a.split(/\s+/)) if(wAddTo(map, t, r)){ top.push({w:t,r}); r++; }
+  let rb = Math.max(150, r+40);
+  for(const t of b.split(/\s+/)) if(wAddTo(map, t, rb)) rb += 3;
+  return {w, map, top};
+});
+// índice global: en qué listas aparece cada palabra
+const WGLOBAL = new Map();
+WDATA.forEach((lv,i)=>{ for(const [n,v] of lv.map){ if(!WGLOBAL.has(n)) WGLOBAL.set(n,[]); WGLOBAL.get(n).push({i, r:v.r, w:v.w}); } });
+function wForms(g){
+  const n = norm(g); if(!n) return [];
+  const c = [n];
+  if(n.endsWith("es")) c.push(n.slice(0,-2));
+  if(n.endsWith("s")) c.push(n.slice(0,-1));
+  c.push(n+"s", n+"es");
+  return c;
+}
+function wLookup(lv, g){
+  const forms = wForms(g);
+  for(const k of forms) if(lv.map.has(k)) return lv.map.get(k);
+  // no está en la lista: estimar la distancia pasando por otra palabra escondida que sí esté
+  let best = null;
+  for(const k of forms){
+    for(const ref of (WGLOBAL.get(k)||[])){
+      const via = lv.map.get(norm(WDATA[ref.i].w));
+      if(!via) continue;
+      const est = Math.min(999, 300 + via.r + ref.r);
+      if(!best || est < best.r) best = {w:ref.w, r:est};
+    }
+  }
+  return best;
+}
+const tierOf = r => r===null ? "bad" : r<=50 ? "good" : r<=300 ? "warn" : "bad";
+
+function wlevels(){
+  levelMap({title:"Palabra escondida", desc:"Escribí palabras. Cuanto más chico el número, más cerca estás. La escondida es la número 1.",
+    store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv",
+    label:s=>`${Math.min(20, WDATA.length-s*20)} palabras · ${s===0?"fáciles":s===1?"intermedias":"difíciles"}`});
+}
+
+let W = null;
+const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>`;
+function wplay(L){
+  clearTimers(); G = null;
+  if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  W = {L, lv:WDATA[L-1], guesses:[], last:null, hints:0, done:false};
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="wplay">
+    <div class="hud"><span>Nivel <b>${L}</b></span><span>Intentos: <b id="wcount">0</b></span></div>
+    <form class="wform" id="wform" autocomplete="off">
+      <input id="wguess" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Escribí una palabra" aria-label="Tu palabra">
+      <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
+      <button type="submit" class="wsend">Probar</button>
+    </form>
+    <p class="hint" id="micst">Escribí una palabra o tocá el micrófono</p>
+    <div class="legend"><span class="t-good"><i></i>1–50 muy cerca</span><span class="t-warn"><i></i>51–300 cerca</span><span class="t-bad"><i></i>más de 300 lejos</span></div>
+    <div id="wlast"></div>
+    <div class="whelps">
+      <button class="help" data-whelp>Pista<small><span class="coin"></span>30</small></button>
+      <button class="help" data-wgive>Rendirse<small>ver la palabra</small></button>
+    </div>
+    <div class="wsec" id="wsec" hidden>Tus palabras, de la más cercana a la más lejana</div>
+    <ol class="wlist" id="wlist"></ol>
+  </div>`;
+  document.getElementById("wform").addEventListener("submit", e => {
+    e.preventDefault(); const inp = document.getElementById("wguess"); wGuess(inp.value);
+  });
+  wRender();
+}
+function wRow(g, last){
+  const t = tierOf(g.r);
+  const pct = g.r===null ? 3 : Math.max(4, (1 - Math.log(g.r)/Math.log(1000))*100);
+  return `<li class="wrow t-${t} ${last?"last":""}"><span class="wbar" style="width:${pct}%"></span>
+    <span class="wword">${esc(g.word)}</span>${g.hint?`<span class="wtag">pista</span>`:""}
+    <span class="wrank num">${g.r===null?"+1000":g.r}</span></li>`;
+}
+function wRender(){
+  document.getElementById("wcount").textContent = W.guesses.length;
+  const last = document.getElementById("wlast");
+  last.innerHTML = W.last ? `<ol class="wlist">${wRow(W.last,true)}</ol>`
+    : `<div class="wempty">Probá con cualquier palabra para empezar. Por ejemplo: <b>casa</b>, <b>animal</b> o <b>comida</b>.</div>`;
+  const sorted = [...W.guesses].sort((a,b)=>(a.r??1e9)-(b.r??1e9));
+  document.getElementById("wlist").innerHTML = sorted.map(g=>wRow(g,false)).join("");
+  document.getElementById("wsec").hidden = W.guesses.length < 2;
+}
+function wAdd(g){
+  W.guesses.push(g); W.last = g; wRender();
+  const t = tierOf(g.r); beep(t==="good"?880:t==="warn"?620:300, .07);
+  if(g.r===1) timers.push(setTimeout(()=>wEnd(true), 450));
+}
+function wGuess(text){
+  if(!W || W.done) return;
+  const raw = String(text).trim().split(/\s+/)[0] || "";
+  const n = norm(raw);
+  const inp = document.getElementById("wguess");
+  if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
+  const hit = wLookup(W.lv, raw);
+  const key = hit ? norm(hit.w) : n;
+  const dup = W.guesses.find(g=>g.key===key);
+  if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r===null?"+1000":dup.r}.`); if(inp){inp.value=""; inp.focus();} return; }
+  wAdd({word: hit ? hit.w : raw.toLowerCase(), r: hit ? hit.r : null, key, hint:false});
+  if(inp){ inp.value=""; inp.focus(); }
+}
+function wHint(){
+  if(!W || W.done) return;
+  if(S.coins < 30){ toast("Necesitás 30 monedas para una pista."); return; }
+  const best = Math.min(...W.guesses.map(g=>g.r??Infinity), Infinity);
+  if(best <= 2){ toast("Ya estás a un paso. ¡Vos podés!"); return; }
+  const target = best > 120 ? 60 : Math.max(2, Math.floor(best/2));
+  const used = new Set(W.guesses.map(g=>g.key));
+  let pick = null;
+  for(const v of W.lv.map.values()){
+    if(v.r<=1 || v.r>=best || used.has(norm(v.w))) continue;
+    if(!pick || Math.abs(v.r-target) < Math.abs(pick.r-target)) pick = v;
+  }
+  if(!pick){ toast("No hay más pistas para esta palabra."); return; }
+  S.coins -= 30; W.hints++; save();
+  document.querySelector(".coins .num").textContent = S.coins;
+  wAdd({word:pick.w, r:pick.r, key:norm(pick.w), hint:true});
+}
+function wGiveUp(btn){
+  if(!W || W.done) return;
+  if(!btn.dataset.sure){ btn.dataset.sure="1"; btn.innerHTML = `¿Seguro?<small>tocá de nuevo</small>`;
+    timers.push(setTimeout(()=>{ if(document.body.contains(btn)){ delete btn.dataset.sure; btn.innerHTML=`Rendirse<small>ver la palabra</small>`; } }, 3000)); return; }
+  wEnd(false);
+}
+function wEnd(ok){
+  W.done = true; clearTimers();
+  const n = W.guesses.length;
+  let stars=0, coins=0, xp=0;
+  if(ok){
+    stars = n<=10 ? 3 : n<=25 ? 2 : 1;
+    if(W.hints) stars = Math.min(stars, 2);
+    const prev = S.games.escondida[W.L]||0;
+    coins = stars*4 + (prev?0:6) + Math.floor(W.L/10);
+    xp = (15 + W.L*2) * stars + (prev?0:20);
+    if(stars>prev) S.games.escondida[W.L] = stars;
+    S.coins += coins; S.xp += xp; save();
+    beep(880,.12); setTimeout(()=>beep(1175,.15),130);
+  } else beep(220,.25);
+  const chips = W.lv.top.slice(0,10).map((t,i)=>`<span class="wchip" style="--i:${i}"><b>${t.r}</b>${esc(t.w)}</span>`).join("");
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="result mood-${ok?"good":"bad"}">
+    <div class="verdict">
+      <h1>${ok?"¡La encontraste!":"Te rendiste"}</h1>
+      <p>${ok?`En <b class="num">${n}</b> ${n===1?"intento":"intentos"}${W.hints?` y ${W.hints} ${W.hints===1?"pista":"pistas"}`:""}`:"La palabra escondida era"}</p>
+      <div class="wordball">${esc(W.lv.w)}</div>
+      ${ok?`<div class="stars" aria-label="${stars} de 3 estrellas">${"★".repeat(stars)}<span class="off">${"★".repeat(3-stars)}</span></div>`:""}
+    </div>
+    ${ok?`<div class="gains"><span><span class="coin"></span>+<span class="num">${coins}</span></span><span>+<span class="num">${xp}</span> XP</span></div>`:""}
+    ${ok?`<p class="hint">3 estrellas: hasta 10 intentos · 2: hasta 25 · con pistas, máximo 2</p>`:""}
+    <div class="chainbox"><h2>Las más cercanas</h2><div class="wchips">${chips}</div></div>
+    <div class="actions">
+      ${ok && W.L<WDATA.length?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
+      ${!ok && W.L<WDATA.length && S.games.escondida[W.L]?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
+      <button class="btn ${ok?"":"primary"}" data-wlv="${W.L}">${ok?"Jugar de nuevo":"Volver a intentar"}</button>
+      <button class="btn" data-go="wlevels">Ver niveles</button>
+    </div>
+  </div>`;
+  if(ok) confetti();
+}
+
+
 /* ---------- micrófono ---------- */
 let rec=null;
 const WORDS = {cero:0,uno:1,un:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,veinte:20,treinta:30,cuarenta:40,cincuenta:50};
@@ -491,18 +908,20 @@ function parseSpoken(t){
   if(n===null) return null;
   return neg ? -n : n;
 }
-function startMic(btn){
+function startMic(btn, onAlts, idle, listening){
+  idle = idle || "Escribí el resultado o tocá el micrófono"; listening = listening || "Escuchando… decí el número";
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ toast("Este navegador no permite dictar. Usá el teclado."); return; }
   try{
     rec = new SR(); rec.lang="es-AR"; rec.interimResults=false; rec.maxAlternatives=3;
     rec.onresult = e => {
+      if(onAlts){ onAlts([...e.results[0]].map(a=>a.transcript)); return; }
       for(const alt of e.results[0]){ const n = parseSpoken(alt.transcript); if(n!==null){ setInput(String(n)); finish(n); return; } }
       toast("No entendí el número. Probá de nuevo.");
     };
     rec.onerror = () => toast("No se pudo usar el micrófono en esta vista. Usá el teclado.");
-    rec.onend = () => { btn && btn.classList.remove("on"); rec=null; micStatus("Escribí el resultado o tocá el micrófono"); };
-    rec.start(); btn.classList.add("on"); micStatus("Escuchando… decí el número");
+    rec.onend = () => { btn && btn.classList.remove("on"); rec=null; micStatus(idle); };
+    rec.start(); btn.classList.add("on"); micStatus(listening);
   }catch(e){ toast("No se pudo usar el micrófono en esta vista. Usá el teclado."); }
 }
 function micStatus(t){ const m=document.getElementById("micst"); if(m) m.textContent=t; }
@@ -511,7 +930,11 @@ function stopMic(){ try{ rec && rec.abort(); }catch(e){} rec=null; }
 /* ---------- eventos ---------- */
 $app.addEventListener("click", e => {
   const t = e.target.closest("button"); if(!t || t.disabled) return;
-  if(t.dataset.go){ t.dataset.go==="home"?home():levels(); return; }
+  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels():levels(); return; }
+  if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
+  if(t.dataset.whelp!==undefined){ wHint(); return; }
+  if(t.dataset.wgive!==undefined){ wGiveUp(t); return; }
+  if(t.dataset.wmic!==undefined){ rec?stopMic():startMic(t, alts=>{ const w=(alts[0]||"").trim().split(/\s+/).pop()||""; const inp=document.getElementById("wguess"); if(inp) inp.value=w; wGuess(w); }, "Escribí una palabra o tocá el micrófono", "Escuchando… decí una palabra"); return; }
   if(t.dataset.lv){ play(+t.dataset.lv); return; }
   if(!G || G.phase!=="answer") { if(t.dataset.help==="replay"){} return; }
   if(t.dataset.help){ useHelp(t.dataset.help); return; }

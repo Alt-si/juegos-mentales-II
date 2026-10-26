@@ -7,7 +7,7 @@ App de juegos de cálculo mental para celulares. Cada juego suma experiencia a u
 | Juego | Estado | Descripción |
 |---|---|---|
 | Cadena | Jugable | Los números aparecen de a uno con su operación. Al terminar, tenés 10 segundos para dar el resultado. |
-| Dígitos | Pendiente | Recordar una serie de dígitos cada vez más larga. |
+| Palabra escondida | Jugable | Hay que encontrar una palabra secreta. Cada palabra que probás recibe un número según qué tan cerca está. |
 | Tablas relámpago | Pendiente | Multiplicaciones contra reloj durante 60 segundos. |
 | Mayor o menor | Pendiente | Elegir qué cuenta da más. |
 
@@ -44,6 +44,35 @@ Después de tocar **Listo**, la respuesta aparece dentro de un círculo con un c
 - **Rojo:** la respuesta está mal o se acabó el tiempo.
 
 Abajo se muestra la cuenta completa: cada número en su círculo y el signo de la operación entre número y número.
+
+## Palabra escondida
+
+Escribís (o decís) una palabra y el juego le asigna un **puesto**: la palabra escondida es la número 1, y cuanto más chico es el número, más cerca estás. Todas tus palabras quedan ordenadas de la más cercana a la más lejana.
+
+- **Colores:** verde para los puestos 1 a 50 (muy cerca), amarillo para 51 a 300 (cerca) y rojo para más de 300 (lejos).
+- **Singular y plural** cuentan como la misma palabra, y no importan los acentos ni las mayúsculas.
+- **Pista (30 monedas):** agrega una palabra que está a mitad de camino entre tu mejor intento y la escondida.
+- **Rendirse:** muestra la palabra (hay que tocar dos veces).
+- **Estrellas:** 3 con hasta 10 intentos, 2 con hasta 25 y 1 con más. Con pistas, el máximo es 2.
+- Al terminar se muestran las 10 palabras más cercanas.
+
+### Cómo se calcula la cercanía
+
+Hay 60 niveles en `data/escondida-*.js`. Cada nivel tiene dos listas escritas a mano:
+
+1. **Cercanas**, en orden: reciben los puestos 2, 3, 4…
+2. **Relacionadas**, en orden: reciben los puestos 150, 153, 156…
+
+Si una palabra no está en ninguna de las dos listas pero sí aparece en la lista de otra palabra escondida que está relacionada, el juego **estima** su puesto (entre 300 y 999). Si no hay ninguna relación, se muestra "+1000".
+
+**Próximo paso recomendado:** generar los puestos con un modelo de vectores de palabras en español (por ejemplo fastText o spaCy `es_core_news_lg`), ordenando todo un vocabulario por similitud con cada palabra escondida. Así cada palabra recibe un número exacto, como en Contexto. Las listas a mano sirven para el prototipo.
+
+## Estructura del proyecto
+
+- `src/app.html`: la app (pantallas, Cadena, estilos).
+- `src/escondida.js`: la lógica de Palabra escondida.
+- `data/escondida-*.js`: las palabras de cada nivel.
+- `tools/build.py`: arma `index.html` juntando todo. Correlo después de cada cambio con `python3 tools/build.py`.
 
 ## Cómo probarlo
 

@@ -58,6 +58,8 @@ Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre 
 
 ### Niveles y dificultad
 
+**Las palabras escondidas son al azar.** Cada jugador recibe su propio orden: la primera vez que abre la app se genera una semilla, y con ella se mezclan las palabras dentro de cada tramo de dificultad (1–20, 21–40, 41–60, 61–100, 101–150 y 151–200). Así nadie sabe de antemano cuál es la palabra de un nivel, y la dificultad igual va subiendo. Si repetís un nivel, te toca otra palabra al azar del mismo tramo.
+
 Son 200 niveles, en 10 etapas de 20:
 
 | Niveles | Dificultad | 3 estrellas | 2 estrellas |
@@ -91,10 +93,20 @@ Premios: 20 monedas por ganar, 8 por empatar y 3 por encontrar la palabra aunque
 
 **Limitaciones:** el código está ofuscado pero no firmado, así que alguien con conocimientos técnicos podría modificarlo. Para duelos en tiempo real, rankings y resultados verificados hace falta un servidor (por ejemplo, Firebase o Supabase).
 
+## Duelo de Cadena
+
+En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
+
+- Se juegan **3 cuentas** del nivel en el que estás. En el duelo no hay ayudas.
+- El código lleva el nivel y una **semilla**, así que tu rival recibe **exactamente las mismas cuentas**.
+- **Gana quien acierte más.** Si empatan, gana quien tardó menos en total en responder; y si siguen empatados, quien quedó más cerca del resultado.
+- El resultado se devuelve con otro código, igual que en Palabra escondida. Los códigos de los dos juegos se pueden pegar en cualquiera de los dos recuadros de Duelo.
+
 ## Estructura del proyecto
 
 - `src/app.html`: la app (pantallas, Cadena, estilos).
-- `src/escondida.js`: la lógica de Palabra escondida.
+- `src/escondida.js`: la lógica de Palabra escondida y de los duelos.
+- `src/cadena-duelo.js`: el duelo de Cadena.
 - `data/vocab-*.js`: el vocabulario con categorías.
 - `data/escondida-*.js`: las listas a mano de los niveles 1 a 60.
 - `data/niveles-extra.js`: las palabras de los niveles 61 a 200.

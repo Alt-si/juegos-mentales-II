@@ -648,8 +648,15 @@ function cfg(L){
     neg: L>70
   };
 }
-const rnd = (a,b)=> a + Math.floor(Math.random()*(b-a+1));
-function genLevel(L){
+// generador con semilla: con la misma semilla salen las mismas cuentas (para los duelos)
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+let RAND = Math.random;
+const rnd = (a,b)=> a + Math.floor(RAND()*(b-a+1));
+function genLevel(L, seed){
+  RAND = seed ? mulberry32(seed) : Math.random;
+  try{ return genLevelRaw(L); } finally { RAND = Math.random; }
+}
+function genLevelRaw(L){
   const c = cfg(L);
   let total = rnd(Math.max(c.min,2), c.max);
   const items = [{op:"", n:total}];
@@ -747,17 +754,18 @@ function levelMap(o){
 function levels(){
   levelMap({title:"Cadena", desc:"La cuenta se resuelve en orden, como en una calculadora: 5 + 6 × 2 = 22.",
     store:S.games.cadena, total:TOTAL_LEVELS, names:STAGE_NAMES, label:stageLabel, attr:"lv"});
+  addDuelCard("cnew", `Los dos reciben las mismas ${C_ROUNDS} cuentas, del nivel en el que estás. Gana quien acierte más; si empatan, el que respondió más rápido.`);
 }
 
 /* ---------- partida ---------- */
 let G = null;
-function play(L){
+function play(L, duel){
   clearTimers();
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  G = Object.assign(genLevel(L), {L, input:"", extra:0, used:{}, phase:"show"});
+  G = Object.assign(genLevel(L, duel ? duel.seed + duel.round*101 : 0), {L, input:"", extra:0, used:{}, phase:"show", duel:duel||null});
   $app.innerHTML = `${topBar("levels")}
   <div class="play">
-    <div class="hud"><span>Nivel <b>${L}</b></span><span><b>${G.items.length}</b> números · ${(G.cfg.speed/1000).toFixed(1)} s cada uno</span></div>
+    <div class="hud">${duel?`<span><b>Duelo</b> · ronda <b>${duel.round+1}</b> de ${C_ROUNDS}${duel.p?` · contra ${esc(duel.p.a.n)}`:""}</span>`:`<span>Nivel <b>${L}</b></span>`}<span><b>${G.items.length}</b> números · ${(G.cfg.speed/1000).toFixed(1)} s cada uno</span></div>
     <div class="stagebox" id="box"></div>
     <div id="bottom"></div>
   </div>`;
@@ -818,7 +826,7 @@ function askAnswer(){
 }
 function renderBottom(){
   const b = document.getElementById("bottom");
-  const helps = Object.entries(HELPS).map(([k,h])=>`<button class="help" data-help="${k}" ${G.used[k]||S.coins<h.cost?"disabled":""}>${h.name}<small><span class="coin"></span>${h.cost}</small></button>`).join("");
+  const helps = G.duel ? "" : Object.entries(HELPS).map(([k,h])=>`<button class="help" data-help="${k}" ${G.used[k]||S.coins<h.cost?"disabled":""}>${h.name}<small><span class="coin"></span>${h.cost}</small></button>`).join("");
   let main;
   if(G.choices){
     main = `<div class="choices">${G.choices.map(c=>`<button data-pick="${c}" class="num">${fmt(c)}</button>`).join("")}</div>`;
@@ -831,7 +839,7 @@ function renderBottom(){
       ${k(0)}<button class="key ok" data-key="ok" style="grid-column:span 3">Listo</button>
     </div>`;
   }
-  b.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px"><div class="helps">${helps}</div>${main}</div>`;
+  b.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px">${helps?`<div class="helps">${helps}</div>`:""}${main}</div>`;
 }
 function setInput(v){
   G.input = v;
@@ -855,6 +863,7 @@ function finish(val){
   G.phase="done"; clearTimers();
   const ok = val!==null && val===G.answer;
   const used = (performance.now()-G.t0)/1000, total = ANSWER_TIME+G.extra;
+  if(G.duel) return cDuelRound(ok, val, used);
   let stars=0, coins=0, xp=0;
   if(ok){
     stars = used <= total*.4 ? 3 : used <= total*.7 ? 2 : 1;
@@ -1040,13 +1049,32 @@ function wlevels(){
     label:s=>{ const d = wDiff(s*20+1); return `nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
 }
 
+/* orden de las palabras: distinto para cada jugador, mezclado dentro de cada tramo de dificultad */
+const W_TIERS = [[1,20],[21,40],[41,60],[61,100],[101,150],[151,WDATA.length]];
+if(!S.wseed){ S.wseed = 1 + Math.floor(Math.random()*2147483646); save(); }
+const W_ORDER = [];
+W_TIERS.forEach(([a,b],k)=>{
+  const idx = []; for(let i=a-1; i<Math.min(b, WDATA.length); i++) idx.push(i);
+  const r = mulberry32(S.wseed + k*7919);
+  for(let i=idx.length-1;i>0;i--){ const j = Math.floor(r()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; }
+  idx.forEach((v,j)=>{ W_ORDER[a-1+j] = v; });
+});
+const wTier = L => W_TIERS.find(([a,b])=>L>=a && L<=b) || W_TIERS[0];
+function wPractice(L){
+  // otra palabra al azar del mismo tramo de dificultad
+  const [a,b] = wTier(L); const cur = W && W.idx;
+  let i; do{ i = a-1 + Math.floor(Math.random()*(Math.min(b,WDATA.length)-a+1)); }while(i===cur && b>a);
+  wplay(L, null, i);
+}
+
 let W = null;
 const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>`;
-function wplay(L, duel){
+function wplay(L, duel, forceIdx){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  const lv = WDATA[L-1];
-  W = Object.assign({L, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null}, wRanking(lv));
+  const idx = forceIdx!=null ? forceIdx : W_ORDER[L-1];
+  const lv = WDATA[idx];
+  W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null}, wRanking(lv));
   $app.innerHTML = `${topBar("wlevels")}
   <div class="wplay">
     <div class="hud">${duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
@@ -1161,7 +1189,7 @@ function wEnd(ok){
     <div class="actions">
       ${ok && W.L<WDATA.length?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
       ${!ok && W.L<WDATA.length && S.games.escondida[W.L]?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
-      <button class="btn ${ok?"":"primary"}" data-wlv="${W.L}">${ok?"Jugar de nuevo":"Volver a intentar"}</button>
+      ${ok?`<button class="btn" data-wpractice="${W.L}">Jugar otra palabra de este nivel</button>`:`<button class="btn primary" data-wpractice="${W.L}">Probar con otra palabra</button>`}
       <button class="btn" data-go="wlevels">Ver niveles</button>
     </div>
   </div>`;
@@ -1183,7 +1211,9 @@ function duelDecode(text){
     const bin = atob(m[1].replace(/-/g,"+").replace(/_/g,"/"));
     const bytes = Uint8Array.from(bin, (c,i)=>c.charCodeAt(0) ^ DUEL_KEY.charCodeAt(i % DUEL_KEY.length));
     const p = JSON.parse(new TextDecoder().decode(bytes));
-    if(p.v!==1 || !WDATA[p.w] || !p.a) return null;
+    if(p.v!==1 || !p.a) return null;
+    if(p.g==="c"){ if(!(p.L>=1 && p.L<=TOTAL_LEVELS) || !p.seed) return null; }
+    else if(!WDATA[p.w]) return null;
     return p;
   }catch(e){ return null; }
 }
@@ -1210,17 +1240,22 @@ function duelCard(){
     </form>
   </div>`;
 }
+function addDuelCard(action, desc){
+  const h = $app.querySelector(".hello"); if(!h) return;
+  h.insertAdjacentHTML("afterend", duelCard().replace('data-duel="new"', `data-duel="${action}"`)
+    .replace(/<p>Jugá una palabra[^<]*<\/p>/, `<p>${desc}</p>`));
+  const f = document.getElementById("duelopen");
+  if(f) f.addEventListener("submit", e=>{ e.preventDefault(); duelOpen(document.getElementById("duelcode").value); });
+}
 const _wlevels = wlevels;
 wlevels = function(){
   _wlevels();
-  const h = $app.querySelector(".hello"); if(h) h.insertAdjacentHTML("afterend", duelCard());
-  const f = document.getElementById("duelopen");
-  if(f) f.addEventListener("submit", e=>{ e.preventDefault(); duelOpen(document.getElementById("duelcode").value); });
+  addDuelCard("new", "Jugá una palabra al azar y desafiá a un rival con la misma palabra. Gana quien la adivine en menos intentos.");
 };
 
-function duelAskName(next){
+function duelAskName(next, back){
   clearTimers();
-  $app.innerHTML = `${topBar("wlevels")}
+  $app.innerHTML = `${topBar(back||"wlevels")}
   <div class="hello"><h1>¿Cómo te llamás?</h1><p>Tu rival va a ver este nombre en el desafío.</p></div>
   <form class="wform" id="nameform" autocomplete="off">
     <input id="pname" type="text" maxlength="16" placeholder="Tu nombre" aria-label="Tu nombre" value="${esc(S.name||"")}">
@@ -1236,11 +1271,12 @@ function duelAskName(next){
 function duelNew(){
   if(!S.name) return duelAskName(duelNew);
   const i = Math.floor(Math.random()*WDATA.length);
-  wplay(i+1, {role:"a", id: Math.random().toString(36).slice(2,8)});
+  wplay(0, {role:"a", id: Math.random().toString(36).slice(2,8)}, i);
 }
 function duelOpen(text){
   const p = duelDecode(text);
   if(!p){ toast("Ese código no es válido. Revisá que esté completo."); return; }
+  if(p.g==="c"){ if(p.b) return cShowResult(p); if(!S.name) return duelAskName(()=>cInvite(p), "levels"); return cInvite(p); }
   if(p.b) return duelShowResult(p);
   if(!S.name) return duelAskName(()=>duelInvite(p));
   duelInvite(p);
@@ -1279,7 +1315,7 @@ function duelEnd(ok){
   const me = {n:S.name, t:W.guesses.length, h:W.hints, ok};
   const word = esc(W.lv.w);
   if(W.duel.role==="a"){
-    const p = {v:1, id:W.duel.id, w:W.L-1, a:me};
+    const p = {v:1, g:"w", id:W.duel.id, w:W.idx, a:me};
     const token = duelEncode(p), link = duelLink(token);
     const text = `${S.name} te desafía en Palabra escondida (MenteCuenta): ${ok?`encontré la palabra en ${markTxt(me)}`:"no pude encontrar la palabra"}. ¿Podés con menos?\n${link?link+"\n":""}Código: ${token}`;
     if(ok){ S.coins += 5; save(); }
@@ -1319,13 +1355,14 @@ function duelEnd(ok){
   </div>`;
   if(res>0) confetti();
 }
-function duelVs(me, rival, res){
+function duelVs(me, rival, res, ballTxt, markFn){
+  ballTxt = ballTxt || (x => x.ok ? x.t : "✕"); markFn = markFn || markTxt;
   const col = r => r>0 ? "var(--good)" : r<0 ? "var(--bad)" : "var(--warn)";
   const on = r => r===0 ? "var(--on-warn)" : "var(--on-mood)";
-  const ball = (x, r) => `<div class="ball hero" style="--m:${col(r)};--on-m:${on(r)}">${x.ok?x.t:"✕"}</div>`;
+  const ball = (x, r) => `<div class="ball hero" style="--m:${col(r)};--on-m:${on(r)}">${ballTxt(x)}</div>`;
   return `<div class="duel">
-    <div class="who">${ball(me,res)}${esc(me.n)}<small class="mark">${markTxt(me)}</small></div>
-    <div class="who">${ball(rival,-res)}${esc(rival.n)}<small class="mark">${markTxt(rival)}</small></div>
+    <div class="who">${ball(me,res)}${esc(me.n)}<small class="mark">${markFn(me)}</small></div>
+    <div class="who">${ball(rival,-res)}${esc(rival.n)}<small class="mark">${markFn(rival)}</small></div>
   </div>`;
 }
 function duelShowResult(p){
@@ -1352,7 +1389,10 @@ function duelShowResult(p){
 }
 function duelAction(a, btn){
   if(a==="new") return duelNew();
-  if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(p.w+1, {role:"b", p}); }
+  if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(0, {role:"b", p}, p.w); }
+  if(a==="cnew") return cDuelNew();
+  if(a==="cnext") return cDuelNext();
+  if(a==="caccept" && cPending){ const p = cPending; cPending = null; return play(p.L, {role:"b", id:p.id, L:p.L, seed:p.seed, round:0, res:[], p}); }
   if(a==="copy"){
     const ta = document.getElementById("sharetxt"); if(!ta) return;
     const fallback = () => { ta.focus(); ta.select(); toast("Seleccioné el mensaje: copialo con el menú del teclado."); };
@@ -1371,6 +1411,130 @@ function duelFromHash(){
   duelOpen(h); return true;
 }
 window.addEventListener("hashchange", duelFromHash);
+/* ---------- Duelo de Cadena ---------- */
+// Los dos jugadores reciben las mismas cuentas: el código lleva el nivel y la semilla del generador.
+const C_ROUNDS = 3;
+let cPending = null, cRound = null;
+const cMark = x => `${x.ok} de ${C_ROUNDS} bien · ${(x.t/10).toFixed(1).replace(".",",")} s`;
+// gana quien acierta más; si empatan, quien tardó menos en total; después, quien quedó más cerca
+function cCompare(a, b){
+  if(a.ok !== b.ok) return a.ok > b.ok ? 1 : -1;
+  if(a.t !== b.t) return a.t < b.t ? 1 : -1;
+  if(a.d !== b.d) return a.d < b.d ? 1 : -1;
+  return 0;
+}
+function cSummary(d){
+  return {n:S.name, ok:d.res.filter(r=>r.ok).length, t:d.res.reduce((s,r)=>s+r.t,0), d:d.res.reduce((s,r)=>s+r.d,0)};
+}
+function cDuelNew(){
+  if(!S.name) return duelAskName(cDuelNew, "levels");
+  const L = Math.max(1, Math.min(TOTAL_LEVELS, highest(S.games.cadena)+1));
+  play(L, {role:"a", id:Math.random().toString(36).slice(2,8), L, seed:1+Math.floor(Math.random()*2147483646), round:0, res:[]});
+}
+function cDuelRound(ok, val, used){
+  const d = G.duel;
+  d.res.push({ok, t:Math.round(Math.min(used, ANSWER_TIME)*10), d: val===null ? 999 : Math.min(999, Math.abs(val-G.answer))});
+  if(ok){ beep(880,.12); } else beep(220,.25);
+  if(d.res.length >= C_ROUNDS) return cDuelEnd(d);
+  cRound = d;
+  const seq = G.items.map(it=>(it.op?(it.op==="-"?"−":it.op)+" ":"")+it.n).join(" ") + " = " + fmt(G.answer);
+  $app.innerHTML = `${topBar("levels")}
+  <div class="result mood-${ok?"good":"bad"}">
+    <div class="verdict">
+      <h1>Ronda ${d.res.length} de ${C_ROUNDS}: ${ok?"¡bien!":val===null?"sin tiempo":"incorrecto"}</h1>
+      <p>${ok?`Respondiste en <b class="num">${used.toFixed(1).replace(".",",")}</b> s`:`Era <b class="num">${fmt(G.answer)}</b>`}</p>
+      <div class="dots">${d.res.map(r=>`<i class="${r.ok?"on":""}" style="width:14px;height:14px;background:${r.ok?"var(--good)":"var(--bad)"}"></i>`).join("")}${"<i style=\"width:14px;height:14px\"></i>".repeat(C_ROUNDS-d.res.length)}</div>
+    </div>
+    <div class="seq">${esc(seq)}</div>
+    <div class="actions"><button class="btn primary" data-duel="cnext">Ronda ${d.res.length+1}</button></div>
+  </div>`;
+}
+function cDuelNext(){
+  if(!cRound) return;
+  const d = cRound; cRound = null; d.round = d.res.length;
+  play(d.L, d);
+}
+function cInvite(p){
+  clearTimers();
+  $app.innerHTML = `${topBar("levels")}
+  <div class="result mood-warn">
+    <div class="verdict">
+      <h1>${esc(p.a.n)} te desafía en Cadena</h1>
+      <p>Hizo <b>${cMark(p.a)}</b> en el nivel ${p.L}. ¿Podés superarlo?</p>
+      <div class="ball hero">${p.a.ok}/${C_ROUNDS}</div>
+    </div>
+    <p class="hint">Vas a recibir las mismas ${C_ROUNDS} cuentas que ${esc(p.a.n)}. En el duelo no hay ayudas. Gana quien acierte más; si empatan, quien respondió más rápido.</p>
+    <div class="actions">
+      <button class="btn primary" data-duel="caccept">Aceptar el desafío</button>
+      <button class="btn" data-go="levels">Ahora no</button>
+    </div>
+  </div>`;
+  cPending = p;
+}
+const cBall = x => `${x.ok}/${C_ROUNDS}`;
+function cDuelEnd(d){
+  const me = cSummary(d);
+  if(d.role==="a"){
+    const p = {v:1, g:"c", id:d.id, L:d.L, seed:d.seed, a:me};
+    const token = duelEncode(p), link = duelLink(token);
+    S.coins += me.ok*2; save();
+    const text = `${S.name} te desafía en Cadena (MenteCuenta): hice ${cMark(me)} en el nivel ${d.L}. ¿Podés superarlo?\n${link?link+"\n":""}Código: ${token}`;
+    $app.innerHTML = `${topBar("levels")}
+    <div class="result mood-${me.ok===C_ROUNDS?"good":me.ok>0?"warn":"bad"}">
+      <div class="verdict">
+        <h1>Tu marca</h1>
+        <p><b>${cMark(me)}</b></p>
+        <div class="ball hero">${cBall(me)}</div>
+      </div>
+      ${shareBox(text, "Ahora desafiá a tu rival")}
+      <div class="actions"><button class="btn" data-duel="cnew">Otro duelo</button><button class="btn" data-go="levels">Volver</button></div>
+    </div>`;
+    if(me.ok===C_ROUNDS) confetti();
+    return;
+  }
+  const p = Object.assign({}, d.p, {b:me});
+  const res = cCompare(me, p.a);
+  if(!S.duel.seen.includes(p.id+"b")){
+    S.duel.seen.push(p.id+"b"); S.duel.seen = S.duel.seen.slice(-200);
+    if(res>0){ S.duel.w++; S.coins += 20; } else if(res<0){ S.duel.l++; S.coins += me.ok; } else { S.duel.e++; S.coins += 8; }
+    save();
+  }
+  const token = duelEncode(p), link = duelLink(token);
+  const text = `Duelo de Cadena: ${S.name} hizo ${cMark(me)} y ${p.a.n} ${cMark(p.a)}. ${res>0?`Ganó ${S.name}.`:res<0?`Ganó ${p.a.n}.`:"Empate."}\n${link?link+"\n":""}Código: ${token}`;
+  $app.innerHTML = `${topBar("levels")}
+  <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
+    <div class="verdict">
+      <h1>${res>0?"¡Ganaste el duelo!":res<0?`Ganó ${esc(p.a.n)}`:"¡Empate!"}</h1>
+      <p>Nivel ${p.L} · ${C_ROUNDS} cuentas</p>
+      ${duelVs(me, p.a, res, cBall, cMark)}
+    </div>
+    ${shareBox(text, `Mandale el resultado a ${esc(p.a.n)}`)}
+    <div class="actions"><button class="btn primary" data-duel="cnew">Revancha</button><button class="btn" data-go="levels">Volver</button></div>
+  </div>`;
+  if(res>0) confetti();
+}
+function cShowResult(p){
+  clearTimers();
+  const iAmA = S.name && p.a.n === S.name;
+  const me = iAmA ? p.a : p.b, rival = iAmA ? p.b : p.a;
+  const res = cCompare(me, rival);
+  if(iAmA && !S.duel.seen.includes(p.id+"a")){
+    S.duel.seen.push(p.id+"a"); S.duel.seen = S.duel.seen.slice(-200);
+    if(res>0){ S.duel.w++; S.coins += 20; } else if(res<0) S.duel.l++; else { S.duel.e++; S.coins += 8; }
+    save();
+  }
+  $app.innerHTML = `${topBar("levels")}
+  <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
+    <div class="verdict">
+      <h1>${res>0?(iAmA?"¡Ganaste el duelo!":`Ganó ${esc(me.n)}`):res<0?`Ganó ${esc(rival.n)}`:"¡Empate!"}</h1>
+      <p>Cadena · nivel ${p.L}</p>
+      ${duelVs(me, rival, res, cBall, cMark)}
+    </div>
+    <div class="actions"><button class="btn primary" data-duel="cnew">Revancha</button><button class="btn" data-go="levels">Volver</button></div>
+  </div>`;
+  if(res>0 && iAmA) confetti();
+}
+
 
 /* ---------- micrófono ---------- */
 let rec=null;
@@ -1408,6 +1572,7 @@ $app.addEventListener("click", e => {
   const t = e.target.closest("button"); if(!t || t.disabled) return;
   if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels():levels(); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
+  if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }
   if(t.dataset.whelp!==undefined){ wHint(); return; }
   if(t.dataset.wgive!==undefined){ wGiveUp(t); return; }
   if(t.dataset.duel!==undefined){ duelAction(t.dataset.duel, t); return; }

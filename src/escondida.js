@@ -115,13 +115,32 @@ function wlevels(){
     label:s=>{ const d = wDiff(s*20+1); return `nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
 }
 
+/* orden de las palabras: distinto para cada jugador, mezclado dentro de cada tramo de dificultad */
+const W_TIERS = [[1,20],[21,40],[41,60],[61,100],[101,150],[151,WDATA.length]];
+if(!S.wseed){ S.wseed = 1 + Math.floor(Math.random()*2147483646); save(); }
+const W_ORDER = [];
+W_TIERS.forEach(([a,b],k)=>{
+  const idx = []; for(let i=a-1; i<Math.min(b, WDATA.length); i++) idx.push(i);
+  const r = mulberry32(S.wseed + k*7919);
+  for(let i=idx.length-1;i>0;i--){ const j = Math.floor(r()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; }
+  idx.forEach((v,j)=>{ W_ORDER[a-1+j] = v; });
+});
+const wTier = L => W_TIERS.find(([a,b])=>L>=a && L<=b) || W_TIERS[0];
+function wPractice(L){
+  // otra palabra al azar del mismo tramo de dificultad
+  const [a,b] = wTier(L); const cur = W && W.idx;
+  let i; do{ i = a-1 + Math.floor(Math.random()*(Math.min(b,WDATA.length)-a+1)); }while(i===cur && b>a);
+  wplay(L, null, i);
+}
+
 let W = null;
 const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>`;
-function wplay(L, duel){
+function wplay(L, duel, forceIdx){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  const lv = WDATA[L-1];
-  W = Object.assign({L, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null}, wRanking(lv));
+  const idx = forceIdx!=null ? forceIdx : W_ORDER[L-1];
+  const lv = WDATA[idx];
+  W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null}, wRanking(lv));
   $app.innerHTML = `${topBar("wlevels")}
   <div class="wplay">
     <div class="hud">${duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
@@ -236,7 +255,7 @@ function wEnd(ok){
     <div class="actions">
       ${ok && W.L<WDATA.length?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
       ${!ok && W.L<WDATA.length && S.games.escondida[W.L]?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
-      <button class="btn ${ok?"":"primary"}" data-wlv="${W.L}">${ok?"Jugar de nuevo":"Volver a intentar"}</button>
+      ${ok?`<button class="btn" data-wpractice="${W.L}">Jugar otra palabra de este nivel</button>`:`<button class="btn primary" data-wpractice="${W.L}">Probar con otra palabra</button>`}
       <button class="btn" data-go="wlevels">Ver niveles</button>
     </div>
   </div>`;
@@ -258,7 +277,9 @@ function duelDecode(text){
     const bin = atob(m[1].replace(/-/g,"+").replace(/_/g,"/"));
     const bytes = Uint8Array.from(bin, (c,i)=>c.charCodeAt(0) ^ DUEL_KEY.charCodeAt(i % DUEL_KEY.length));
     const p = JSON.parse(new TextDecoder().decode(bytes));
-    if(p.v!==1 || !WDATA[p.w] || !p.a) return null;
+    if(p.v!==1 || !p.a) return null;
+    if(p.g==="c"){ if(!(p.L>=1 && p.L<=TOTAL_LEVELS) || !p.seed) return null; }
+    else if(!WDATA[p.w]) return null;
     return p;
   }catch(e){ return null; }
 }
@@ -285,17 +306,22 @@ function duelCard(){
     </form>
   </div>`;
 }
+function addDuelCard(action, desc){
+  const h = $app.querySelector(".hello"); if(!h) return;
+  h.insertAdjacentHTML("afterend", duelCard().replace('data-duel="new"', `data-duel="${action}"`)
+    .replace(/<p>Jugá una palabra[^<]*<\/p>/, `<p>${desc}</p>`));
+  const f = document.getElementById("duelopen");
+  if(f) f.addEventListener("submit", e=>{ e.preventDefault(); duelOpen(document.getElementById("duelcode").value); });
+}
 const _wlevels = wlevels;
 wlevels = function(){
   _wlevels();
-  const h = $app.querySelector(".hello"); if(h) h.insertAdjacentHTML("afterend", duelCard());
-  const f = document.getElementById("duelopen");
-  if(f) f.addEventListener("submit", e=>{ e.preventDefault(); duelOpen(document.getElementById("duelcode").value); });
+  addDuelCard("new", "Jugá una palabra al azar y desafiá a un rival con la misma palabra. Gana quien la adivine en menos intentos.");
 };
 
-function duelAskName(next){
+function duelAskName(next, back){
   clearTimers();
-  $app.innerHTML = `${topBar("wlevels")}
+  $app.innerHTML = `${topBar(back||"wlevels")}
   <div class="hello"><h1>¿Cómo te llamás?</h1><p>Tu rival va a ver este nombre en el desafío.</p></div>
   <form class="wform" id="nameform" autocomplete="off">
     <input id="pname" type="text" maxlength="16" placeholder="Tu nombre" aria-label="Tu nombre" value="${esc(S.name||"")}">
@@ -311,11 +337,12 @@ function duelAskName(next){
 function duelNew(){
   if(!S.name) return duelAskName(duelNew);
   const i = Math.floor(Math.random()*WDATA.length);
-  wplay(i+1, {role:"a", id: Math.random().toString(36).slice(2,8)});
+  wplay(0, {role:"a", id: Math.random().toString(36).slice(2,8)}, i);
 }
 function duelOpen(text){
   const p = duelDecode(text);
   if(!p){ toast("Ese código no es válido. Revisá que esté completo."); return; }
+  if(p.g==="c"){ if(p.b) return cShowResult(p); if(!S.name) return duelAskName(()=>cInvite(p), "levels"); return cInvite(p); }
   if(p.b) return duelShowResult(p);
   if(!S.name) return duelAskName(()=>duelInvite(p));
   duelInvite(p);
@@ -354,7 +381,7 @@ function duelEnd(ok){
   const me = {n:S.name, t:W.guesses.length, h:W.hints, ok};
   const word = esc(W.lv.w);
   if(W.duel.role==="a"){
-    const p = {v:1, id:W.duel.id, w:W.L-1, a:me};
+    const p = {v:1, g:"w", id:W.duel.id, w:W.idx, a:me};
     const token = duelEncode(p), link = duelLink(token);
     const text = `${S.name} te desafía en Palabra escondida (MenteCuenta): ${ok?`encontré la palabra en ${markTxt(me)}`:"no pude encontrar la palabra"}. ¿Podés con menos?\n${link?link+"\n":""}Código: ${token}`;
     if(ok){ S.coins += 5; save(); }
@@ -394,13 +421,14 @@ function duelEnd(ok){
   </div>`;
   if(res>0) confetti();
 }
-function duelVs(me, rival, res){
+function duelVs(me, rival, res, ballTxt, markFn){
+  ballTxt = ballTxt || (x => x.ok ? x.t : "✕"); markFn = markFn || markTxt;
   const col = r => r>0 ? "var(--good)" : r<0 ? "var(--bad)" : "var(--warn)";
   const on = r => r===0 ? "var(--on-warn)" : "var(--on-mood)";
-  const ball = (x, r) => `<div class="ball hero" style="--m:${col(r)};--on-m:${on(r)}">${x.ok?x.t:"✕"}</div>`;
+  const ball = (x, r) => `<div class="ball hero" style="--m:${col(r)};--on-m:${on(r)}">${ballTxt(x)}</div>`;
   return `<div class="duel">
-    <div class="who">${ball(me,res)}${esc(me.n)}<small class="mark">${markTxt(me)}</small></div>
-    <div class="who">${ball(rival,-res)}${esc(rival.n)}<small class="mark">${markTxt(rival)}</small></div>
+    <div class="who">${ball(me,res)}${esc(me.n)}<small class="mark">${markFn(me)}</small></div>
+    <div class="who">${ball(rival,-res)}${esc(rival.n)}<small class="mark">${markFn(rival)}</small></div>
   </div>`;
 }
 function duelShowResult(p){
@@ -427,7 +455,10 @@ function duelShowResult(p){
 }
 function duelAction(a, btn){
   if(a==="new") return duelNew();
-  if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(p.w+1, {role:"b", p}); }
+  if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(0, {role:"b", p}, p.w); }
+  if(a==="cnew") return cDuelNew();
+  if(a==="cnext") return cDuelNext();
+  if(a==="caccept" && cPending){ const p = cPending; cPending = null; return play(p.L, {role:"b", id:p.id, L:p.L, seed:p.seed, round:0, res:[], p}); }
   if(a==="copy"){
     const ta = document.getElementById("sharetxt"); if(!ta) return;
     const fallback = () => { ta.focus(); ta.select(); toast("Seleccioné el mensaje: copialo con el menú del teclado."); };

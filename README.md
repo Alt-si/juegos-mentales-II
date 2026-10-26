@@ -1,6 +1,6 @@
 # MenteCuenta
 
-App de juegos de cálculo mental para celulares. Cada juego suma experiencia a un **rango general** y da **monedas** para pedir ayudas.
+App de juegos mentales para celulares. Cada juego suma experiencia a un **rango general** y da **monedas** para pedir ayudas.
 
 ## Juegos
 
@@ -10,6 +10,24 @@ App de juegos de cálculo mental para celulares. Cada juego suma experiencia a u
 | Palabra escondida | Jugable | Hay que encontrar una palabra secreta. Cada palabra que probás recibe un número según qué tan cerca está. |
 | Tablas relámpago | Pendiente | Multiplicaciones contra reloj durante 60 segundos. |
 | Mayor o menor | Pendiente | Elegir qué cuenta da más. |
+
+## Palabra del día
+
+Es un extra de Palabra escondida: el juego es el mismo, pero **la palabra es la misma para todos los jugadores en la misma fecha**, y cambia cada día. Se elige con una lista mezclada con una semilla fija, según el número de día.
+
+- **En la portada**, la tarjeta "Desafío del día" lleva a su sección.
+- **Calendario mensual.** Cada día se marca en **verde** con la cantidad de intentos, en **rojo** si te rendiste, con **borde punteado** si no lo jugaste (todavía se puede jugar) o apagado si es un día futuro. Hoy aparece resaltado.
+- **Racha** de días seguidos encontrando la palabra, mejor racha, palabras encontradas e intentos promedio. Los días anteriores se pueden recuperar desde el calendario, pero no suman a la racha y dan menos premio.
+- **Premio:** 15 monedas más 2 por cada día de racha (hasta 7), y XP.
+- Cada día se juega una sola vez. Después se ve el resultado y se puede **compartir** ("Palabra del día 26/10: la encontré en 12 intentos. Racha: 3 días. ¿Y vos?").
+
+### Aviso diario
+
+En la sección hay un botón **Recordatorio diario → Activar**, que pide permiso para mandar notificaciones y registra `sw.js` (el service worker).
+
+- En **Chrome para Android, con la app instalada**, el aviso llega con `periodicSync`. El sistema decide la hora exacta, aproximadamente una vez por día.
+- Al tocar el aviso se abre la app en la Palabra del día (`#hoy`).
+- `sw.js` ya maneja el evento `push`. Para un aviso a hora fija y en iPhone hace falta un servidor que lo mande (por ejemplo, Firebase Cloud Messaging), o empaquetar la app como nativa con notificaciones locales (por ejemplo, con Capacitor).
 
 ## Cadena: progresión de niveles
 
@@ -107,6 +125,9 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/app.html`: la app (pantallas, Cadena, estilos).
 - `src/escondida.js`: la lógica de Palabra escondida y de los duelos.
 - `src/cadena-duelo.js`: el duelo de Cadena.
+- `src/diaria.js`: la Palabra del día, el calendario y el aviso diario.
+- `sw.js`: el service worker de los avisos.
+- `icon.svg`, `manifest.webmanifest`: el ícono y los datos para instalar la app.
 - `data/vocab-*.js`: el vocabulario con categorías.
 - `data/escondida-*.js`: las listas a mano de los niveles 1 a 60.
 - `data/niveles-extra.js`: las palabras de los niveles 61 a 200.

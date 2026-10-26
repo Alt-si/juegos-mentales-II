@@ -135,15 +135,15 @@ function wPractice(L){
 
 let W = null;
 const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>`;
-function wplay(L, duel, forceIdx){
+function wplay(L, duel, forceIdx, opts){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
   const idx = forceIdx!=null ? forceIdx : W_ORDER[L-1];
   const lv = WDATA[idx];
-  W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null}, wRanking(lv));
-  $app.innerHTML = `${topBar("wlevels")}
+  W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null, daily:(opts&&opts.daily)||null}, wRanking(lv));
+  $app.innerHTML = `${topBar(W.daily ? "daily" : "wlevels")}
   <div class="wplay">
-    <div class="hud">${duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
+    <div class="hud">${W.daily ? `<span><b>Palabra del día</b> · ${prettyDay(W.daily)}</span>` : duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
     <form class="wform" id="wform" autocomplete="off">
       <input id="wguess" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Escribí una palabra" aria-label="Tu palabra">
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
@@ -228,6 +228,7 @@ function wGiveUp(btn){
 function wEnd(ok){
   W.done = true; clearTimers();
   if(W.duel) return duelEnd(ok);
+  if(W.daily) return dailyEnd(ok);
   const n = W.guesses.length;
   let stars=0, coins=0, xp=0;
   if(ok){

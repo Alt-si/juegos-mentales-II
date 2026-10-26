@@ -33,6 +33,16 @@ Son 300 niveles, agrupados en etapas de 20. La cuenta se resuelve en orden, como
 - **XP:** (8 + nivel) × estrellas, más 20 la primera vez. La XP sube el rango general (10 rangos, de Novato a Mente Infinita).
 - **Ayudas:** volver a ver la secuencia (30 monedas), 5 segundos más (20) o elegir entre 3 opciones (40).
 
+## Pantalla de resultado
+
+Después de tocar **Listo**, la respuesta aparece dentro de un círculo con un color según el resultado:
+
+- **Verde:** la respuesta es correcta. Además hay confeti.
+- **Amarillo:** estuviste cerca, a una diferencia de 2 o del 10 % del resultado, la que sea mayor. No supera el nivel.
+- **Rojo:** la respuesta está mal o se acabó el tiempo.
+
+Abajo se muestra la cuenta completa: cada número en su círculo y el signo de la operación entre número y número.
+
 ## Cómo probarlo
 
 Abrí `index.html` en el navegador, o publicalo con GitHub Pages (Settings → Pages → rama `main`). En el celular se puede agregar a la pantalla de inicio.

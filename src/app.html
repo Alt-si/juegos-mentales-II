@@ -77,6 +77,36 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .game .prog .pbar{flex:1;height:6px;border-radius:6px;background:rgba(255,255,255,.3);overflow:hidden}
 .game .prog .pbar i{display:block;height:100%;background:var(--ink-on);border-radius:6px}
 .game .bubble{position:absolute;right:-26px;bottom:-26px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
+.game.g-mayor{--g1:var(--c4);--g2:var(--c5)}
+.game.wide{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px}
+.game.wide > div:last-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.mplay{display:flex;flex-direction:column;gap:12px}
+.mq{border-radius:22px;padding:16px;color:var(--ink-on);background:linear-gradient(135deg, var(--c4), var(--c5));display:flex;flex-direction:column;gap:6px}
+.mq .kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.mq h2{font-size:23px;font-weight:600;line-height:1.2}
+.mq p{margin:0;font-size:14px;opacity:.95}
+.mrange{display:flex;flex-direction:column;gap:6px}
+.mtrack{position:relative;height:18px;border-radius:999px;background:var(--line)}
+.mzone{position:absolute;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg, var(--c4), var(--c5));transition:left .4s, width .4s}
+.mk{position:absolute;top:-4px;width:4px;height:26px;margin-left:-2px;border-radius:2px;background:var(--ink)}
+.mk.hint{background:var(--muted)}
+.mends{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}
+.mends .num{font-weight:700;color:var(--ink)}
+.mfeed{display:flex;align-items:center;gap:14px;border-radius:20px;padding:14px;background:var(--surface);border:2px solid var(--line)}
+.mfeed .arrow{width:60px;height:60px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:32px;font-weight:700;background:var(--bg);color:var(--muted)}
+.mfeed div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mfeed b{font-family:var(--f-display);font-size:21px;font-weight:600}
+.mfeed span{color:var(--muted);font-size:14px}
+.mfeed.t-good,.mfeed.t-warn,.mfeed.t-bad{border-color:var(--tc)}
+.mfeed.t-good .arrow,.mfeed.t-warn .arrow,.mfeed.t-bad .arrow{background:var(--tc);color:var(--on-tc)}
+.mfeed.pop{animation:land .35s cubic-bezier(.2,1.5,.4,1) both}
+.mlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.mrow{display:flex;align-items:center;gap:10px;height:44px;border-radius:14px;padding:0 14px;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--tc)}
+.mrow .num{font-weight:700;font-size:16px;flex:1}
+.mdir{font-weight:600;font-size:14px}
+.mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
+.wordball small{font-size:.45em;font-weight:600}
+.mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
 .soon{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .soon div{border:2px dashed var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:4px}
 .soon b{font-family:var(--f-display);font-size:17px;font-weight:600}
@@ -374,7 +404,7 @@ function clearTimers(){ const cf=document.getElementById("confetti"); if(cf) cf.
 
 function home(){
   clearTimers();
-  const hc = highest(), hw = highest(S.games.escondida);
+  const hc = highest(), hw = highest(S.games.escondida), hm = highest(S.games.mayor);
   const st = dailyStatus();
   const logo = [..."MenteCuenta"].map((c,i)=>`<span style="--i:${i}">${c}</span>`).join("");
   $app.innerHTML = `${topBar()}
@@ -403,10 +433,17 @@ function home(){
       <div class="prog"><span class="pbar"><i style="width:${hw/WDATA.length*100}%"></i></span><span class="num">${hw}/${WDATA.length}</span></div>
     </button>
   </div>
+    <button class="game g-mayor wide" data-go="mlevels">
+      <span class="bubble"></span>
+      <div class="ic">↑↓</div>
+      <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
+      <div class="prog"><span class="pbar"><i style="width:${hm/MDATA.length*100}%"></i></span><span class="num">${hm}/${MDATA.length}</span></div></div>
+    </button>
+  </div>
   <h2 class="sec-title">Muy pronto</h2>
   <div class="soon">
     <div><span class="dot" style="--c:var(--c4)"></span><b>Tablas relámpago</b><span>Multiplicaciones contra reloj</span></div>
-    <div><span class="dot" style="--c:var(--c5)"></span><b>Mayor o menor</b><span>¿Qué cuenta da más?</span></div>
+    <div><span class="dot" style="--c:var(--c5)"></span><b>Y más juegos</b><span>Estamos preparando nuevos desafíos</span></div>
   </div>
   <p class="note">Tu progreso se guarda en este dispositivo.</p>`;
 }
@@ -420,7 +457,7 @@ function levelMap(o){
     html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s]||"Etapa"}</h2><span>${o.label(s)}</span></div><div class="grid">`;
     for(let L=s*20+1; L<=Math.min(o.total, s*20+20); L++){
       const st = o.store[L];
-      if(st) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${"★".repeat(st)}</span></button>`;
+      if(st!==undefined) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${st?"★".repeat(st):"–"}</span></button>`;
       else if(L===h+1) html += `<button class="lv next" data-${o.attr}="${L}" aria-label="Nivel ${L}, siguiente">${L}<span class="st"></span></button>`;
       else html += `<button class="lv lock" disabled aria-label="Nivel ${L} bloqueado">${L}<span class="st"></span></button>`;
     }
@@ -645,7 +682,9 @@ function stopMic(){ try{ rec && rec.abort(); }catch(e){} rec=null; }
 /* ---------- eventos ---------- */
 $app.addEventListener("click", e => {
   const t = e.target.closest("button"); if(!t || t.disabled) return;
-  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="daily"?dailyScreen():levels(); return; }
+  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen():levels(); return; }
+  if(t.dataset.mlv){ mplay(+t.dataset.mlv); return; }
+  if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }
   if(t.dataset.daily){ dailyAction(t.dataset.daily); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }

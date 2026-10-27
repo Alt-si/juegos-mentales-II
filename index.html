@@ -88,6 +88,36 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .game .prog .pbar{flex:1;height:6px;border-radius:6px;background:rgba(255,255,255,.3);overflow:hidden}
 .game .prog .pbar i{display:block;height:100%;background:var(--ink-on);border-radius:6px}
 .game .bubble{position:absolute;right:-26px;bottom:-26px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
+.game.g-mayor{--g1:var(--c4);--g2:var(--c5)}
+.game.wide{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px}
+.game.wide > div:last-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.mplay{display:flex;flex-direction:column;gap:12px}
+.mq{border-radius:22px;padding:16px;color:var(--ink-on);background:linear-gradient(135deg, var(--c4), var(--c5));display:flex;flex-direction:column;gap:6px}
+.mq .kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.mq h2{font-size:23px;font-weight:600;line-height:1.2}
+.mq p{margin:0;font-size:14px;opacity:.95}
+.mrange{display:flex;flex-direction:column;gap:6px}
+.mtrack{position:relative;height:18px;border-radius:999px;background:var(--line)}
+.mzone{position:absolute;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg, var(--c4), var(--c5));transition:left .4s, width .4s}
+.mk{position:absolute;top:-4px;width:4px;height:26px;margin-left:-2px;border-radius:2px;background:var(--ink)}
+.mk.hint{background:var(--muted)}
+.mends{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}
+.mends .num{font-weight:700;color:var(--ink)}
+.mfeed{display:flex;align-items:center;gap:14px;border-radius:20px;padding:14px;background:var(--surface);border:2px solid var(--line)}
+.mfeed .arrow{width:60px;height:60px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:32px;font-weight:700;background:var(--bg);color:var(--muted)}
+.mfeed div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mfeed b{font-family:var(--f-display);font-size:21px;font-weight:600}
+.mfeed span{color:var(--muted);font-size:14px}
+.mfeed.t-good,.mfeed.t-warn,.mfeed.t-bad{border-color:var(--tc)}
+.mfeed.t-good .arrow,.mfeed.t-warn .arrow,.mfeed.t-bad .arrow{background:var(--tc);color:var(--on-tc)}
+.mfeed.pop{animation:land .35s cubic-bezier(.2,1.5,.4,1) both}
+.mlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.mrow{display:flex;align-items:center;gap:10px;height:44px;border-radius:14px;padding:0 14px;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--tc)}
+.mrow .num{font-weight:700;font-size:16px;flex:1}
+.mdir{font-weight:600;font-size:14px}
+.mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
+.wordball small{font-size:.45em;font-weight:600}
+.mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
 .soon{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .soon div{border:2px dashed var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:4px}
 .soon b{font-family:var(--f-display);font-size:17px;font-weight:600}
@@ -481,6 +511,145 @@ P("verdad",
 
 </script>
 <script>
+// Mayor o menor — preguntas con respuesta numérica.
+// q: pregunta · a: respuesta · u: unidad · lo/hi: rango que se le muestra al jugador
+// d: dificultad (1 fácil, 2 media, 3 difícil) · tol: margen aceptado para datos aproximados · n: dato curioso al final
+window.__mayor = [
+// ---------- fáciles ----------
+{q:"¿Cuántos jugadores tiene un equipo de fútbol en la cancha?", a:11, u:"jugadores", lo:1, hi:30, d:1},
+{q:"¿Cuántos planetas tiene el sistema solar?", a:8, u:"planetas", lo:1, hi:20, d:1, n:"Plutón dejó de contarse como planeta en 2006."},
+{q:"¿Cuántas provincias tiene la Argentina?", a:23, u:"provincias", lo:1, hi:50, d:1, n:"Además de las 23 provincias está la Ciudad Autónoma de Buenos Aires."},
+{q:"¿Cuántos días tiene un año bisiesto?", a:366, u:"días", lo:300, hi:400, d:1},
+{q:"¿Cuántos minutos dura un partido de fútbol, sin contar el descuento?", a:90, u:"minutos", lo:1, hi:200, d:1},
+{q:"¿Cuántas patas tiene una araña?", a:8, u:"patas", lo:1, hi:20, d:1},
+{q:"¿Cuántas patas tiene un insecto?", a:6, u:"patas", lo:1, hi:20, d:1},
+{q:"¿Cuántos colores tiene el arcoíris?", a:7, u:"colores", lo:1, hi:15, d:1},
+{q:"¿Cuántas casillas tiene un tablero de ajedrez?", a:64, u:"casillas", lo:1, hi:150, d:1, n:"Son 8 filas por 8 columnas."},
+{q:"¿Con cuántas piezas empieza cada jugador en el ajedrez?", a:16, u:"piezas", lo:1, hi:40, d:1},
+{q:"¿Cuántos jugadores de cada equipo hay en la cancha en básquet?", a:5, u:"jugadores", lo:1, hi:15, d:1},
+{q:"¿Cuántos jugadores de cada equipo hay en la cancha en vóley?", a:6, u:"jugadores", lo:1, hi:15, d:1},
+{q:"¿Cuántas cuerdas tiene una guitarra común?", a:6, u:"cuerdas", lo:1, hi:15, d:1},
+{q:"¿Cuántos anillos tiene la bandera olímpica?", a:5, u:"anillos", lo:1, hi:12, d:1},
+{q:"¿Cuántos lados tiene un hexágono?", a:6, u:"lados", lo:3, hi:20, d:1},
+{q:"¿Cuántos grados tiene un ángulo recto?", a:90, u:"grados", lo:1, hi:360, d:1},
+{q:"¿Cuántos grados suman los ángulos de un triángulo?", a:180, u:"grados", lo:1, hi:500, d:1},
+{q:"¿Cuántos segundos tiene una hora?", a:3600, u:"segundos", lo:60, hi:10000, d:1},
+{q:"¿Cuántos kilos tiene una tonelada?", a:1000, u:"kilos", lo:1, hi:5000, d:1},
+{q:"¿A cuántos grados hierve el agua a nivel del mar?", a:100, u:"°C", lo:0, hi:300, d:1},
+{q:"¿Cuántos Mundiales de fútbol ganó la selección argentina?", a:3, u:"Mundiales", lo:0, hi:10, d:1, n:"1978, 1986 y 2022."},
+{q:"¿Cuántos Mundiales de fútbol ganó Brasil?", a:5, u:"Mundiales", lo:0, hi:10, d:1, n:"1958, 1962, 1970, 1994 y 2002."},
+{q:"¿Cuántos dientes tiene una persona adulta, contando las muelas de juicio?", a:32, u:"dientes", lo:1, hi:60, d:1},
+{q:"¿Cuántos hoyos tiene una cancha de golf completa?", a:18, u:"hoyos", lo:1, hi:40, d:1},
+{q:"¿Cuántos estados tiene Estados Unidos?", a:50, u:"estados", lo:1, hi:100, d:1},
+{q:"¿Cuántos libros tiene la saga principal de Harry Potter?", a:7, u:"libros", lo:1, hi:15, d:1},
+{q:"¿Cuántos apóstoles tenía Jesús según los Evangelios?", a:12, u:"apóstoles", lo:1, hi:30, d:1},
+{q:"¿Cuántos países limitan con la Argentina?", a:5, u:"países", lo:1, hi:12, d:1, n:"Chile, Bolivia, Paraguay, Brasil y Uruguay."},
+{q:"¿Cuántas cartas tiene el mazo español que se usa para jugar al truco?", a:40, u:"cartas", lo:1, hi:80, d:1, n:"Se sacan los 8, los 9 y los comodines del mazo de 50."},
+{q:"¿Cuántas cartas tiene un mazo de póker, sin comodines?", a:52, u:"cartas", lo:1, hi:80, d:1},
+{q:"¿Cuántos años dura el mandato de un presidente en la Argentina?", a:4, u:"años", lo:1, hi:10, d:1},
+{q:"¿Cuántas cámaras tiene el corazón humano?", a:4, u:"cámaras", lo:1, hi:10, d:1, n:"Dos aurículas y dos ventrículos."},
+{q:"¿Cuántos corazones tiene un pulpo?", a:3, u:"corazones", lo:1, hi:10, d:1},
+{q:"¿Cuántos océanos hay en el planeta?", a:5, u:"océanos", lo:1, hi:12, d:1, n:"Pacífico, Atlántico, Índico, Antártico y Ártico."},
+{q:"¿Cuántas horas tiene una semana?", a:168, u:"horas", lo:24, hi:500, d:1},
+{q:"¿Cuántas letras tiene el abecedario español?", a:27, u:"letras", lo:10, hi:50, d:1, n:"La que lo distingue es la ñ."},
+{q:"¿Cuántos versos tiene un soneto?", a:14, u:"versos", lo:1, hi:30, d:1},
+{q:"¿Cuántos minutos tiene un día?", a:1440, u:"minutos", lo:60, hi:5000, d:1},
+{q:"¿Cuántos países hay en América del Sur?", a:12, u:"países", lo:1, hi:30, d:1, n:"Contando solo los países independientes; la Guayana Francesa es parte de Francia."},
+{q:"¿Cuántas teclas tiene un piano de cola estándar?", a:88, u:"teclas", lo:20, hi:200, d:1, n:"52 blancas y 36 negras."},
+// ---------- medias ----------
+{q:"¿En qué año llegó Cristóbal Colón a América?", a:1492, u:"", lo:1000, hi:2025, d:2},
+{q:"¿En qué año se declaró la independencia argentina?", a:1816, u:"", lo:1500, hi:2025, d:2, n:"Fue el 9 de julio, en Tucumán."},
+{q:"¿En qué año fue la Revolución de Mayo?", a:1810, u:"", lo:1500, hi:2025, d:2},
+{q:"¿En qué año terminó la Segunda Guerra Mundial?", a:1945, u:"", lo:1800, hi:2025, d:2},
+{q:"¿En qué año empezó la Primera Guerra Mundial?", a:1914, u:"", lo:1800, hi:2025, d:2},
+{q:"¿En qué año llegó el ser humano a la Luna?", a:1969, u:"", lo:1900, hi:2025, d:2, n:"Con la misión Apolo 11, el 20 de julio."},
+{q:"¿En qué año cayó el Muro de Berlín?", a:1989, u:"", lo:1900, hi:2025, d:2},
+{q:"¿En qué año fue la toma de la Bastilla, inicio de la Revolución Francesa?", a:1789, u:"", lo:1500, hi:2025, d:2},
+{q:"¿En qué año declaró su independencia Estados Unidos?", a:1776, u:"", lo:1500, hi:2025, d:2},
+{q:"¿En qué año ganó la Argentina su primer Mundial de fútbol?", a:1978, u:"", lo:1900, hi:2025, d:2},
+{q:"¿En qué año ganó la Argentina el Mundial de México?", a:1986, u:"", lo:1900, hi:2025, d:2},
+{q:"¿En qué año se jugó el primer Mundial de fútbol?", a:1930, u:"", lo:1850, hi:2025, d:2, n:"Fue en Uruguay, y el campeón fue el local."},
+{q:"¿En qué año se hundió el Titanic?", a:1912, u:"", lo:1800, hi:2025, d:2},
+{q:"¿En qué año fue la guerra de Malvinas?", a:1982, u:"", lo:1900, hi:2025, d:2},
+{q:"¿En qué año volvió la democracia a la Argentina, con la asunción de Raúl Alfonsín?", a:1983, u:"", lo:1900, hi:2025, d:2},
+{q:"¿En qué año se sancionó la Constitución Nacional argentina?", a:1853, u:"", lo:1700, hi:2025, d:2},
+{q:"¿En qué año nació Lionel Messi?", a:1987, u:"", lo:1950, hi:2025, d:2},
+{q:"¿En qué año se presentó el primer iPhone?", a:2007, u:"", lo:1980, hi:2025, d:2},
+{q:"¿En qué año se fundó Google?", a:1998, u:"", lo:1950, hi:2025, d:2},
+{q:"¿En qué año hicieron su primer vuelo a motor los hermanos Wright?", a:1903, u:"", lo:1800, hi:2025, d:2},
+{q:"¿En qué año fue el accidente nuclear de Chernóbil?", a:1986, u:"", lo:1900, hi:2025, d:2},
+{q:"¿En qué año murió Carlos Gardel?", a:1935, u:"", lo:1850, hi:2025, d:2, n:"Murió en un accidente de avión en Medellín, Colombia."},
+{q:"¿En qué año murió Eva Perón?", a:1952, u:"", lo:1850, hi:2025, d:2},
+{q:"¿En qué año fue elegido papa Jorge Bergoglio?", a:2013, u:"", lo:1950, hi:2025, d:2},
+{q:"¿Cuántos huesos tiene el cuerpo humano adulto?", a:206, u:"huesos", lo:1, hi:1000, d:2, n:"Un bebé nace con alrededor de 300; muchos se fusionan al crecer."},
+{q:"¿Cuántos cromosomas tiene una célula humana?", a:46, u:"cromosomas", lo:1, hi:200, d:2, n:"Son 23 pares."},
+{q:"¿Cuántos países son miembros de la ONU?", a:193, u:"países", lo:1, hi:400, d:2},
+{q:"¿Cuántos países forman la Unión Europea?", a:27, u:"países", lo:1, hi:60, d:2},
+{q:"¿Cuántos barrios oficiales tiene la Ciudad de Buenos Aires?", a:48, u:"barrios", lo:1, hi:150, d:2},
+{q:"¿Cuántos diputados nacionales tiene la Argentina?", a:257, u:"diputados", lo:1, hi:600, d:2},
+{q:"¿Cuántos senadores nacionales tiene la Argentina?", a:72, u:"senadores", lo:1, hi:300, d:2, n:"Tres por cada provincia y tres por la Ciudad de Buenos Aires."},
+{q:"¿Cuántos elementos tiene la tabla periódica?", a:118, u:"elementos", lo:1, hi:300, d:2},
+{q:"¿Cuántas sinfonías compuso Beethoven?", a:9, u:"sinfonías", lo:1, hi:50, d:2},
+{q:"¿Cuántas lunas tiene Marte?", a:2, u:"lunas", lo:0, hi:20, d:2, n:"Se llaman Fobos y Deimos."},
+{q:"¿Cuántos goles hizo Maradona en el Mundial de México 86?", a:5, u:"goles", lo:0, hi:20, d:2},
+{q:"¿Cuántos puntos vale un try en rugby?", a:5, u:"puntos", lo:1, hi:10, d:2},
+{q:"¿Cuántos minutos dura un partido de básquet con reglas FIBA, sin contar alargues?", a:40, u:"minutos", lo:1, hi:120, d:2, n:"Cuatro cuartos de 10 minutos."},
+{q:"¿Cuántos jugadores de cada equipo hay en la cancha en rugby?", a:15, u:"jugadores", lo:1, hi:30, d:2},
+{q:"¿Cuántos jugadores de cada equipo hay en la cancha en handball?", a:7, u:"jugadores", lo:1, hi:20, d:2},
+{q:"¿Cuántos kilómetros mide una maratón?", a:42, u:"km", lo:1, hi:100, d:2, tol:1, n:"Exactamente, 42,195 km."},
+{q:"¿Cuántos centímetros de alto mide un arco de fútbol?", a:244, u:"cm", lo:100, hi:500, d:2, n:"Y 732 centímetros de ancho."},
+{q:"¿Cuántos compartimentos tiene el estómago de una vaca?", a:4, u:"compartimentos", lo:1, hi:10, d:2, n:"Rumen, retículo, omaso y abomaso."},
+{q:"¿Cuántas semanas dura, en promedio, un embarazo humano?", a:40, u:"semanas", lo:10, hi:80, d:2, tol:1},
+{q:"¿Cuántos meses dura el embarazo de una elefanta?", a:22, u:"meses", lo:1, hi:40, d:2, tol:1, n:"Es la gestación más larga de los mamíferos terrestres."},
+{q:"¿Cuántos litros de sangre tiene, aproximadamente, una persona adulta?", a:5, u:"litros", lo:1, hi:20, d:2, tol:1},
+{q:"¿Qué porcentaje de la superficie de la Tierra está cubierto por agua?", a:71, u:"%", lo:1, hi:100, d:2, tol:2},
+{q:"¿Cuántos metros mide de alto el Obelisco de Buenos Aires?", a:67, u:"metros", lo:10, hi:200, d:2, tol:1, n:"Mide 67,5 metros."},
+{q:"¿En qué año se inauguró el Obelisco de Buenos Aires?", a:1936, u:"", lo:1850, hi:2025, d:2, n:"Se construyó en apenas 31 días."},
+{q:"¿En qué año se inauguró la primera línea de subte de Buenos Aires?", a:1913, u:"", lo:1850, hi:2025, d:2, n:"Fue la línea A, la primera de América Latina."},
+{q:"¿Cuál es la edad mínima para votar en la Argentina?", a:16, u:"años", lo:10, hi:30, d:2},
+{q:"¿Qué número hay que marcar en la Argentina para llamar a la policía?", a:911, u:"", lo:1, hi:999, d:2},
+{q:"¿Qué número hay que marcar en la Argentina para llamar a los bomberos?", a:100, u:"", lo:1, hi:999, d:2},
+// ---------- difíciles ----------
+{q:"¿Cuántos metros de altura tiene el Aconcagua?", a:6961, u:"metros", lo:1000, hi:10000, d:3, tol:2, n:"Es la montaña más alta de América."},
+{q:"¿Cuántos metros de altura tiene el monte Everest?", a:8849, u:"metros", lo:1000, hi:12000, d:3, tol:2, n:"Es la medición oficial que publicaron China y Nepal en 2020."},
+{q:"¿Cuántos kilómetros por segundo recorre la luz en el vacío?", a:299792, u:"km/s", lo:1000, hi:1000000, d:3, tol:300},
+{q:"¿A cuántos kilómetros está, en promedio, la Luna de la Tierra?", a:384400, u:"km", lo:1000, hi:1000000, d:3, tol:4000},
+{q:"¿A cuántos millones de kilómetros está, en promedio, el Sol de la Tierra?", a:150, u:"millones de km", lo:1, hi:1000, d:3, tol:1},
+{q:"¿A cuántos grados centígrados está el cero absoluto?", a:-273, u:"°C", lo:-1000, hi:0, d:3, tol:1, n:"Exactamente, −273,15 °C."},
+{q:"¿A cuántos metros por segundo viaja el sonido en el aire, a unos 20 °C?", a:343, u:"m/s", lo:1, hi:2000, d:3, tol:3},
+{q:"¿Cuántos metros de profundidad tiene la fosa de las Marianas, el punto más hondo del océano?", a:10950, u:"metros", lo:1000, hi:20000, d:3, tol:100},
+{q:"¿Cuántos metros mide de alto la Torre Eiffel, con sus antenas?", a:330, u:"metros", lo:50, hi:1000, d:3, tol:6},
+{q:"¿Cuántos metros mide de alto la Estatua de la Libertad, con su pedestal?", a:93, u:"metros", lo:10, hi:300, d:3, tol:1},
+{q:"¿A cuántos metros sobre el nivel del mar está el lago Titicaca?", a:3812, u:"metros", lo:100, hi:6000, d:3, tol:10},
+{q:"¿Cuántos kilómetros por hora puede alcanzar un guepardo en carrera?", a:110, u:"km/h", lo:10, hi:300, d:3, tol:10, n:"Es el animal terrestre más rápido, aunque solo aguanta esa velocidad unos segundos."},
+{q:"¿Cuántos kilómetros mide el río Nilo, aproximadamente?", a:6650, u:"km", lo:500, hi:10000, d:3, tol:100},
+{q:"¿Cuántos músculos tiene, aproximadamente, el cuerpo humano?", a:600, u:"músculos", lo:50, hi:2000, d:3, tol:50},
+{q:"¿Cuántos saltos tienen, aproximadamente, las Cataratas del Iguazú?", a:275, u:"saltos", lo:1, hi:1000, d:3, tol:10, n:"El más famoso es la Garganta del Diablo."},
+{q:"¿Cuántos años vivió Matusalén según la Biblia?", a:969, u:"años", lo:100, hi:2000, d:3},
+{q:"¿Cuántos años duró la Guerra de los Cien Años?", a:116, u:"años", lo:50, hi:200, d:3, n:"Fue de 1337 a 1453."},
+{q:"¿En qué año cayó el Imperio romano de Occidente?", a:476, u:"", lo:1, hi:2000, d:3},
+{q:"¿En qué año fundó Juan de Garay, por segunda vez, la ciudad de Buenos Aires?", a:1580, u:"", lo:1400, hi:1900, d:3},
+{q:"¿En qué año hizo Pedro de Mendoza la primera fundación de Buenos Aires?", a:1536, u:"", lo:1400, hi:1900, d:3},
+{q:"¿En qué año se aprobó la ley del voto femenino en la Argentina?", a:1947, u:"", lo:1850, hi:2025, d:3},
+{q:"¿En qué año murió José de San Martín?", a:1850, u:"", lo:1750, hi:1950, d:3, n:"Murió en Boulogne-sur-Mer, Francia."},
+{q:"¿En qué año se publicó la primera parte de Don Quijote de la Mancha?", a:1605, u:"", lo:1400, hi:1900, d:3},
+{q:"¿En qué año murieron Cervantes y Shakespeare?", a:1616, u:"", lo:1400, hi:1900, d:3, n:"Por eso el 23 de abril es el Día del Libro."},
+{q:"¿En qué año descubrió Alexander Fleming la penicilina?", a:1928, u:"", lo:1800, hi:2025, d:3},
+{q:"¿En qué año nació Jorge Luis Borges?", a:1899, u:"", lo:1800, hi:2000, d:3},
+{q:"¿En qué año apareció por primera vez Mafalda?", a:1964, u:"", lo:1900, hi:2025, d:3},
+{q:"¿En qué año se inauguró el actual Teatro Colón de Buenos Aires?", a:1908, u:"", lo:1800, hi:2025, d:3},
+{q:"¿En qué año se jugó la primera Copa Libertadores?", a:1960, u:"", lo:1900, hi:2025, d:3},
+{q:"¿En qué año ganó la Argentina el Mundial de Qatar?", a:2022, u:"", lo:1950, hi:2025, d:3},
+{q:"¿Cuántos kilómetros cuadrados tiene la Argentina continental, aproximadamente?", a:2780400, u:"km²", lo:100000, hi:10000000, d:3, tol:30000, n:"Es el octavo país más grande del mundo."},
+{q:"¿Cuántos kilómetros de ancho tiene el Río de la Plata en su desembocadura, aproximadamente?", a:220, u:"km", lo:10, hi:1000, d:3, tol:15},
+{q:"¿Cuántas toneladas puede llegar a pesar una ballena azul?", a:150, u:"toneladas", lo:1, hi:500, d:3, tol:30, n:"Es el animal más grande que existió."},
+{q:"¿Qué porcentaje del cuerpo de una persona adulta es agua, aproximadamente?", a:60, u:"%", lo:1, hi:100, d:3, tol:5},
+{q:"¿Cuál es la velocidad máxima en las autopistas de la Argentina?", a:130, u:"km/h", lo:40, hi:250, d:3},
+{q:"¿Qué número hay que marcar en la Argentina para pedir una ambulancia del SAME?", a:107, u:"", lo:1, hi:999, d:3},
+];
+
+</script>
+<script>
 // Palabra escondida — niveles 61 en adelante, de menor a mayor dificultad.
 // Estas palabras no tienen lista a mano: su cercanía sale solo de las categorías del vocabulario,
 // así que son más difíciles (las palabras de una misma subcategoría quedan muy parejas).
@@ -776,7 +945,7 @@ function clearTimers(){ const cf=document.getElementById("confetti"); if(cf) cf.
 
 function home(){
   clearTimers();
-  const hc = highest(), hw = highest(S.games.escondida);
+  const hc = highest(), hw = highest(S.games.escondida), hm = highest(S.games.mayor);
   const st = dailyStatus();
   const logo = [..."MenteCuenta"].map((c,i)=>`<span style="--i:${i}">${c}</span>`).join("");
   $app.innerHTML = `${topBar()}
@@ -805,10 +974,17 @@ function home(){
       <div class="prog"><span class="pbar"><i style="width:${hw/WDATA.length*100}%"></i></span><span class="num">${hw}/${WDATA.length}</span></div>
     </button>
   </div>
+    <button class="game g-mayor wide" data-go="mlevels">
+      <span class="bubble"></span>
+      <div class="ic">↑↓</div>
+      <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
+      <div class="prog"><span class="pbar"><i style="width:${hm/MDATA.length*100}%"></i></span><span class="num">${hm}/${MDATA.length}</span></div></div>
+    </button>
+  </div>
   <h2 class="sec-title">Muy pronto</h2>
   <div class="soon">
     <div><span class="dot" style="--c:var(--c4)"></span><b>Tablas relámpago</b><span>Multiplicaciones contra reloj</span></div>
-    <div><span class="dot" style="--c:var(--c5)"></span><b>Mayor o menor</b><span>¿Qué cuenta da más?</span></div>
+    <div><span class="dot" style="--c:var(--c5)"></span><b>Y más juegos</b><span>Estamos preparando nuevos desafíos</span></div>
   </div>
   <p class="note">Tu progreso se guarda en este dispositivo.</p>`;
 }
@@ -822,7 +998,7 @@ function levelMap(o){
     html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s]||"Etapa"}</h2><span>${o.label(s)}</span></div><div class="grid">`;
     for(let L=s*20+1; L<=Math.min(o.total, s*20+20); L++){
       const st = o.store[L];
-      if(st) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${"★".repeat(st)}</span></button>`;
+      if(st!==undefined) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${st?"★".repeat(st):"–"}</span></button>`;
       else if(L===h+1) html += `<button class="lv next" data-${o.attr}="${L}" aria-label="Nivel ${L}, siguiente">${L}<span class="st"></span></button>`;
       else html += `<button class="lv lock" disabled aria-label="Nivel ${L} bloqueado">${L}<span class="st"></span></button>`;
     }
@@ -1801,6 +1977,180 @@ function dailyFromHash(){
 }
 window.addEventListener("hashchange", dailyFromHash);
 
+/* ---------- Mayor o menor ---------- */
+// Una pregunta con respuesta numérica. Cada número que probás te dice si el dato es mayor o menor.
+const MDATA = (window.__mayor||[]).map(x=>Object.assign({tol:0, u:"", n:""}, x));
+S.games.mayor = S.games.mayor || {};
+// orden distinto para cada jugador, mezclado dentro de cada dificultad
+const M_ORDER = [];
+const M_TIERS = [];
+[1,2,3].forEach(d=>{
+  const idx = MDATA.map((x,i)=>x.d===d?i:-1).filter(i=>i>=0);
+  const r = mulberry32((S.wseed||1) + d*104729);
+  for(let i=idx.length-1;i>0;i--){ const j = Math.floor(r()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; }
+  M_TIERS.push([M_ORDER.length+1, M_ORDER.length+idx.length]);
+  M_ORDER.push(...idx);
+});
+const M_STAGES = ["Para entrar en calor","Números de todos los días","Fechas y cantidades","Historia y deporte","Datos curiosos","Para expertos","Solo para cracks"];
+const mFmt = n => Number(n).toLocaleString("es-AR").replace("-", "−");
+// cuántos intentos haría falta yendo siempre a la mitad
+const mPar = x => Math.max(1, Math.ceil(Math.log2((x.hi - x.lo) / (2*x.tol + 1) + 1)));
+const M_HINT_COST = [30, 50, 80];
+
+function mlevels(){
+  levelMap({title:"Mayor o menor", desc:"Te hacemos una pregunta con respuesta numérica. Probá números: te decimos si el dato es mayor o menor hasta que lo encuentres.",
+    store:S.games.mayor, total:MDATA.length, names:M_STAGES, attr:"mlv",
+    label:s=>{ const L = s*20+1; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
+}
+
+let M = null;
+function mplay(L){
+  clearTimers(); G = null; W = null;
+  if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  const x = MDATA[M_ORDER[L-1]];
+  M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x)};
+  $app.innerHTML = `${topBar("mlevels")}
+  <div class="mplay">
+    <div class="hud"><span>Nivel <b>${L}</b></span><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span></div>
+    <div class="mq">
+      <span class="kicker">Pregunta</span>
+      <h2>${esc(x.q)}</h2>
+      <p>La respuesta está entre <b class="num">${mFmt(x.lo)}</b> y <b class="num">${mFmt(x.hi)}</b>${x.u?` ${esc(x.u)}`:""}.${x.tol?` Se acepta un margen de ±${mFmt(x.tol)}.`:""}</p>
+    </div>
+    <div class="mrange" id="mrange"></div>
+    <div id="mfeed" class="mfeed"><span class="arrow">?</span><div><b>Probá un número</b><span>Empezar por la mitad del rango suele ser la mejor idea.</span></div></div>
+    <form class="wform" id="mform" autocomplete="off">
+      <input id="mguess" type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Tu número" aria-label="Tu número">
+      <button type="button" class="wmic" data-mmic aria-label="Decir un número">${MIC_SVG}</button>
+      <button type="submit" class="wsend">Probar</button>
+    </form>
+    <p class="hint" id="micst">Escribí un número o tocá el micrófono</p>
+    <div class="whelps">
+      <button class="help" data-mhelp>Pista<small><span class="coin"></span><span id="mhcost">${M_HINT_COST[0]}</span></small></button>
+      <button class="help" data-mgive>Rendirse<small>ver la respuesta</small></button>
+    </div>
+    <ol class="mlist" id="mlist"></ol>
+  </div>`;
+  document.getElementById("mform").addEventListener("submit", e=>{ e.preventDefault(); mGuess(document.getElementById("mguess").value); });
+  mRender();
+}
+function mRender(){
+  document.getElementById("mcount").textContent = M.guesses.filter(g=>!g.hint).length;
+  const x = M.x, span = x.hi - x.lo || 1;
+  const pos = v => Math.max(0, Math.min(100, (v - x.lo) / span * 100));
+  const marks = M.guesses.map(g=>`<i class="mk ${g.hint?"hint":""}" style="left:${pos(g.v)}%"></i>`).join("");
+  document.getElementById("mrange").innerHTML = `
+    <div class="mtrack"><span class="mzone" style="left:${pos(M.lo)}%;width:${pos(M.hi)-pos(M.lo)}%"></span>${marks}</div>
+    <div class="mends"><span class="num">${mFmt(M.lo)}</span><span>la respuesta está acá</span><span class="num">${mFmt(M.hi)}</span></div>`;
+  const list = [...M.guesses].reverse();
+  document.getElementById("mlist").innerHTML = list.map(g=>`<li class="mrow t-${g.tier}">
+    <span class="num">${mFmt(g.v)}</span>${g.hint?`<span class="wtag">pista</span>`:""}
+    <span class="mdir">${g.dir>0?"Es mayor ↑":g.dir<0?"Es menor ↓":"¡Justo!"}</span></li>`).join("");
+}
+function mTier(v){
+  const x = M.x, rel = Math.abs(v - x.a) / ((x.hi - x.lo) || 1);
+  return rel <= .03 ? "good" : rel <= .15 ? "warn" : "bad";
+}
+function mParse(text){
+  let t = String(text).toLowerCase().trim();
+  const neg = /^-|^−|menos/.test(t);
+  t = t.replace(/[.\s]/g,"").replace(",", ".");
+  const m = t.match(/\d+(\.\d+)?/); if(!m) return null;
+  const v = Math.round(parseFloat(m[0]));
+  return neg ? -v : v;
+}
+function mGuess(text){
+  if(!M || M.done) return;
+  const inp = document.getElementById("mguess");
+  const v = mParse(text);
+  if(v === null){ toast("Escribí un número."); return; }
+  if(M.guesses.some(g=>g.v===v && !g.hint)){ toast(`Ya probaste ${mFmt(v)}.`); if(inp) inp.value=""; return; }
+  const x = M.x, hit = Math.abs(v - x.a) <= x.tol;
+  const dir = hit ? 0 : (x.a > v ? 1 : -1);
+  if(!hit){ if(dir>0) M.lo = Math.max(M.lo, v+1); else M.hi = Math.min(M.hi, v-1); }
+  const g = {v, dir, tier: hit ? "good" : mTier(v), hint:false};
+  M.guesses.push(g);
+  if(inp){ inp.value=""; inp.focus(); }
+  const f = document.getElementById("mfeed");
+  f.className = `mfeed t-${g.tier} ${hit?"win":dir>0?"up":"down"}`;
+  f.innerHTML = hit ? `<span class="arrow">✓</span><div><b>¡Es ${mFmt(v)}!</b><span>Encontraste el dato.</span></div>`
+    : `<span class="arrow">${dir>0?"↑":"↓"}</span><div><b>Es ${dir>0?"MAYOR":"MENOR"} que ${mFmt(v)}</b><span>${g.tier==="good"?"¡Estás muy cerca!":g.tier==="warn"?"Estás cerca.":"Todavía estás lejos."}</span></div>`;
+  f.classList.remove("pop"); void f.offsetWidth; f.classList.add("pop");
+  beep(hit?880:g.tier==="good"?760:g.tier==="warn"?560:330, .07);
+  mRender();
+  if(hit) timers.push(setTimeout(()=>mEnd(true), 600));
+}
+function mHint(){
+  if(!M || M.done) return;
+  const cost = M_HINT_COST[Math.min(M.hints, M_HINT_COST.length-1)];
+  if(S.coins < cost){ toast(`Necesitás ${cost} monedas para esta pista.`); return; }
+  const x = M.x, width = M.hi - M.lo;
+  if(width <= Math.max(4, x.tol*4)){ toast("El rango ya es chico: esta vez no hay pista."); return; }
+  // achica el rango a la mitad, sin centrarlo en la respuesta
+  const nw = Math.ceil(width/2);
+  const minLo = Math.max(M.lo, x.a - nw + 1), maxLo = Math.min(x.a, M.hi - nw);
+  const nlo = minLo <= maxLo ? minLo + Math.floor(Math.random()*(maxLo-minLo+1)) : M.lo;
+  const nhi = nlo + nw;
+  S.coins -= cost; M.hints++; save();
+  document.querySelector(".coins .num").textContent = S.coins;
+  const mc = document.getElementById("mhcost"); if(mc) mc.textContent = M_HINT_COST[Math.min(M.hints, M_HINT_COST.length-1)];
+  if(nlo > M.lo){ M.guesses.push({v:nlo-1, dir:1, tier:mTier(nlo-1), hint:true}); M.lo = nlo; }
+  if(nhi < M.hi){ M.guesses.push({v:nhi+1, dir:-1, tier:mTier(nhi+1), hint:true}); M.hi = nhi; }
+  toast(`Pista: la respuesta está entre ${mFmt(M.lo)} y ${mFmt(M.hi)}.`);
+  mRender();
+}
+function mGiveUp(btn){
+  if(!M || M.done) return;
+  if(!btn.dataset.sure){ btn.dataset.sure="1"; btn.innerHTML = `¿Seguro?<small>tocá de nuevo</small>`;
+    timers.push(setTimeout(()=>{ if(document.body.contains(btn)){ delete btn.dataset.sure; btn.innerHTML=`Rendirse<small>ver la respuesta</small>`; } }, 3000)); return; }
+  mEnd(false);
+}
+function mEnd(ok){
+  M.done = true; clearTimers();
+  const x = M.x, n = M.guesses.filter(g=>!g.hint).length;
+  let stars=0, coins=0, xp=0;
+  if(ok){
+    stars = n <= M.par ? 3 : n <= M.par+3 ? 2 : 1;
+    if(M.hints) stars = Math.min(stars, 2);
+    const prev = S.games.mayor[M.L]||0;
+    coins = stars*3 + (prev?0:5) + Math.floor(M.L/10);
+    xp = (10 + M.L) * stars + (prev?0:20);
+    if(stars>prev) S.games.mayor[M.L] = stars;
+    S.coins += coins; S.xp += xp; save();
+    beep(880,.12); setTimeout(()=>beep(1175,.15),130);
+  } else { beep(220,.25); if(S.games.mayor[M.L]===undefined){ S.games.mayor[M.L] = 0; save(); } }   // rendirse igual deja pasar a la siguiente
+  const chips = M.guesses.filter(g=>!g.hint).map((g,i)=>`<span class="wchip mchip t-${g.tier}" style="--i:${i}"><b>${g.dir>0?"↑":g.dir<0?"↓":"✓"}</b>${mFmt(g.v)}</span>`).join("");
+  $app.innerHTML = `${topBar("mlevels")}
+  <div class="result mood-${ok?"good":"bad"}">
+    <div class="verdict">
+      <h1>${ok?"¡Lo encontraste!":"Te rendiste"}</h1>
+      <p>${esc(x.q)}</p>
+      <div class="wordball num">${mFmt(x.a)}${x.u?` <small>${esc(x.u)}</small>`:""}</div>
+      ${ok?`<div class="stars" aria-label="${stars} de 3 estrellas">${"★".repeat(stars)}<span class="off">${"★".repeat(3-stars)}</span></div>`:""}
+      ${ok?`<p>En <b class="num">${n}</b> ${n===1?"intento":"intentos"}. Yendo siempre a la mitad se puede en ${M.par}.</p>`:""}
+    </div>
+    ${x.n?`<p class="mfact">${esc(x.n)}</p>`:""}
+    ${ok?`<div class="gains"><span><span class="coin"></span>+<span class="num">${coins}</span></span><span>+<span class="num">${xp}</span> XP</span></div>`:""}
+    ${chips?`<div class="chainbox"><h2>Tus números</h2><div class="wchips">${chips}</div></div>`:""}
+    <div class="actions">
+      ${ok && M.L<MDATA.length?`<button class="btn primary" data-mlv="${M.L+1}">Nivel ${M.L+1}</button>`:""}
+      ${!ok && M.L<MDATA.length?`<button class="btn primary" data-mlv="${M.L+1}">Siguiente pregunta</button>`:""}
+      <button class="btn" data-go="mlevels">Ver niveles</button>
+    </div>
+  </div>`;
+  if(ok) confetti();
+}
+function mAction(t){
+  if(t.dataset.mhelp!==undefined) return mHint();
+  if(t.dataset.mgive!==undefined) return mGiveUp(t);
+  if(t.dataset.mmic!==undefined){
+    return rec ? stopMic() : startMic(t, alts=>{
+      for(const a of alts){ const v = mParse(a) ?? parseSpoken(a); if(v!==null && v!==undefined){ const inp=document.getElementById("mguess"); if(inp) inp.value=v; return mGuess(String(v)); } }
+      toast("No entendí el número. Probá de nuevo.");
+    }, "Escribí un número o tocá el micrófono", "Escuchando… decí un número");
+  }
+}
+
 
 /* ---------- micrófono ---------- */
 let rec=null;
@@ -1836,7 +2186,9 @@ function stopMic(){ try{ rec && rec.abort(); }catch(e){} rec=null; }
 /* ---------- eventos ---------- */
 $app.addEventListener("click", e => {
   const t = e.target.closest("button"); if(!t || t.disabled) return;
-  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="daily"?dailyScreen():levels(); return; }
+  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen():levels(); return; }
+  if(t.dataset.mlv){ mplay(+t.dataset.mlv); return; }
+  if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }
   if(t.dataset.daily){ dailyAction(t.dataset.daily); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }

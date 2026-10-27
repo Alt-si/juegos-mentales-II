@@ -9,7 +9,7 @@ App de juegos mentales para celulares. Cada juego suma experiencia a un **rango 
 | Cadena | Jugable | Los números aparecen de a uno con su operación. Al terminar, tenés 10 segundos para dar el resultado. |
 | Palabra escondida | Jugable | Hay que encontrar una palabra secreta. Cada palabra que probás recibe un número según qué tan cerca está. |
 | Tablas relámpago | Pendiente | Multiplicaciones contra reloj durante 60 segundos. |
-| Mayor o menor | Pendiente | Elegir qué cuenta da más. |
+| Mayor o menor | Jugable | Una pregunta con respuesta numérica (años, metros, cantidades). Probás números y el juego te dice si el dato es mayor o menor. |
 
 ## Palabra del día
 
@@ -28,6 +28,19 @@ En la sección hay un botón **Recordatorio diario → Activar**, que pide permi
 - En **Chrome para Android, con la app instalada**, el aviso llega con `periodicSync`. El sistema decide la hora exacta, aproximadamente una vez por día.
 - Al tocar el aviso se abre la app en la Palabra del día (`#hoy`).
 - `sw.js` ya maneja el evento `push`. Para un aviso a hora fija y en iPhone hace falta un servidor que lo mande (por ejemplo, Firebase Cloud Messaging), o empaquetar la app como nativa con notificaciones locales (por ejemplo, con Capacitor).
+
+## Mayor o menor
+
+El juego hace una pregunta cuya respuesta es un número y muestra entre qué valores está, por ejemplo: "¿En qué año se declaró la independencia argentina? Entre 1500 y 2025".
+
+- Probás un número (escrito o con el micrófono) y el juego responde **"Es MAYOR ↑"** o **"Es MENOR ↓"**, en verde si estás muy cerca (a menos del 3 % del rango), amarillo si estás cerca (a menos del 15 %) o rojo si estás lejos.
+- Una **barra** muestra cuánto se fue achicando el rango donde puede estar la respuesta, con una marca por cada número que probaste.
+- Para los datos aproximados (distancias, alturas) se acepta un **margen**, que se avisa en la pregunta.
+- **Estrellas:** el juego calcula cuántos intentos hacen falta yendo siempre a la mitad del rango (el "ideal"). 3 estrellas si lo lográs en esa cantidad, 2 con hasta 3 intentos más y 1 con más.
+- **Pista** (30, 50 y 80 monedas): achica el rango a la mitad, sin centrarlo en la respuesta. Con pistas, el máximo es 2 estrellas.
+- **Rendirse** muestra la respuesta y deja pasar a la pregunta siguiente.
+- Al terminar se ve la respuesta, un dato curioso y los números que probaste.
+- Hay **128 preguntas** en `data/mayor.js`, divididas en tres dificultades (cantidades conocidas, fechas y datos, y datos difíciles). Cada jugador las recibe en un orden distinto dentro de cada dificultad.
 
 ## Cadena: progresión de niveles
 
@@ -125,6 +138,8 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/app.html`: la app (pantallas, Cadena, estilos).
 - `src/escondida.js`: la lógica de Palabra escondida y de los duelos.
 - `src/cadena-duelo.js`: el duelo de Cadena.
+- `src/mayor.js`: el juego Mayor o menor.
+- `data/mayor.js`: las preguntas de Mayor o menor.
 - `src/diaria.js`: la Palabra del día, el calendario y el aviso diario.
 - `sw.js`: el service worker de los avisos.
 - `icon.svg`, `manifest.webmanifest`: el ícono y los datos para instalar la app.

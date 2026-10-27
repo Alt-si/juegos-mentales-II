@@ -13,7 +13,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 rd = lambda p: open(os.path.join(ROOT, p), encoding="utf-8").read()
 
 body = rd("src/app.html")
-body = body.replace("@@WGAME@@", rd("src/escondida.js") + rd("src/cadena-duelo.js") + rd("src/diaria.js"))
+body = body.replace("@@WGAME@@", rd("src/escondida.js") + rd("src/cadena-duelo.js") + rd("src/diaria.js") + rd("src/mayor.js"))
 data = "".join(
     "<script>\n" + open(f, encoding="utf-8").read() + "\n</script>\n"
     for f in sorted(glob.glob(os.path.join(ROOT, "data", "*.js")))

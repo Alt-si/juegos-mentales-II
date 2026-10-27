@@ -107,6 +107,33 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
 .wordball small{font-size:.45em;font-weight:600}
 .mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
+.titlerow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.howbtn{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:20px;
+  background:var(--surface);color:var(--accent);border:2px solid currentColor;box-shadow:0 3px 0 color-mix(in srgb, currentColor 25%, transparent)}
+.howbtn:active{transform:translateY(2px);box-shadow:none}
+.gwrap{position:relative;display:flex}
+.gwrap > .game,.gwrap > .daycard{flex:1;min-width:0}
+.gwrap.wide{grid-column:1 / -1}
+.gwrap .daycard .kicker,.gwrap .game.wide h3{padding-right:46px}
+.gwrap > .howbtn{position:absolute;top:12px;right:12px;z-index:2;background:rgba(255,255,255,.95);border:0;color:#2A2440}
+.hud .howbtn{width:28px;height:28px;font-size:16px;border-width:2px}
+.hudr{display:flex;align-items:center;gap:8px}
+.howwrap{position:fixed;inset:0;z-index:30;background:rgba(13,18,34,.55);display:flex;align-items:flex-end;justify-content:center;
+  padding:16px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+.howsheet{width:100%;max-width:480px;max-height:calc(100% - env(safe-area-inset-top, 0px) - 16px);overflow:auto;background:var(--surface);color:var(--ink);border-radius:26px;
+  padding:0 18px 18px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box;animation:sheetup .3s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes sheetup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.howhead{margin:0 -18px;padding:20px 18px 18px;border-radius:26px 26px 0 0;color:var(--ink-on);background:linear-gradient(135deg, var(--hc), color-mix(in srgb, var(--hc) 60%, #FFC233));display:flex;flex-direction:column;gap:4px}
+.howkicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.howhead h2{font-size:28px;font-weight:700}
+.howhead p{margin:0;opacity:.95}
+.howsteps{list-style:none;counter-reset:st;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.howsteps li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;line-height:1.4}
+.howsteps li::before{content:counter(st);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--hc);color:var(--ink-on);font-family:var(--f-display);font-weight:700;font-size:17px}
+.howsheet h3{font-size:16px;font-weight:600;margin-top:4px}
+.howtips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:var(--muted);line-height:1.4}
+.howok{background:var(--hc)!important;border-color:var(--hc)!important;color:var(--ink-on)!important}
+@media (prefers-reduced-motion: reduce){.howsheet{animation:none}}
 .soon{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .soon div{border:2px dashed var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:4px}
 .soon b{font-family:var(--f-display);font-size:17px;font-weight:600}
@@ -409,6 +436,7 @@ function home(){
   const logo = [..."MenteCuenta"].map((c,i)=>`<span style="--i:${i}">${c}</span>`).join("");
   $app.innerHTML = `${topBar()}
   <div class="brand"><h1 class="logo" aria-label="MenteCuenta">${logo}</h1><p>Entrená la cabeza jugando un ratito por día.</p></div>
+  <div class="gwrap">${howBtn("dia")}
   <button class="daycard" data-go="daily">
     <span class="kicker">Desafío del día · ${prettyDay(st.k)}</span>
     <h2>Palabra del día</h2>
@@ -417,28 +445,28 @@ function home(){
       <span class="chip">Racha: <b class="num">${st.streak}</b> ${st.streak===1?"día":"días"}</span>
       <span class="go">${st.r ? "Ver calendario" : "Jugar ahora"}</span>
     </div>
-  </button>
+  </button></div>
   <h2 class="sec-title">Juegos</h2>
   <div class="games">
-    <button class="game g-cadena" data-go="levels">
+    <div class="gwrap">${howBtn("cadena")}<button class="game g-cadena" data-go="levels">
       <span class="bubble"></span>
       <div class="ic">5+6</div>
       <div><h3>Cadena</h3><p>Sumá, restá y multiplicá de cabeza mientras pasan los números.</p></div>
       <div class="prog"><span class="pbar"><i style="width:${hc/TOTAL_LEVELS*100}%"></i></span><span class="num">${hc}/${TOTAL_LEVELS}</span></div>
-    </button>
-    <button class="game g-palabra" data-go="wlevels">
+    </button></div>
+    <div class="gwrap">${howBtn("palabra")}<button class="game g-palabra" data-go="wlevels">
       <span class="bubble"></span>
       <div class="ic">A?</div>
       <div><h3>Palabra escondida</h3><p>Probá palabras y acercate a la secreta.</p></div>
       <div class="prog"><span class="pbar"><i style="width:${hw/WDATA.length*100}%"></i></span><span class="num">${hw}/${WDATA.length}</span></div>
-    </button>
+    </button></div>
   </div>
-    <button class="game g-mayor wide" data-go="mlevels">
+    <div class="gwrap wide">${howBtn("mayor")}<button class="game g-mayor wide" data-go="mlevels">
       <span class="bubble"></span>
       <div class="ic">↑↓</div>
       <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
       <div class="prog"><span class="pbar"><i style="width:${hm/MDATA.length*100}%"></i></span><span class="num">${hm}/${MDATA.length}</span></div></div>
-    </button>
+    </button></div>
   </div>
   <h2 class="sec-title">Muy pronto</h2>
   <div class="soon">
@@ -451,7 +479,7 @@ function home(){
 function levelMap(o){
   clearTimers();
   const h = highest(o.store); const stages = Math.ceil(o.total/20);
-  let html = `${topBar("home")}<div class="hello"><h1>${o.title}</h1><p>${o.desc}</p></div><div class="levels">`;
+  let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="levels">`;
   for(let s=0;s<stages;s++){
     if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} a ${stages}</h2><span>Se desbloquean a medida que avanzás</span></div></div>`; break; }
     html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s]||"Etapa"}</h2><span>${o.label(s)}</span></div><div class="grid">`;
@@ -465,10 +493,11 @@ function levelMap(o){
   }
   $app.innerHTML = html + `</div>`;
   const nx = $app.querySelector(".lv.next"); if(nx) nx.scrollIntoView({block:"center"});
+  if(o.how) howFirst(o.how);
 }
 function levels(){
   levelMap({title:"Cadena", desc:"La cuenta se resuelve en orden, como en una calculadora: 5 + 6 × 2 = 22.",
-    store:S.games.cadena, total:TOTAL_LEVELS, names:STAGE_NAMES, label:stageLabel, attr:"lv"});
+    store:S.games.cadena, total:TOTAL_LEVELS, names:STAGE_NAMES, label:stageLabel, attr:"lv", how:"cadena"});
   addDuelCard("cnew", `Los dos reciben las mismas ${C_ROUNDS} cuentas, del nivel en el que estás. Gana quien acierte más; si empatan, el que respondió más rápido.`);
 }
 
@@ -686,6 +715,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.mlv){ mplay(+t.dataset.mlv); return; }
   if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }
   if(t.dataset.daily){ dailyAction(t.dataset.daily); return; }
+  if(t.dataset.howto){ howTo(t.dataset.howto); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }
   if(t.dataset.whelp!==undefined){ wHint(); return; }

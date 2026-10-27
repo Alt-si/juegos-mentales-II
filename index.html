@@ -118,6 +118,33 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
 .wordball small{font-size:.45em;font-weight:600}
 .mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
+.titlerow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.howbtn{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:20px;
+  background:var(--surface);color:var(--accent);border:2px solid currentColor;box-shadow:0 3px 0 color-mix(in srgb, currentColor 25%, transparent)}
+.howbtn:active{transform:translateY(2px);box-shadow:none}
+.gwrap{position:relative;display:flex}
+.gwrap > .game,.gwrap > .daycard{flex:1;min-width:0}
+.gwrap.wide{grid-column:1 / -1}
+.gwrap .daycard .kicker,.gwrap .game.wide h3{padding-right:46px}
+.gwrap > .howbtn{position:absolute;top:12px;right:12px;z-index:2;background:rgba(255,255,255,.95);border:0;color:#2A2440}
+.hud .howbtn{width:28px;height:28px;font-size:16px;border-width:2px}
+.hudr{display:flex;align-items:center;gap:8px}
+.howwrap{position:fixed;inset:0;z-index:30;background:rgba(13,18,34,.55);display:flex;align-items:flex-end;justify-content:center;
+  padding:16px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+.howsheet{width:100%;max-width:480px;max-height:calc(100% - env(safe-area-inset-top, 0px) - 16px);overflow:auto;background:var(--surface);color:var(--ink);border-radius:26px;
+  padding:0 18px 18px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box;animation:sheetup .3s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes sheetup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.howhead{margin:0 -18px;padding:20px 18px 18px;border-radius:26px 26px 0 0;color:var(--ink-on);background:linear-gradient(135deg, var(--hc), color-mix(in srgb, var(--hc) 60%, #FFC233));display:flex;flex-direction:column;gap:4px}
+.howkicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.howhead h2{font-size:28px;font-weight:700}
+.howhead p{margin:0;opacity:.95}
+.howsteps{list-style:none;counter-reset:st;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.howsteps li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;line-height:1.4}
+.howsteps li::before{content:counter(st);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--hc);color:var(--ink-on);font-family:var(--f-display);font-weight:700;font-size:17px}
+.howsheet h3{font-size:16px;font-weight:600;margin-top:4px}
+.howtips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:var(--muted);line-height:1.4}
+.howok{background:var(--hc)!important;border-color:var(--hc)!important;color:var(--ink-on)!important}
+@media (prefers-reduced-motion: reduce){.howsheet{animation:none}}
 .soon{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .soon div{border:2px dashed var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:4px}
 .soon b{font-family:var(--f-display);font-size:17px;font-weight:600}
@@ -950,6 +977,7 @@ function home(){
   const logo = [..."MenteCuenta"].map((c,i)=>`<span style="--i:${i}">${c}</span>`).join("");
   $app.innerHTML = `${topBar()}
   <div class="brand"><h1 class="logo" aria-label="MenteCuenta">${logo}</h1><p>Entrená la cabeza jugando un ratito por día.</p></div>
+  <div class="gwrap">${howBtn("dia")}
   <button class="daycard" data-go="daily">
     <span class="kicker">Desafío del día · ${prettyDay(st.k)}</span>
     <h2>Palabra del día</h2>
@@ -958,28 +986,28 @@ function home(){
       <span class="chip">Racha: <b class="num">${st.streak}</b> ${st.streak===1?"día":"días"}</span>
       <span class="go">${st.r ? "Ver calendario" : "Jugar ahora"}</span>
     </div>
-  </button>
+  </button></div>
   <h2 class="sec-title">Juegos</h2>
   <div class="games">
-    <button class="game g-cadena" data-go="levels">
+    <div class="gwrap">${howBtn("cadena")}<button class="game g-cadena" data-go="levels">
       <span class="bubble"></span>
       <div class="ic">5+6</div>
       <div><h3>Cadena</h3><p>Sumá, restá y multiplicá de cabeza mientras pasan los números.</p></div>
       <div class="prog"><span class="pbar"><i style="width:${hc/TOTAL_LEVELS*100}%"></i></span><span class="num">${hc}/${TOTAL_LEVELS}</span></div>
-    </button>
-    <button class="game g-palabra" data-go="wlevels">
+    </button></div>
+    <div class="gwrap">${howBtn("palabra")}<button class="game g-palabra" data-go="wlevels">
       <span class="bubble"></span>
       <div class="ic">A?</div>
       <div><h3>Palabra escondida</h3><p>Probá palabras y acercate a la secreta.</p></div>
       <div class="prog"><span class="pbar"><i style="width:${hw/WDATA.length*100}%"></i></span><span class="num">${hw}/${WDATA.length}</span></div>
-    </button>
+    </button></div>
   </div>
-    <button class="game g-mayor wide" data-go="mlevels">
+    <div class="gwrap wide">${howBtn("mayor")}<button class="game g-mayor wide" data-go="mlevels">
       <span class="bubble"></span>
       <div class="ic">↑↓</div>
       <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
       <div class="prog"><span class="pbar"><i style="width:${hm/MDATA.length*100}%"></i></span><span class="num">${hm}/${MDATA.length}</span></div></div>
-    </button>
+    </button></div>
   </div>
   <h2 class="sec-title">Muy pronto</h2>
   <div class="soon">
@@ -992,7 +1020,7 @@ function home(){
 function levelMap(o){
   clearTimers();
   const h = highest(o.store); const stages = Math.ceil(o.total/20);
-  let html = `${topBar("home")}<div class="hello"><h1>${o.title}</h1><p>${o.desc}</p></div><div class="levels">`;
+  let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="levels">`;
   for(let s=0;s<stages;s++){
     if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} a ${stages}</h2><span>Se desbloquean a medida que avanzás</span></div></div>`; break; }
     html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s]||"Etapa"}</h2><span>${o.label(s)}</span></div><div class="grid">`;
@@ -1006,10 +1034,11 @@ function levelMap(o){
   }
   $app.innerHTML = html + `</div>`;
   const nx = $app.querySelector(".lv.next"); if(nx) nx.scrollIntoView({block:"center"});
+  if(o.how) howFirst(o.how);
 }
 function levels(){
   levelMap({title:"Cadena", desc:"La cuenta se resuelve en orden, como en una calculadora: 5 + 6 × 2 = 22.",
-    store:S.games.cadena, total:TOTAL_LEVELS, names:STAGE_NAMES, label:stageLabel, attr:"lv"});
+    store:S.games.cadena, total:TOTAL_LEVELS, names:STAGE_NAMES, label:stageLabel, attr:"lv", how:"cadena"});
   addDuelCard("cnew", `Los dos reciben las mismas ${C_ROUNDS} cuentas, del nivel en el que estás. Gana quien acierte más; si empatan, el que respondió más rápido.`);
 }
 
@@ -1188,6 +1217,98 @@ function confetti(){
   })(t0);
 }
 
+/* ---------- Cómo se juega ---------- */
+// Cada juego tiene un botón "?" que abre su explicación. La primera vez que entrás a un juego se abre sola.
+const HOWTO = {
+  cadena: {
+    title: "Cadena", color: "var(--c1)",
+    intro: "Una cuenta que se arma de a un número por vez. Tenés que ir haciéndola de cabeza.",
+    steps: [
+      "Aparecen los números de a uno, cada uno en un círculo, y entre número y número el signo de la operación (+, −, ×, ÷).",
+      "La cuenta se resuelve en orden, como en una calculadora: 5 + 6 × 2 da 22.",
+      "Cuando termina el último número tenés 10 segundos para escribir el resultado o decirlo con el micrófono.",
+      "Tocá Listo para ver si acertaste: verde si está bien, amarillo si estuviste cerca, rojo si está mal.",
+    ],
+    tips: [
+      "Más estrellas cuanto más rápido respondas: 3 si usás menos del 40 % del tiempo.",
+      "Ayudas con monedas: volver a ver la secuencia, 5 segundos más o elegir entre 3 opciones. Con ayudas, máximo 2 estrellas.",
+      "Hay 300 niveles: con cada uno hay más números, más grandes, más rápidos y aparecen nuevas operaciones.",
+      "Duelo: tu rival recibe las mismas 3 cuentas. Gana quien acierte más; si empatan, quien respondió más rápido.",
+    ],
+  },
+  palabra: {
+    title: "Palabra escondida", color: "var(--c2)",
+    intro: "Hay una palabra secreta. Encontrala probando palabras que se le parezcan.",
+    steps: [
+      "Escribí cualquier palabra, o decila con el micrófono.",
+      "El juego le pone un número según qué tan cerca está de la escondida. La escondida es la número 1.",
+      "Cuanto más chico el número, más cerca estás: verde del 1 al 50, amarillo del 51 al 300, rojo más lejos.",
+      "Usá las palabras que te dieron números chicos para ir acercándote, hasta llegar al 1.",
+    ],
+    tips: [
+      "Pensá en el tema: si \"gato\" te da 8, la palabra puede ser otro animal o algo de mascotas.",
+      "Singular y plural cuentan como la misma palabra, y no importan los acentos.",
+      "Si el juego no conoce una palabra, te avisa y ese intento no cuenta.",
+      "La pista cuesta monedas y te acerca solo un poco. Con pistas, máximo 2 estrellas.",
+      "Duelo: tu rival juega la misma palabra. Gana quien la encuentre en menos intentos.",
+    ],
+  },
+  dia: {
+    title: "Palabra del día", color: "var(--c3)",
+    intro: "Todos los días hay una palabra escondida nueva, la misma para todos los jugadores.",
+    steps: [
+      "Se juega igual que Palabra escondida: probás palabras y cada una recibe un número según qué tan cerca está.",
+      "Encontrá la palabra en la menor cantidad de intentos. Cada día se juega una sola vez.",
+      "Al terminar, compartí tu resultado y compará con tus amigos.",
+    ],
+    tips: [
+      "Si la encontrás varios días seguidos, armás una racha y ganás más monedas.",
+      "En el calendario ves los días que jugaste. Los que te perdiste se pueden jugar después, pero no suman a la racha.",
+      "Activá el recordatorio para que te avise cuando hay palabra nueva.",
+    ],
+  },
+  mayor: {
+    title: "Mayor o menor", color: "var(--c4)",
+    intro: "Una pregunta con respuesta numérica: un año, una altura, una cantidad. Adiviná el dato.",
+    steps: [
+      "Leé la pregunta y fijate entre qué números está la respuesta.",
+      "Probá un número. El juego te dice si el dato es MAYOR ↑ o MENOR ↓ que lo que pusiste.",
+      "El color te dice qué tan cerca estás: verde muy cerca, amarillo cerca, rojo lejos.",
+      "Seguí achicando el rango hasta dar con el número justo.",
+    ],
+    tips: [
+      "El truco: probá siempre el número del medio del rango que te queda. Así llegás en la menor cantidad de intentos.",
+      "3 estrellas si lo encontrás en la cantidad de intentos \"ideal\" que muestra el juego.",
+      "En los datos aproximados, como distancias o alturas, se acepta un margen que se avisa en la pregunta.",
+      "La pista achica el rango a la mitad. Si te rendís, ves la respuesta y pasás a la siguiente.",
+    ],
+  },
+};
+S.seenHow = S.seenHow || {};
+function howBtn(key, label){ return `<button class="howbtn" data-howto="${key}" aria-label="Cómo se juega ${esc(label||HOWTO[key].title)}">?</button>`; }
+function howTo(key){
+  const h = HOWTO[key]; if(!h) return;
+  S.seenHow[key] = true; save();
+  let el = document.getElementById("howsheet");
+  if(!el){
+    el = document.createElement("div"); el.id = "howsheet"; el.className = "howwrap";
+    document.body.appendChild(el);
+    el.addEventListener("click", e => { if(e.target === el || e.target.closest("[data-howclose]")) howClose(); });
+    document.addEventListener("keydown", e => { if(e.key === "Escape") howClose(); });
+  }
+  el.innerHTML = `<div class="howsheet" role="dialog" aria-modal="true" aria-labelledby="howtitle" style="--hc:${h.color}">
+    <div class="howhead"><span class="howkicker">Cómo se juega</span><h2 id="howtitle">${esc(h.title)}</h2><p>${esc(h.intro)}</p></div>
+    <ol class="howsteps">${h.steps.map(t=>`<li>${esc(t)}</li>`).join("")}</ol>
+    <h3>Para tener en cuenta</h3>
+    <ul class="howtips">${h.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+    <button class="btn primary howok" data-howclose>¡Entendido!</button>
+  </div>`;
+  el.hidden = false;
+  const ok = el.querySelector(".howok"); if(ok) ok.focus();
+}
+function howClose(){ const el = document.getElementById("howsheet"); if(el) el.hidden = true; }
+function howFirst(key){ if(!S.seenHow[key]) setTimeout(()=>howTo(key), 250); }
+
 /* ---------- Palabra escondida ---------- */
 const W_STAGES = ["Cosas de todos los días","Lugares y objetos","Ideas y emociones","Animales y comida","Casa y ciudad","Más específicas","Naturaleza y cultura","Sentimientos","Grandes ideas","Expertos"];
 const STOP = new Set("de del la las el los y o u e en a al un una unos unas con por para que se su sus lo le les mi tu".split(" "));
@@ -1301,7 +1422,7 @@ const wDiff = L => L<=60 ? {s3:12, s2:30, name:"fácil"} : L<=120 ? {s3:18, s2:4
 
 function wlevels(){
   levelMap({title:"Palabra escondida", desc:`Escribí palabras. Cada una tiene su puesto entre las ${VOCAB.length.toLocaleString("es-AR")} del juego. La escondida es la número 1.`,
-    store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv",
+    store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv", how:"palabra",
     label:s=>{ const d = wDiff(s*20+1); return `nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
 }
 
@@ -1333,7 +1454,7 @@ function wplay(L, duel, forceIdx, opts){
   W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null, daily:(opts&&opts.daily)||null}, wRanking(lv));
   $app.innerHTML = `${topBar(W.daily ? "daily" : "wlevels")}
   <div class="wplay">
-    <div class="hud">${W.daily ? `<span><b>Palabra del día</b> · ${prettyDay(W.daily)}</span>` : duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
+    <div class="hud">${W.daily ? `<span><b>Palabra del día</b> · ${prettyDay(W.daily)}</span>` : duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span class="hudr"><span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span>${howBtn(W.daily?"dia":"palabra")}</span></div>
     <form class="wform" id="wform" autocomplete="off">
       <input id="wguess" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Escribí una palabra" aria-label="Tu palabra">
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
@@ -1832,7 +1953,7 @@ function dailyScreen(){
   $app.innerHTML = `${topBar("home")}
   <div class="dhero">
     <span class="kicker">Desafío del día</span>
-    <h1>Palabra del día</h1>
+    <div class="titlerow"><h1>Palabra del día</h1>${howBtn("dia")}</div>
     <p>Todos los días hay una palabra nueva, la misma para todos los jugadores. ¿La descubrís?</p>
     <div class="dtoday">
       <div><b>${prettyDay(st.k)}</b><br>${st.r ? (st.r.ok ? `La encontraste en ${st.r.t} ${st.r.t===1?"intento":"intentos"}` : "Hoy te rendiste") : "Todavía no la jugaste"}</div>
@@ -1850,6 +1971,7 @@ function dailyScreen(){
     <div><b>Recordatorio diario</b><br><span>${S.notif ? "Activado: te avisamos cuando hay palabra nueva." : "Recibí un aviso cada día con la palabra nueva."}</span></div>
     <button class="btn ${S.notif?"":"primary"}" data-daily="notif">${S.notif ? "Probar aviso" : "Activar"}</button>
   </div>`;
+  howFirst("dia");
 }
 function calendarHtml(){
   const {y, m} = calMonth;
@@ -1999,7 +2121,7 @@ const M_HINT_COST = [30, 50, 80];
 
 function mlevels(){
   levelMap({title:"Mayor o menor", desc:"Te hacemos una pregunta con respuesta numérica. Probá números: te decimos si el dato es mayor o menor hasta que lo encuentres.",
-    store:S.games.mayor, total:MDATA.length, names:M_STAGES, attr:"mlv",
+    store:S.games.mayor, total:MDATA.length, names:M_STAGES, attr:"mlv", how:"mayor",
     label:s=>{ const L = s*20+1; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
 }
 
@@ -2011,7 +2133,7 @@ function mplay(L){
   M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x)};
   $app.innerHTML = `${topBar("mlevels")}
   <div class="mplay">
-    <div class="hud"><span>Nivel <b>${L}</b></span><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span></div>
+    <div class="hud"><span>Nivel <b>${L}</b></span><span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
     <div class="mq">
       <span class="kicker">Pregunta</span>
       <h2>${esc(x.q)}</h2>
@@ -2190,6 +2312,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.mlv){ mplay(+t.dataset.mlv); return; }
   if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }
   if(t.dataset.daily){ dailyAction(t.dataset.daily); return; }
+  if(t.dataset.howto){ howTo(t.dataset.howto); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }
   if(t.dataset.whelp!==undefined){ wHint(); return; }

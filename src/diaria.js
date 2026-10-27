@@ -38,7 +38,7 @@ function dailyScreen(){
   $app.innerHTML = `${topBar("home")}
   <div class="dhero">
     <span class="kicker">Desafío del día</span>
-    <h1>Palabra del día</h1>
+    <div class="titlerow"><h1>Palabra del día</h1>${howBtn("dia")}</div>
     <p>Todos los días hay una palabra nueva, la misma para todos los jugadores. ¿La descubrís?</p>
     <div class="dtoday">
       <div><b>${prettyDay(st.k)}</b><br>${st.r ? (st.r.ok ? `La encontraste en ${st.r.t} ${st.r.t===1?"intento":"intentos"}` : "Hoy te rendiste") : "Todavía no la jugaste"}</div>
@@ -56,6 +56,7 @@ function dailyScreen(){
     <div><b>Recordatorio diario</b><br><span>${S.notif ? "Activado: te avisamos cuando hay palabra nueva." : "Recibí un aviso cada día con la palabra nueva."}</span></div>
     <button class="btn ${S.notif?"":"primary"}" data-daily="notif">${S.notif ? "Probar aviso" : "Activar"}</button>
   </div>`;
+  howFirst("dia");
 }
 function calendarHtml(){
   const {y, m} = calMonth;

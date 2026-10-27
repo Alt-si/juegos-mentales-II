@@ -20,7 +20,7 @@ const M_HINT_COST = [30, 50, 80];
 
 function mlevels(){
   levelMap({title:"Mayor o menor", desc:"Te hacemos una pregunta con respuesta numérica. Probá números: te decimos si el dato es mayor o menor hasta que lo encuentres.",
-    store:S.games.mayor, total:MDATA.length, names:M_STAGES, attr:"mlv",
+    store:S.games.mayor, total:MDATA.length, names:M_STAGES, attr:"mlv", how:"mayor",
     label:s=>{ const L = s*20+1; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
 }
 
@@ -32,7 +32,7 @@ function mplay(L){
   M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x)};
   $app.innerHTML = `${topBar("mlevels")}
   <div class="mplay">
-    <div class="hud"><span>Nivel <b>${L}</b></span><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span></div>
+    <div class="hud"><span>Nivel <b>${L}</b></span><span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
     <div class="mq">
       <span class="kicker">Pregunta</span>
       <h2>${esc(x.q)}</h2>

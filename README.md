@@ -11,6 +11,10 @@ App de juegos mentales para celulares. Cada juego suma experiencia a un **rango 
 | Tablas relámpago | Pendiente | Multiplicaciones contra reloj durante 60 segundos. |
 | Mayor o menor | Jugable | Una pregunta con respuesta numérica (años, metros, cantidades). Probás números y el juego te dice si el dato es mayor o menor. |
 
+## Cómo se juega
+
+Cada juego tiene un botón **?** que abre su explicación: en la portada (sobre cada tarjeta), en la pantalla de niveles y, en Palabra escondida y Mayor o menor, también durante la partida. La explicación aparece sola la primera vez que el jugador entra a cada juego. Los textos están en `src/ayuda.js`.
+
 ## Palabra del día
 
 Es un extra de Palabra escondida: el juego es el mismo, pero **la palabra es la misma para todos los jugadores en la misma fecha**, y cambia cada día. Se elige con una lista mezclada con una semilla fija, según el número de día.
@@ -138,6 +142,7 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/app.html`: la app (pantallas, Cadena, estilos).
 - `src/escondida.js`: la lógica de Palabra escondida y de los duelos.
 - `src/cadena-duelo.js`: el duelo de Cadena.
+- `src/ayuda.js`: las explicaciones de cómo se juega.
 - `src/mayor.js`: el juego Mayor o menor.
 - `data/mayor.js`: las preguntas de Mayor o menor.
 - `src/diaria.js`: la Palabra del día, el calendario y el aviso diario.

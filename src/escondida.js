@@ -111,7 +111,7 @@ const wDiff = L => L<=60 ? {s3:12, s2:30, name:"fácil"} : L<=120 ? {s3:18, s2:4
 
 function wlevels(){
   levelMap({title:"Palabra escondida", desc:`Escribí palabras. Cada una tiene su puesto entre las ${VOCAB.length.toLocaleString("es-AR")} del juego. La escondida es la número 1.`,
-    store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv",
+    store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv", how:"palabra",
     label:s=>{ const d = wDiff(s*20+1); return `nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
 }
 
@@ -143,7 +143,7 @@ function wplay(L, duel, forceIdx, opts){
   W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null, daily:(opts&&opts.daily)||null}, wRanking(lv));
   $app.innerHTML = `${topBar(W.daily ? "daily" : "wlevels")}
   <div class="wplay">
-    <div class="hud">${W.daily ? `<span><b>Palabra del día</b> · ${prettyDay(W.daily)}</span>` : duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span></div>
+    <div class="hud">${W.daily ? `<span><b>Palabra del día</b> · ${prettyDay(W.daily)}</span>` : duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span class="hudr"><span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span>${howBtn(W.daily?"dia":"palabra")}</span></div>
     <form class="wform" id="wform" autocomplete="off">
       <input id="wguess" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Escribí una palabra" aria-label="Tu palabra">
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>

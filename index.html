@@ -265,17 +265,43 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .note{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
 
 /* mapa de niveles */
-.stage{display:flex;flex-direction:column;gap:10px}
-.stage-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-.stage-head h2{font-size:20px}
-.stage-head span{font-size:12px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.lv{aspect-ratio:1;max-width:100%;border-radius:14px;background:var(--surface);border:1px solid var(--line);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--f-num);font-weight:700;font-size:17px}
-.lv .st{font-size:10px;letter-spacing:1px;color:var(--coin);height:12px}
-.lv.next{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.lv.lock{background:transparent;color:var(--lock);border-style:dashed;cursor:default}
-.levels{display:flex;flex-direction:column;gap:26px}
+/* mapa de niveles en camino */
+.lmap{display:flex;flex-direction:column;gap:6px;padding-bottom:20px}
+.lstage{display:flex;flex-direction:column}
+.lbanner{position:relative;overflow:hidden;border-radius:22px;padding:14px 16px;color:var(--ink-on);display:flex;flex-direction:column;gap:2px;
+  background:linear-gradient(135deg, var(--sc), color-mix(in srgb, var(--sc) 55%, var(--c5)));box-shadow:0 8px 20px color-mix(in srgb, var(--sc) 30%, transparent)}
+.lbanner::after{content:"";position:absolute;right:-24px;top:-24px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.15)}
+.lbanner.locked{filter:saturate(.35);opacity:.8}
+.lkick{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+.lbanner h2{font-size:24px;font-weight:700;line-height:1.1}
+.lsub{font-size:13px;opacity:.92}
+.lprog{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13px;font-weight:700;position:relative}
+.lbar{flex:1;height:7px;border-radius:7px;background:rgba(255,255,255,.3);overflow:hidden}
+.lbar i{display:block;height:100%;background:var(--ink-on);border-radius:7px}
+.lstars{white-space:nowrap}
+.lpath{position:relative;margin:4px 0 0}
+.lpath > svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lroad{fill:none;stroke:var(--line);stroke-width:10;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:2 16}
+.lroad.on{stroke:var(--sc);stroke-dasharray:none;opacity:.55}
+.lvn{position:absolute;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--f-display);border:0;padding:0;z-index:1}
+.lvn b{font-size:22px;font-weight:700;line-height:1}
+.lvn.done{background:var(--sc);color:var(--ink-on);box-shadow:0 5px 0 color-mix(in srgb, var(--sc) 60%, #000)}
+.lvn.done:active{transform:translate(-50%,-46%);box-shadow:0 2px 0 color-mix(in srgb, var(--sc) 60%, #000)}
+.lst{position:absolute;top:100%;margin-top:7px;font-size:13px;letter-spacing:1px;color:var(--coin);white-space:nowrap;line-height:1}
+.lst i{font-style:normal;color:var(--line)}
+.lvn.next{width:78px;height:78px;background:var(--surface);color:var(--sc);border:6px solid var(--sc);box-shadow:0 6px 0 color-mix(in srgb, var(--sc) 60%, #000);animation:lpulse 1.6s ease-in-out infinite}
+.lvn.next b{font-size:26px;color:var(--ink)}
+.lgo{position:absolute;top:100%;margin-top:10px;background:var(--sc);color:var(--ink-on);font-family:var(--f-body);font-size:11px;font-weight:800;letter-spacing:.1em;border-radius:999px;padding:3px 10px}
+@keyframes lpulse{50%{box-shadow:0 6px 0 color-mix(in srgb, var(--sc) 60%, #000), 0 0 0 12px color-mix(in srgb, var(--sc) 22%, transparent)}}
+.lvn.lock{background:var(--surface);color:var(--lock);border:3px dashed var(--line);cursor:default}
+.lnum{font-family:var(--f-num);font-size:11px;font-weight:700;margin-top:2px}
+.lend{display:flex;align-items:center;gap:12px;border:2px dashed var(--line);border-radius:20px;padding:14px 16px;color:var(--muted);margin-top:10px}
+.lend svg{width:26px;height:26px;color:var(--sc);flex:none}
+.lend div{display:flex;flex-direction:column;gap:2px}
+.lend b{font-family:var(--f-display);font-size:18px;color:var(--ink)}
+.lend span{font-size:13px}
+@media (prefers-reduced-motion: reduce){.lvn.next{animation:none}}
 
 /* juego */
 .play{flex:1;display:flex;flex-direction:column;gap:16px}
@@ -1109,23 +1135,61 @@ function home(){
 `;
 }
 
+/* mapa de niveles: un camino en zigzag, con un cartel de color al empezar cada etapa */
+const STAGE_COLORS = ["var(--c1)","var(--c2)","var(--c3)","var(--c6)","var(--c4)","var(--c7)","var(--c2b)","var(--c3)"];
+const PATH_X = [50, 74, 84, 74, 50, 26, 16, 26];          // posición horizontal (%) de cada nivel en el zigzag
+const NODE_H = 92;                                        // alto de cada escalón del camino (px)
+const LOCK_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>`;
+function pathD(pts){
+  let d = `M${pts[0][0]} ${pts[0][1]}`;
+  for(let i=1;i<pts.length;i++){ const [x0,y0] = pts[i-1], [x1,y1] = pts[i], my = (y0+y1)/2; d += ` C${x0} ${my} ${x1} ${my} ${x1} ${y1}`; }
+  return d;
+}
 function levelMap(o){
   clearTimers();
-  const h = highest(o.store); const stages = Math.ceil(o.total/20);
-  let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="levels">`;
-  for(let s=0;s<stages;s++){
-    if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>${isFinite(stages)?`Etapa ${s+1} a ${stages}`:`Etapa ${s+1} y más`}</h2><span>${isFinite(stages)?"Se desbloquean a medida que avanzás":"Los niveles no se terminan nunca: siempre hay uno más"}</span></div></div>`; break; }
-    html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s] || o.names[s % o.names.length] + " " + (Math.floor(s/o.names.length)+1)}</h2><span>${o.label(s)}</span></div><div class="grid">`;
-    for(let L=s*20+1; L<=Math.min(o.total, s*20+20); L++){
-      const st = o.store[L];
-      if(st!==undefined) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${st?"★".repeat(st):"–"}</span></button>`;
-      else if(L===h+1) html += `<button class="lv next" data-${o.attr}="${L}" aria-label="Nivel ${L}, siguiente">${L}<span class="st"></span></button>`;
-      else html += `<button class="lv lock" disabled aria-label="Nivel ${L} bloqueado">${L}<span class="st"></span></button>`;
+  const h = highest(o.store), stages = Math.ceil(o.total/20);
+  let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="lmap">`;
+  for(let s=0; s<stages; s++){
+    const first = s*20+1, last = Math.min(o.total, s*20+20), color = STAGE_COLORS[s % STAGE_COLORS.length];
+    const name = o.names[s] || o.names[s % o.names.length] + " " + (Math.floor(s/o.names.length)+1);
+    if(first > h+21 && s>0){
+      html += `<div class="lend" style="--sc:${color}">${LOCK_SVG}<div><b>${isFinite(stages)?`Etapa ${s+1} a ${stages}`:`Etapa ${s+1} y más`}</b><span>${isFinite(stages)?"Se desbloquean a medida que avanzás.":"Los niveles no se terminan nunca: siempre hay uno más."}</span></div></div>`;
+      break;
     }
-    html += `</div></div>`;
+    let done = 0, stars = 0;
+    for(let L=first; L<=last; L++) if(o.store[L]!==undefined){ done++; stars += o.store[L]||0; }
+    const n = last - first + 1, locked = first > h+1;
+    html += `<section class="lstage" style="--sc:${color}">
+      <div class="lbanner ${locked?"locked":""}">
+        <span class="lkick">Etapa ${s+1}</span>
+        <h2>${esc(name)}</h2>
+        <span class="lsub">${o.label(s)}</span>
+        <div class="lprog"><span class="lbar"><i style="width:${done/n*100}%"></i></span><span class="num">${done}/${n}</span><span class="lstars">★ <span class="num">${stars}</span></span></div>
+      </div>`;
+    // camino
+    const pts = [], nodes = [];
+    let lastDone = -1;
+    for(let j=0; j<n; j++){
+      const L = first + j, x = PATH_X[(s*20+j) % PATH_X.length], y = j*NODE_H + NODE_H/2;
+      pts.push([x, y]);
+      const st = o.store[L];
+      if(st!==undefined){ lastDone = j;
+        nodes.push(`<button class="lvn done" data-${o.attr}="${L}" style="left:${x}%;top:${y}px" aria-label="Nivel ${L}, ${st} ${st===1?"estrella":"estrellas"}"><b class="num">${L}</b><span class="lst">${st?`${"★".repeat(st)}<i>${"★".repeat(3-st)}</i>`:"–"}</span></button>`);
+      } else if(L===h+1){
+        nodes.push(`<button class="lvn next" data-${o.attr}="${L}" style="left:${x}%;top:${y}px" aria-label="Nivel ${L}, jugar"><b class="num">${L}</b><span class="lgo">JUGAR</span></button>`);
+      } else {
+        nodes.push(`<button class="lvn lock" disabled style="left:${x}%;top:${y}px" aria-label="Nivel ${L} bloqueado">${LOCK_SVG}<span class="lnum num">${L}</span></button>`);
+      }
+    }
+    const H = n*NODE_H, reach = Math.min(n-1, lastDone + (h+1 >= first && h+1 <= last ? 1 : 0));
+    html += `<div class="lpath" style="height:${H}px">
+      <svg viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true">
+        <path class="lroad" d="${pathD(pts)}"/>
+        ${reach>0?`<path class="lroad on" d="${pathD(pts.slice(0, reach+1))}"/>`:""}
+      </svg>${nodes.join("")}</div></section>`;
   }
   $app.innerHTML = html + `</div>`;
-  const nx = $app.querySelector(".lv.next"); if(nx) nx.scrollIntoView({block:"center"});
+  const nx = $app.querySelector(".lvn.next"); if(nx) nx.scrollIntoView({block:"center"});
   if(o.how) howFirst(o.how);
 }
 function levels(){
@@ -2834,14 +2898,16 @@ const BK_MAXM = BK_MS.length ? BK_MS[BK_MS.length-1] : 2;
 // cada jugador recibe los puzzles en otro orden
 BK_MS.forEach(m=>{ const a = BK_BY[m], r = mulberry32((S.wseed||1) + m*7919); for(let i=a.length-1;i>0;i--){ const j = Math.floor(r()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } });
 // dificultad buscada (mínimo de movimientos) para cada nivel: sube rápido al principio y después más despacio
+const BK_SHIFT = 19;           // el nivel 1 tiene la dificultad que antes tenía el nivel 20
 function bkTarget(L){
+  L += BK_SHIFT;
   const top = Math.max(4, Math.min(BK_MAXM, 34) - 2);
   const base = 2 + (top - 2) * (1 - Math.exp(-L/110));
   const j = Math.floor(mulberry32((S.wseed||1)*13 + L)()*3) - 1;
-  return Math.max(2, Math.round(base) + (L > 5 ? j : 0));
+  return Math.max(2, Math.round(base) + j);
 }
 const BK_ASSIGN = [], BK_USED = new Set(), BK_REP = {};
-const BK_WALLS_FROM = 40;      // antes del nivel 40, solo tableros sin paredes
+const BK_WALLS_FROM = 21;      // antes del nivel 21, solo tableros sin paredes
 function bkPickFrom(m, walls){ const a = BK_BY[m]; if(!a) return -1; for(const i of a) if(!BK_USED.has(i) && (walls || !BK_BANK[i].b.includes("x"))) return i; return -1; }
 function bkIdxFor(L){
   while(BK_ASSIGN.length < L){

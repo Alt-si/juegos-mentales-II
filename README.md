@@ -12,6 +12,16 @@ App de juegos mentales para celulares. Cada juego suma experiencia a un **rango 
 | Bloques deslizantes | Jugable | Tablero de 6×6 con bloques que se deslizan en su dirección: hay que sacar el bloque rojo por la salida. |
 | Mayor o menor | Jugable | Una pregunta con respuesta numérica (años, metros, cantidades). Probás números y el juego te dice si el dato es mayor o menor. |
 
+## Mapa de niveles
+
+En cada juego los niveles se muestran como un **camino en zigzag**:
+
+- Cada etapa de 20 niveles empieza con un **cartel de color** que muestra el nombre de la etapa, de qué se trata, cuántos niveles completaste y cuántas estrellas juntaste.
+- Los niveles **completados** se ven como círculos del color de la etapa, con sus estrellas abajo, y el tramo de camino recorrido queda pintado.
+- El **próximo nivel** es más grande, late y tiene un cartel "JUGAR". Al abrir la pantalla, el camino se desplaza solo hasta él.
+- Los niveles **bloqueados** muestran un candado, y el camino hacia ellos es punteado.
+- Al final hay un aviso de que los niveles no se terminan nunca.
+
 ## Cómo se juega
 
 Cada juego tiene un botón **?** que abre su explicación: en la portada (sobre cada tarjeta), en la pantalla de niveles y, en Palabra escondida y Mayor o menor, también durante la partida. La explicación aparece sola la primera vez que el jugador entra a cada juego. Los textos están en `src/ayuda.js`.
@@ -71,8 +81,8 @@ Es un juego al estilo Rush Hour o "Unblock Me". El tablero es de 6×6 y tiene la
 - **Estrellas:** 3 si se resuelve con el mínimo, 2 con hasta el mínimo + la mitad (al menos +2) y 1 con más. Con pistas, el máximo es 2.
 - **Deshacer** es gratis y resta el movimiento. **Reiniciar** vuelve el tablero al principio.
 - **Pista** (30, 50 y 80 monedas): el solucionador calcula la mejor jugada desde el tablero actual, marca el bloque que hay que mover y muestra con una silueta punteada hasta dónde.
-- **Paredes:** desde el nivel 40 aparecen tableros con cuadrados rayados fijos.
-- **Niveles sin fin:** cada nivel busca una dificultad (mínimo de movimientos) que sube rápido al principio y después más despacio. Cada jugador recibe los puzzles en otro orden. Cuando se usaron todos, empieza otra vuelta.
+- **Paredes:** desde el nivel 21 aparecen tableros con cuadrados rayados fijos.
+- **Niveles sin fin:** el nivel 1 ya pide unos 7 movimientos. Cada nivel busca una dificultad (mínimo de movimientos) que sube rápido al principio y después más despacio, hasta unos 30 movimientos. Cada jugador recibe los puzzles en otro orden. Cuando se usaron todos, empieza otra vuelta.
 
 ### Cómo se arma el banco de puzzles
 

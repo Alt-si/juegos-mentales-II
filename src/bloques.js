@@ -8,14 +8,16 @@ const BK_MAXM = BK_MS.length ? BK_MS[BK_MS.length-1] : 2;
 // cada jugador recibe los puzzles en otro orden
 BK_MS.forEach(m=>{ const a = BK_BY[m], r = mulberry32((S.wseed||1) + m*7919); for(let i=a.length-1;i>0;i--){ const j = Math.floor(r()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } });
 // dificultad buscada (mínimo de movimientos) para cada nivel: sube rápido al principio y después más despacio
+const BK_SHIFT = 19;           // el nivel 1 tiene la dificultad que antes tenía el nivel 20
 function bkTarget(L){
+  L += BK_SHIFT;
   const top = Math.max(4, Math.min(BK_MAXM, 34) - 2);
   const base = 2 + (top - 2) * (1 - Math.exp(-L/110));
   const j = Math.floor(mulberry32((S.wseed||1)*13 + L)()*3) - 1;
-  return Math.max(2, Math.round(base) + (L > 5 ? j : 0));
+  return Math.max(2, Math.round(base) + j);
 }
 const BK_ASSIGN = [], BK_USED = new Set(), BK_REP = {};
-const BK_WALLS_FROM = 40;      // antes del nivel 40, solo tableros sin paredes
+const BK_WALLS_FROM = 21;      // antes del nivel 21, solo tableros sin paredes
 function bkPickFrom(m, walls){ const a = BK_BY[m]; if(!a) return -1; for(const i of a) if(!BK_USED.has(i) && (walls || !BK_BANK[i].b.includes("x"))) return i; return -1; }
 function bkIdxFor(L){
   while(BK_ASSIGN.length < L){

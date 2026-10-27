@@ -335,7 +335,7 @@ function duelCard(){
   </div>`;
 }
 function addDuelCard(action, desc){
-  const h = $app.querySelector(".hello"); if(!h) return;
+  const h = $app.querySelector(".lhint") || $app.querySelector(".hello"); if(!h) return;   // el duelo va debajo del camino de niveles
   h.insertAdjacentHTML("afterend", duelCard().replace('data-duel="new"', `data-duel="${action}"`)
     .replace(/<p>Jugá una palabra[^<]*<\/p>/, `<p>${desc}</p>`));
   const f = document.getElementById("duelopen");

@@ -266,16 +266,20 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 
 /* mapa de niveles */
 /* mapa de niveles en camino */
-.lmap{display:flex;flex-direction:column;gap:6px;padding-bottom:20px}
+.lbox{position:relative;border-radius:24px;background:color-mix(in srgb, var(--surface) 55%, var(--bg));border:1px solid var(--line);overflow:hidden}
+.lmap{display:flex;flex-direction:column;gap:6px;padding:10px 10px 34px;height:min(52vh, 460px);min-height:300px;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;scroll-behavior:smooth;box-sizing:border-box;
+  -webkit-mask-image:linear-gradient(#000 calc(100% - 46px), transparent);mask-image:linear-gradient(#000 calc(100% - 46px), transparent)}
+.lhint{margin:-6px 0 4px;text-align:center;font-size:12px;color:var(--muted)}
 .lstage{display:flex;flex-direction:column}
-.lbanner{position:relative;overflow:hidden;border-radius:22px;padding:14px 16px;color:var(--ink-on);display:flex;flex-direction:column;gap:2px;
+.lbanner{position:sticky;top:0;z-index:3;overflow:hidden;border-radius:18px;padding:10px 14px;color:var(--ink-on);display:flex;flex-direction:column;gap:2px;
   background:linear-gradient(135deg, var(--sc), color-mix(in srgb, var(--sc) 55%, var(--c5)));box-shadow:0 8px 20px color-mix(in srgb, var(--sc) 30%, transparent)}
 .lbanner::after{content:"";position:absolute;right:-24px;top:-24px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.15)}
 .lbanner.locked{filter:saturate(.35);opacity:.8}
 .lkick{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
-.lbanner h2{font-size:24px;font-weight:700;line-height:1.1}
+.lbanner h2{font-size:20px;font-weight:700;line-height:1.1}
 .lsub{font-size:13px;opacity:.92}
-.lprog{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13px;font-weight:700;position:relative}
+.lprog{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:13px;font-weight:700;position:relative}
 .lbar{flex:1;height:7px;border-radius:7px;background:rgba(255,255,255,.3);overflow:hidden}
 .lbar i{display:block;height:100%;background:var(--ink-on);border-radius:7px}
 .lstars{white-space:nowrap}
@@ -283,16 +287,16 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .lpath > svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .lroad{fill:none;stroke:var(--line);stroke-width:10;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:2 16}
 .lroad.on{stroke:var(--sc);stroke-dasharray:none;opacity:.55}
-.lvn{position:absolute;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+.lvn{position:absolute;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-family:var(--f-display);border:0;padding:0;z-index:1}
-.lvn b{font-size:22px;font-weight:700;line-height:1}
+.lvn b{font-size:19px;font-weight:700;line-height:1}
 .lvn.done{background:var(--sc);color:var(--ink-on);box-shadow:0 5px 0 color-mix(in srgb, var(--sc) 60%, #000)}
 .lvn.done:active{transform:translate(-50%,-46%);box-shadow:0 2px 0 color-mix(in srgb, var(--sc) 60%, #000)}
-.lst{position:absolute;top:100%;margin-top:7px;font-size:13px;letter-spacing:1px;color:var(--coin);white-space:nowrap;line-height:1}
+.lst{position:absolute;top:100%;margin-top:5px;font-size:11px;letter-spacing:1px;color:var(--coin);white-space:nowrap;line-height:1}
 .lst i{font-style:normal;color:var(--line)}
-.lvn.next{width:78px;height:78px;background:var(--surface);color:var(--sc);border:6px solid var(--sc);box-shadow:0 6px 0 color-mix(in srgb, var(--sc) 60%, #000);animation:lpulse 1.6s ease-in-out infinite}
-.lvn.next b{font-size:26px;color:var(--ink)}
-.lgo{position:absolute;top:100%;margin-top:10px;background:var(--sc);color:var(--ink-on);font-family:var(--f-body);font-size:11px;font-weight:800;letter-spacing:.1em;border-radius:999px;padding:3px 10px}
+.lvn.next{width:64px;height:64px;background:var(--surface);color:var(--sc);border:6px solid var(--sc);box-shadow:0 6px 0 color-mix(in srgb, var(--sc) 60%, #000);animation:lpulse 1.6s ease-in-out infinite}
+.lvn.next b{font-size:22px;color:var(--ink)}
+.lgo{position:absolute;top:100%;margin-top:8px;background:var(--sc);color:var(--ink-on);font-family:var(--f-body);font-size:11px;font-weight:800;letter-spacing:.1em;border-radius:999px;padding:3px 10px}
 @keyframes lpulse{50%{box-shadow:0 6px 0 color-mix(in srgb, var(--sc) 60%, #000), 0 0 0 12px color-mix(in srgb, var(--sc) 22%, transparent)}}
 .lvn.lock{background:var(--surface);color:var(--lock);border:3px dashed var(--line);cursor:default}
 .lnum{font-family:var(--f-num);font-size:11px;font-weight:700;margin-top:2px}
@@ -1137,8 +1141,8 @@ function home(){
 
 /* mapa de niveles: un camino en zigzag, con un cartel de color al empezar cada etapa */
 const STAGE_COLORS = ["var(--c1)","var(--c2)","var(--c3)","var(--c6)","var(--c4)","var(--c7)","var(--c2b)","var(--c3)"];
-const PATH_X = [50, 74, 84, 74, 50, 26, 16, 26];          // posición horizontal (%) de cada nivel en el zigzag
-const NODE_H = 92;                                        // alto de cada escalón del camino (px)
+const PATH_X = [50, 70, 80, 70, 50, 30, 20, 30];          // posición horizontal (%) de cada nivel en el zigzag
+const NODE_H = 72;                                        // alto de cada escalón del camino (px)
 const LOCK_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>`;
 function pathD(pts){
   let d = `M${pts[0][0]} ${pts[0][1]}`;
@@ -1148,7 +1152,7 @@ function pathD(pts){
 function levelMap(o){
   clearTimers();
   const h = highest(o.store), stages = Math.ceil(o.total/20);
-  let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="lmap">`;
+  let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="lbox"><div class="lmap" id="lmap">`;
   for(let s=0; s<stages; s++){
     const first = s*20+1, last = Math.min(o.total, s*20+20), color = STAGE_COLORS[s % STAGE_COLORS.length];
     const name = o.names[s] || o.names[s % o.names.length] + " " + (Math.floor(s/o.names.length)+1);
@@ -1188,8 +1192,10 @@ function levelMap(o){
         ${reach>0?`<path class="lroad on" d="${pathD(pts.slice(0, reach+1))}"/>`:""}
       </svg>${nodes.join("")}</div></section>`;
   }
-  $app.innerHTML = html + `</div>`;
-  const nx = $app.querySelector(".lvn.next"); if(nx) nx.scrollIntoView({block:"center"});
+  $app.innerHTML = html + `</div></div><p class="lhint">Deslizá dentro del camino para ver más niveles</p>`;
+  // el camino muestra un tramo corto: se centra en el próximo nivel y el resto se ve deslizando
+  const box = document.getElementById("lmap"), nx = $app.querySelector(".lvn.next");
+  if(box && nx){ const go = () => { const r = nx.getBoundingClientRect(), b = box.getBoundingClientRect(); box.scrollTop += (r.top + r.height/2) - (b.top + b.height*0.58); }; go(); requestAnimationFrame(go); }
   if(o.how) howFirst(o.how);
 }
 function levels(){
@@ -1839,7 +1845,7 @@ function duelCard(){
   </div>`;
 }
 function addDuelCard(action, desc){
-  const h = $app.querySelector(".hello"); if(!h) return;
+  const h = $app.querySelector(".lhint") || $app.querySelector(".hello"); if(!h) return;   // el duelo va debajo del camino de niveles
   h.insertAdjacentHTML("afterend", duelCard().replace('data-duel="new"', `data-duel="${action}"`)
     .replace(/<p>Jugá una palabra[^<]*<\/p>/, `<p>${desc}</p>`));
   const f = document.getElementById("duelopen");

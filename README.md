@@ -18,7 +18,9 @@ En cada juego los niveles se muestran como un **camino en zigzag**:
 
 - Cada etapa de 20 niveles empieza con un **cartel de color** que muestra el nombre de la etapa, de qué se trata, cuántos niveles completaste y cuántas estrellas juntaste.
 - Los niveles **completados** se ven como círculos del color de la etapa, con sus estrellas abajo, y el tramo de camino recorrido queda pintado.
-- El **próximo nivel** es más grande, late y tiene un cartel "JUGAR". Al abrir la pantalla, el camino se desplaza solo hasta él.
+- El camino se ve dentro de un **recuadro de altura fija** que muestra un tramo corto. Al entrar se centra en el próximo nivel, y deslizando hacia arriba o hacia abajo aparecen los demás. El cartel de la etapa queda fijo arriba mientras se desliza.
+- El **próximo nivel** es más grande, late y tiene un cartel "JUGAR".
+- El recuadro de **Duelo** está debajo del camino.
 - Los niveles **bloqueados** muestran un candado, y el camino hacia ellos es punteado.
 - Al final hay un aviso de que los niveles no se terminan nunca.
 

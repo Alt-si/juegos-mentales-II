@@ -701,7 +701,14 @@ function parseSpoken(t){
   if(n===null) return null;
   return neg ? -n : n;
 }
+// modo voz: si el jugador usa el micrófono, la app no vuelve a poner el cursor en el campo de texto
+// (así no se abre el teclado del celular). Si toca el campo para escribir, vuelve el modo teclado.
+let voiceMode = false;
+function refocus(inp){ if(!inp) return; if(voiceMode) inp.blur(); else inp.focus(); }
+document.addEventListener("pointerdown", e => { if(e.target && e.target.matches && e.target.matches("#wguess, #mguess")) voiceMode = false; }, true);
 function startMic(btn, onAlts, idle, listening){
+  voiceMode = true;
+  try{ if(document.activeElement && document.activeElement.blur) document.activeElement.blur(); }catch(e){}
   idle = idle || "Escribí el resultado o tocá el micrófono"; listening = listening || "Escuchando… decí el número";
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ toast("Este navegador no permite dictar. Usá el teclado."); return; }

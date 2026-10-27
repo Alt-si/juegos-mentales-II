@@ -217,7 +217,7 @@ function wGuess(text){
   const raw = String(text).trim().split(/\s+/)[0] || "";
   const n = norm(raw);
   const inp = document.getElementById("wguess");
-  const clear = () => { if(inp){ inp.value=""; inp.focus(); } };
+  const clear = () => { if(inp){ inp.value=""; refocus(inp); } };
   if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
   const i = vFind(n);
   if(i<0){ toast(`No conozco "${raw}". Probá con otra palabra; este intento no cuenta.`); clear(); return; }

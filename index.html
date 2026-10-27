@@ -1543,7 +1543,7 @@ function wGuess(text){
   const raw = String(text).trim().split(/\s+/)[0] || "";
   const n = norm(raw);
   const inp = document.getElementById("wguess");
-  const clear = () => { if(inp){ inp.value=""; inp.focus(); } };
+  const clear = () => { if(inp){ inp.value=""; refocus(inp); } };
   if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
   const i = vFind(n);
   if(i<0){ toast(`No conozco "${raw}". Probá con otra palabra; este intento no cuenta.`); clear(); return; }
@@ -2243,7 +2243,7 @@ function mGuess(text){
   const g = {v, dir, tier: hit ? "good" : mTier(v), hint:false};
   M.guesses.push(g);
   if(!hit) mLose(M.pen);
-  if(inp){ inp.value=""; inp.focus(); }
+  if(inp){ inp.value=""; refocus(inp); }
   const f = document.getElementById("mfeed");
   f.className = `mfeed t-${g.tier} ${hit?"win":dir>0?"up":"down"}`;
   f.innerHTML = hit ? `<span class="arrow">✓</span><div><b>¡Es ${mFmt(v)}!</b><span>Encontraste el dato.</span></div>`
@@ -2415,7 +2415,14 @@ function parseSpoken(t){
   if(n===null) return null;
   return neg ? -n : n;
 }
+// modo voz: si el jugador usa el micrófono, la app no vuelve a poner el cursor en el campo de texto
+// (así no se abre el teclado del celular). Si toca el campo para escribir, vuelve el modo teclado.
+let voiceMode = false;
+function refocus(inp){ if(!inp) return; if(voiceMode) inp.blur(); else inp.focus(); }
+document.addEventListener("pointerdown", e => { if(e.target && e.target.matches && e.target.matches("#wguess, #mguess")) voiceMode = false; }, true);
 function startMic(btn, onAlts, idle, listening){
+  voiceMode = true;
+  try{ if(document.activeElement && document.activeElement.blur) document.activeElement.blur(); }catch(e){}
   idle = idle || "Escribí el resultado o tocá el micrófono"; listening = listening || "Escuchando… decí el número";
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ toast("Este navegador no permite dictar. Usá el teclado."); return; }

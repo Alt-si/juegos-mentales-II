@@ -100,7 +100,7 @@ function mGuess(text){
   const g = {v, dir, tier: hit ? "good" : mTier(v), hint:false};
   M.guesses.push(g);
   if(!hit) mLose(M.pen);
-  if(inp){ inp.value=""; inp.focus(); }
+  if(inp){ inp.value=""; refocus(inp); }
   const f = document.getElementById("mfeed");
   f.className = `mfeed t-${g.tier} ${hit?"win":dir>0?"up":"down"}`;
   f.innerHTML = hit ? `<span class="arrow">✓</span><div><b>¡Es ${mFmt(v)}!</b><span>Encontraste el dato.</span></div>`

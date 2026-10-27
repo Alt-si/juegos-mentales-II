@@ -91,6 +91,18 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .game.g-mayor{--g1:var(--c4);--g2:var(--c5)}
 .game.wide{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px}
 .game.wide > div:last-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.mpts{position:relative;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-radius:18px;padding:10px 14px;background:var(--surface);border:2px solid var(--c4)}
+.mpts span{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mpts b{font-family:var(--f-display);font-size:30px;font-weight:700;color:var(--c4);line-height:1}
+.mpts small{flex-basis:100%;font-size:12px;color:var(--muted)}
+.mpts.low{border-color:var(--bad)} .mpts.low b{color:var(--bad)}
+.mminus{position:absolute;right:16px;top:8px;font-family:var(--f-display);font-weight:700;font-size:22px;color:var(--bad)!important;letter-spacing:0!important;animation:minus .9s ease-out forwards}
+@keyframes minus{from{transform:none;opacity:1}to{transform:translateY(-24px);opacity:0}}
+.mscore{display:flex;flex-direction:column;align-items:center}
+.mscore b{font-family:var(--f-display);font-size:44px;font-weight:700;line-height:1;color:var(--ink)}
+.mscore span{font-size:13px;color:var(--muted)}
+.mtotal{margin:6px 0 0;font-weight:600}
+.mtotal b{color:var(--c4);font-size:18px}
 .mplay{display:flex;flex-direction:column;gap:12px}
 .mq{border-radius:22px;padding:16px;color:var(--ink-on);background:linear-gradient(135deg, var(--c4), var(--c5));display:flex;flex-direction:column;gap:6px}
 .mq .kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
@@ -870,7 +882,7 @@ acciones/relaciones/relaciones|sociedad,amor: amar querer abrazar besar beso abr
 
 <script>
 (function(){
-const TOTAL_LEVELS = 300;
+const TOTAL_LEVELS = Infinity;   // los niveles no se terminan: la dificultad sigue subiendo
 const ANSWER_TIME = 10;
 const RANKS = [
   ["Novato",0],["Aprendiz",400],["Contador",1200],["Calculista",3000],["Veloz",6500],
@@ -900,11 +912,11 @@ function highest(store){ store = store || cleared(); let h=0; for(const k in sto
 /* ---------- generador de niveles ---------- */
 function cfg(L){
   return {
-    count: Math.min(3 + Math.floor((L-1)/7), 20),
-    max: L<=10?9 : L<=30?15 : L<=60?25 : L<=110?50 : L<=180?99 : L<=240?250 : 999,
+    count: L<=300 ? Math.min(3 + Math.floor((L-1)/7), 20) : Math.min(30, 20 + Math.floor((L-300)/40)),
+    max: L<=10?9 : L<=30?15 : L<=60?25 : L<=110?50 : L<=180?99 : L<=240?250 : L<=400?999 : L<=600?2500 : 9999,
     min: L>110?10 : 1,
     ops: L<=5?["+"] : L<=40?["+","-"] : L<=90?["+","-","×"] : ["+","-","×","÷"],
-    speed: Math.max(520, 1650 - L*6),
+    speed: L<=300 ? Math.max(520, 1650 - L*6) : Math.max(380, 520 - Math.floor((L-300)/5)),
     neg: L>70
   };
 }
@@ -943,7 +955,7 @@ function stageLabel(s){
   const ops = c2.ops.join(" ");
   return `${c.count}–${c2.count} números · hasta ${c2.max} · ${ops}`;
 }
-const STAGE_NAMES = ["Primeros pasos","Calentando","Restas en juego","Ritmo","Doble dígito","Entra el ×","Cadena larga","Sin red","Todo vale","Cuatro operaciones","Centenas","Velocidad","Mente fría","Elite","Leyenda"];
+const STAGE_NAMES = ["Primeros pasos","Calentando","Restas en juego","Ritmo","Doble dígito","Entra el ×","Cadena larga","Sin red","Todo vale","Cuatro operaciones","Centenas","Velocidad","Mente fría","Elite","Leyenda","Miles","Turbo","Sin respiro","Maratón","Mente de acero"];
 
 /* ---------- utilidades ---------- */
 const $app = document.getElementById("app");
@@ -993,20 +1005,20 @@ function home(){
       <span class="bubble"></span>
       <div class="ic">5+6</div>
       <div><h3>Cadena</h3><p>Sumá, restá y multiplicá de cabeza mientras pasan los números.</p></div>
-      <div class="prog"><span class="pbar"><i style="width:${hc/TOTAL_LEVELS*100}%"></i></span><span class="num">${hc}/${TOTAL_LEVELS}</span></div>
+      <div class="prog"><span class="pbar"><i style="width:${hc%20/20*100}%"></i></span><span class="num">Nivel ${hc+1}</span></div>
     </button></div>
     <div class="gwrap">${howBtn("palabra")}<button class="game g-palabra" data-go="wlevels">
       <span class="bubble"></span>
       <div class="ic">A?</div>
       <div><h3>Palabra escondida</h3><p>Probá palabras y acercate a la secreta.</p></div>
-      <div class="prog"><span class="pbar"><i style="width:${hw/WDATA.length*100}%"></i></span><span class="num">${hw}/${WDATA.length}</span></div>
+      <div class="prog"><span class="pbar"><i style="width:${hw%20/20*100}%"></i></span><span class="num">Nivel ${hw+1}</span></div>
     </button></div>
   </div>
     <div class="gwrap wide">${howBtn("mayor")}<button class="game g-mayor wide" data-go="mlevels">
       <span class="bubble"></span>
       <div class="ic">↑↓</div>
       <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
-      <div class="prog"><span class="pbar"><i style="width:${hm/MDATA.length*100}%"></i></span><span class="num">${hm}/${MDATA.length}</span></div></div>
+      <div class="prog"><span class="pbar"><i style="width:${hm%20/20*100}%"></i></span><span class="num">Nivel ${hm+1} · ${mFmt(mTotal())} pts</span></div></div>
     </button></div>
   </div>
   <h2 class="sec-title">Muy pronto</h2>
@@ -1022,8 +1034,8 @@ function levelMap(o){
   const h = highest(o.store); const stages = Math.ceil(o.total/20);
   let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="levels">`;
   for(let s=0;s<stages;s++){
-    if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} a ${stages}</h2><span>Se desbloquean a medida que avanzás</span></div></div>`; break; }
-    html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s]||"Etapa"}</h2><span>${o.label(s)}</span></div><div class="grid">`;
+    if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>${isFinite(stages)?`Etapa ${s+1} a ${stages}`:`Etapa ${s+1} y más`}</h2><span>${isFinite(stages)?"Se desbloquean a medida que avanzás":"Los niveles no se terminan nunca: siempre hay uno más"}</span></div></div>`; break; }
+    html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s] || o.names[s % o.names.length] + " " + (Math.floor(s/o.names.length)+1)}</h2><span>${o.label(s)}</span></div><div class="grid">`;
     for(let L=s*20+1; L<=Math.min(o.total, s*20+20); L++){
       const st = o.store[L];
       if(st!==undefined) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${st?"★".repeat(st):"–"}</span></button>`;
@@ -1232,7 +1244,7 @@ const HOWTO = {
     tips: [
       "Más estrellas cuanto más rápido respondas: 3 si usás menos del 40 % del tiempo.",
       "Ayudas con monedas: volver a ver la secuencia, 5 segundos más o elegir entre 3 opciones. Con ayudas, máximo 2 estrellas.",
-      "Hay 300 niveles: con cada uno hay más números, más grandes, más rápidos y aparecen nuevas operaciones.",
+      "Los niveles no se terminan nunca: con cada uno hay más números, más grandes, más rápidos y aparecen nuevas operaciones.",
       "Duelo: tu rival recibe las mismas 3 cuentas. Gana quien acierte más; si empatan, quien respondió más rápido.",
     ],
   },
@@ -1247,6 +1259,7 @@ const HOWTO = {
     ],
     tips: [
       "Pensá en el tema: si \"gato\" te da 8, la palabra puede ser otro animal o algo de mascotas.",
+      "Los niveles no se terminan nunca: después de los primeros 200, cualquier palabra del juego puede ser la escondida.",
       "Singular y plural cuentan como la misma palabra, y no importan los acentos.",
       "Si el juego no conoce una palabra, te avisa y ese intento no cuenta.",
       "La pista cuesta monedas y te acerca solo un poco. Con pistas, máximo 2 estrellas.",
@@ -1278,7 +1291,9 @@ const HOWTO = {
     ],
     tips: [
       "El truco: probá siempre el número del medio del rango que te queda. Así llegás en la menor cantidad de intentos.",
+      "Arrancás con 1000 puntos y cada número que no es la respuesta te descuenta puntos: cuantos menos intentos, más puntos. La pista también descuenta.",
       "3 estrellas si lo encontrás en la cantidad de intentos \"ideal\" que muestra el juego.",
+      "Los niveles no se terminan nunca: después de las preguntas de datos aparecen preguntas nuevas con fechas, cuentas y tiempo.",
       "En los datos aproximados, como distancias o alturas, se acepta un margen que se avisa en la pregunta.",
       "La pista achica el rango a la mitad. Si te rendís, ves la respuesta y pasás a la siguiente.",
     ],
@@ -1422,8 +1437,8 @@ const wDiff = L => L<=60 ? {s3:12, s2:30, name:"fácil"} : L<=120 ? {s3:18, s2:4
 
 function wlevels(){
   levelMap({title:"Palabra escondida", desc:`Escribí palabras. Cada una tiene su puesto entre las ${VOCAB.length.toLocaleString("es-AR")} del juego. La escondida es la número 1.`,
-    store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv", how:"palabra",
-    label:s=>{ const d = wDiff(s*20+1); return `nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
+    store:S.games.escondida, total:Infinity, names:W_STAGES, attr:"wlv", how:"palabra",
+    label:s=>{ const d = wDiff(s*20+1); return `${s*20+1 > WDATA.length ? "todo el vocabulario · " : ""}nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
 }
 
 /* orden de las palabras: distinto para cada jugador, mezclado dentro de cada tramo de dificultad */
@@ -1437,7 +1452,34 @@ W_TIERS.forEach(([a,b],k)=>{
   idx.forEach((v,j)=>{ W_ORDER[a-1+j] = v; });
 });
 const wTier = L => W_TIERS.find(([a,b])=>L>=a && L<=b) || W_TIERS[0];
+/* niveles sin fin: después de los 200 niveles armados, cualquier sustantivo del vocabulario puede ser la escondida */
+const WPOOL = (()=>{
+  const used = new Set(WDATA.map(l=>l.si));
+  const skipDom = new Set(["acciones"]);
+  return VOCAB.map((v,i)=>i).filter(i=>{
+    const v = VOCAB[i];
+    if(used.has(i) || v.n.length < 4 || v.inferred) return false;
+    if(!v.mem.length || v.mem.some(m=>skipDom.has(m.d) || /acciones|cualidades|sabores|medidas|números/.test(m.s))) return false;
+    if(/(ar|er|ir)$/.test(v.n) && !/(lugar|mar|altar|collar|azúcar|azucar|mujer|placer|taller|alfiler|cráter|crater|bar|hogar|dólar|dolar|militar|nivel)$/.test(v.n)) return false;
+    return true;
+  });
+})();
+const W_CYCLES = {};
+function wIdxFor(L){
+  if(L <= WDATA.length) return W_ORDER[L-1];
+  const n = L - WDATA.length - 1, P = WPOOL.length, c = Math.floor(n / P);
+  if(!W_CYCLES[c]){ const idx = [...Array(P).keys()]; const r = mulberry32(S.wseed + 50000 + c*7919);
+    for(let i=idx.length-1;i>0;i--){ const j = Math.floor(r()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; } W_CYCLES[c] = idx; }
+  return WDATA.length + W_CYCLES[c][n % P];
+}
+const W_EXTRA = {};
+function wLv(idx){
+  if(idx < WDATA.length) return WDATA[idx];
+  const vi = WPOOL[idx - WDATA.length]; if(vi===undefined) return null;
+  return W_EXTRA[idx] || (W_EXTRA[idx] = {w:VOCAB[vi].w, si:vi, A:[], B:[]});
+}
 function wPractice(L){
+  if(L > WDATA.length){ const cur = W && W.idx; let i; do{ i = WDATA.length + Math.floor(Math.random()*WPOOL.length); }while(i===cur); return wplay(L, null, i); }
   // otra palabra al azar del mismo tramo de dificultad
   const [a,b] = wTier(L); const cur = W && W.idx;
   let i; do{ i = a-1 + Math.floor(Math.random()*(Math.min(b,WDATA.length)-a+1)); }while(i===cur && b>a);
@@ -1449,8 +1491,8 @@ const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" str
 function wplay(L, duel, forceIdx, opts){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  const idx = forceIdx!=null ? forceIdx : W_ORDER[L-1];
-  const lv = WDATA[idx];
+  const idx = forceIdx!=null ? forceIdx : wIdxFor(L);
+  const lv = wLv(idx);
   W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null, daily:(opts&&opts.daily)||null}, wRanking(lv));
   $app.innerHTML = `${topBar(W.daily ? "daily" : "wlevels")}
   <div class="wplay">
@@ -1565,8 +1607,8 @@ function wEnd(ok){
     ${ok?`<p class="hint">Nivel ${wDiff(W.L).name}: 3 estrellas con hasta ${wDiff(W.L).s3} intentos, 2 con hasta ${wDiff(W.L).s2}. Con pistas, máximo 2.</p>`:""}
     <div class="chainbox"><h2>Las más cercanas</h2><div class="wchips">${chips}</div></div>
     <div class="actions">
-      ${ok && W.L<WDATA.length?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
-      ${!ok && W.L<WDATA.length && S.games.escondida[W.L]?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
+      ${ok?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
+      ${!ok && S.games.escondida[W.L]?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
       ${ok?`<button class="btn" data-wpractice="${W.L}">Jugar otra palabra de este nivel</button>`:`<button class="btn primary" data-wpractice="${W.L}">Probar con otra palabra</button>`}
       <button class="btn" data-go="wlevels">Ver niveles</button>
     </div>
@@ -1591,7 +1633,7 @@ function duelDecode(text){
     const p = JSON.parse(new TextDecoder().decode(bytes));
     if(p.v!==1 || !p.a) return null;
     if(p.g==="c"){ if(!(p.L>=1 && p.L<=TOTAL_LEVELS) || !p.seed) return null; }
-    else if(!WDATA[p.w]) return null;
+    else if(!wLv(p.w)) return null;
     return p;
   }catch(e){ return null; }
 }
@@ -1758,7 +1800,7 @@ function duelShowResult(p){
   <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
     <div class="verdict">
       <h1>${verdict}</h1>
-      <p>La palabra era <b>${esc(WDATA[p.w].w)}</b></p>
+      <p>La palabra era <b>${esc(wLv(p.w).w)}</b></p>
       ${duelVs(me, rival, res)}
     </div>
     <div class="actions"><button class="btn primary" data-duel="new">Revancha con otra palabra</button><button class="btn" data-go="wlevels">Volver</button></div>
@@ -2118,21 +2160,29 @@ const mFmt = n => Number(n).toLocaleString("es-AR").replace("-", "−");
 // cuántos intentos haría falta yendo siempre a la mitad
 const mPar = x => Math.max(1, Math.ceil(Math.log2((x.hi - x.lo) / (2*x.tol + 1) + 1)));
 const M_HINT_COST = [30, 50, 80];
+// puntaje: arrancás con 1000 y cada número que no es la respuesta descuenta puntos (más en las preguntas de rango chico)
+const M_START = 1000, M_MIN = 50;
+const mPenalty = par => Math.max(25, Math.round(M_START / (2*par + 2)));
+S.mbest = S.mbest || {};
+const mTotal = () => Object.values(S.mbest).reduce((s,v)=>s+v, 0);
 
 function mlevels(){
   levelMap({title:"Mayor o menor", desc:"Te hacemos una pregunta con respuesta numérica. Probá números: te decimos si el dato es mayor o menor hasta que lo encuentres.",
-    store:S.games.mayor, total:MDATA.length, names:M_STAGES, attr:"mlv", how:"mayor",
-    label:s=>{ const L = s*20+1; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
+    store:S.games.mayor, total:Infinity, names:M_STAGES, attr:"mlv", how:"mayor",
+    label:s=>{ const L = s*20+1; if(L > MDATA.length) return "preguntas nuevas: fechas, cuentas y tiempo"; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
+  const h = $app.querySelector(".hello"); if(h) h.insertAdjacentHTML("beforeend", `<p class="mtotal">Tu puntaje total: <b class="num">${mFmt(mTotal())}</b> puntos</p>`);
 }
 
 let M = null;
 function mplay(L){
   clearTimers(); G = null; W = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  const x = MDATA[M_ORDER[L-1]];
-  M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x)};
+  const x = mQuestion(L);
+  M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x), pts:M_START};
+  M.pen = mPenalty(M.par);
   $app.innerHTML = `${topBar("mlevels")}
   <div class="mplay">
+    <div class="mpts" id="mpts"><span>Puntos</span><b class="num" id="mptsv">${mFmt(M.pts)}</b><small>cada número que no es la respuesta resta ${M.pen}</small></div>
     <div class="hud"><span>Nivel <b>${L}</b></span><span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
     <div class="mq">
       <span class="kicker">Pregunta</span>
@@ -2192,6 +2242,7 @@ function mGuess(text){
   if(!hit){ if(dir>0) M.lo = Math.max(M.lo, v+1); else M.hi = Math.min(M.hi, v-1); }
   const g = {v, dir, tier: hit ? "good" : mTier(v), hint:false};
   M.guesses.push(g);
+  if(!hit) mLose(M.pen);
   if(inp){ inp.value=""; inp.focus(); }
   const f = document.getElementById("mfeed");
   f.className = `mfeed t-${g.tier} ${hit?"win":dir>0?"up":"down"}`;
@@ -2213,7 +2264,7 @@ function mHint(){
   const minLo = Math.max(M.lo, x.a - nw + 1), maxLo = Math.min(x.a, M.hi - nw);
   const nlo = minLo <= maxLo ? minLo + Math.floor(Math.random()*(maxLo-minLo+1)) : M.lo;
   const nhi = nlo + nw;
-  S.coins -= cost; M.hints++; save();
+  S.coins -= cost; M.hints++; save(); mLose(M.pen*2);
   document.querySelector(".coins .num").textContent = S.coins;
   const mc = document.getElementById("mhcost"); if(mc) mc.textContent = M_HINT_COST[Math.min(M.hints, M_HINT_COST.length-1)];
   if(nlo > M.lo){ M.guesses.push({v:nlo-1, dir:1, tier:mTier(nlo-1), hint:true}); M.lo = nlo; }
@@ -2227,6 +2278,16 @@ function mGiveUp(btn){
     timers.push(setTimeout(()=>{ if(document.body.contains(btn)){ delete btn.dataset.sure; btn.innerHTML=`Rendirse<small>ver la respuesta</small>`; } }, 3000)); return; }
   mEnd(false);
 }
+function mLose(p){
+  const before = M.pts; M.pts = Math.max(M_MIN, M.pts - p);
+  const box = document.getElementById("mpts"), v = document.getElementById("mptsv");
+  if(v) v.textContent = mFmt(M.pts);
+  if(box && before > M.pts){
+    box.insertAdjacentHTML("beforeend", `<span class="mminus">−${before - M.pts}</span>`);
+    const m = box.lastElementChild; timers.push(setTimeout(()=>m && m.remove(), 900));
+    box.classList.toggle("low", M.pts < 400);
+  }
+}
 function mEnd(ok){
   M.done = true; clearTimers();
   const x = M.x, n = M.guesses.filter(g=>!g.hint).length;
@@ -2235,8 +2296,9 @@ function mEnd(ok){
     stars = n <= M.par ? 3 : n <= M.par+3 ? 2 : 1;
     if(M.hints) stars = Math.min(stars, 2);
     const prev = S.games.mayor[M.L]||0;
-    coins = stars*3 + (prev?0:5) + Math.floor(M.L/10);
-    xp = (10 + M.L) * stars + (prev?0:20);
+    coins = Math.round(M.pts/80) + (prev?0:5);
+    xp = Math.round(M.pts/8) + (prev?0:20);
+    M.newBest = M.pts > (S.mbest[M.L]||0); if(M.newBest) S.mbest[M.L] = M.pts;
     if(stars>prev) S.games.mayor[M.L] = stars;
     S.coins += coins; S.xp += xp; save();
     beep(880,.12); setTimeout(()=>beep(1175,.15),130);
@@ -2249,14 +2311,14 @@ function mEnd(ok){
       <p>${esc(x.q)}</p>
       <div class="wordball num">${mFmt(x.a)}${x.u?` <small>${esc(x.u)}</small>`:""}</div>
       ${ok?`<div class="stars" aria-label="${stars} de 3 estrellas">${"★".repeat(stars)}<span class="off">${"★".repeat(3-stars)}</span></div>`:""}
+      ${ok?`<div class="mscore"><b class="num">${mFmt(M.pts)}</b><span>puntos${M.newBest && (n>1||M.hints) ? " · ¡tu mejor marca en este nivel!" : ""}</span></div>`:`<div class="mscore"><b class="num">0</b><span>puntos</span></div>`}
       ${ok?`<p>En <b class="num">${n}</b> ${n===1?"intento":"intentos"}. Yendo siempre a la mitad se puede en ${M.par}.</p>`:""}
     </div>
     ${x.n?`<p class="mfact">${esc(x.n)}</p>`:""}
     ${ok?`<div class="gains"><span><span class="coin"></span>+<span class="num">${coins}</span></span><span>+<span class="num">${xp}</span> XP</span></div>`:""}
     ${chips?`<div class="chainbox"><h2>Tus números</h2><div class="wchips">${chips}</div></div>`:""}
     <div class="actions">
-      ${ok && M.L<MDATA.length?`<button class="btn primary" data-mlv="${M.L+1}">Nivel ${M.L+1}</button>`:""}
-      ${!ok && M.L<MDATA.length?`<button class="btn primary" data-mlv="${M.L+1}">Siguiente pregunta</button>`:""}
+      <button class="btn primary" data-mlv="${M.L+1}">${ok?`Nivel ${M.L+1}`:"Siguiente pregunta"}</button>
       <button class="btn" data-go="mlevels">Ver niveles</button>
     </div>
   </div>`;
@@ -2272,6 +2334,73 @@ function mAction(t){
     }, "Escribí un número o tocá el micrófono", "Escuchando… decí un número");
   }
 }
+
+/* ---------- Mayor o menor: preguntas generadas (niveles sin fin) ---------- */
+// Después de las preguntas escritas a mano, cada nivel arma una pregunta nueva a partir de datos firmes
+// (años de hechos conocidos) o de cuentas. La respuesta siempre se calcula, así que siempre es correcta.
+const M_EVENTS = [
+  ["la caída del Imperio romano de Occidente",476],["la llegada de Colón a América",1492],["la primera fundación de Buenos Aires",1536],
+  ["la segunda fundación de Buenos Aires",1580],["la publicación de la primera parte del Quijote",1605],["la independencia de Estados Unidos",1776],
+  ["la toma de la Bastilla",1789],["la Revolución de Mayo",1810],["la Declaración de la Independencia argentina",1816],
+  ["la muerte de San Martín",1850],["la sanción de la Constitución argentina",1853],["el nacimiento de Borges",1899],
+  ["el primer vuelo de los hermanos Wright",1903],["la inauguración del Teatro Colón",1908],["el hundimiento del Titanic",1912],
+  ["la inauguración del subte de Buenos Aires",1913],["el comienzo de la Primera Guerra Mundial",1914],["el descubrimiento de la penicilina",1928],
+  ["el primer Mundial de fútbol",1930],["la muerte de Carlos Gardel",1935],["la inauguración del Obelisco",1936],
+  ["el fin de la Segunda Guerra Mundial",1945],["la ley del voto femenino en la Argentina",1947],["la muerte de Eva Perón",1952],
+  ["la primera Copa Libertadores",1960],["la primera aparición de Mafalda",1964],["la llegada del ser humano a la Luna",1969],
+  ["el primer Mundial que ganó la Argentina",1978],["la guerra de Malvinas",1982],["la vuelta de la democracia en la Argentina",1983],
+  ["el Mundial de México 86",1986],["el nacimiento de Messi",1987],["la caída del Muro de Berlín",1989],
+  ["la fundación de Google",1998],["la presentación del primer iPhone",2007],["la elección del papa Francisco",2013],["el Mundial de Qatar",2022],
+];
+const M_MESES_DIAS = [31,28,31,30,31,30,31,31,30,31,30,31];
+function mNiceCeil(v){ if(v<=10) return 10; const p = Math.pow(10, Math.floor(Math.log10(v))); for(const m of [1,1.5,2,2.5,3,4,5,6,8,10]) if(m*p >= v) return Math.round(m*p); return 10*p; }
+function mGen(L){
+  const k = Math.max(0, L - MDATA.length);                     // cuánto pasamos de las preguntas a mano
+  const r = mulberry32((S.wseed||1)*31 + L*7919);
+  const ri = (a,b) => a + Math.floor(r()*(b-a+1));
+  const pick = arr => arr[Math.floor(r()*arr.length)];
+  const range = (a, spread) => { const hi = mNiceCeil(Math.max(a+1, a*(1.3 + r()*spread))); return {lo:0, hi}; };
+  const types = ["años","años","edad","multi","porcentaje","tiempo","fechas","ahorro","suma"];
+  const t = pick(types);
+  let q, a, u = "", n = "";
+  if(t==="años"){
+    let e1 = pick(M_EVENTS), e2 = pick(M_EVENTS); while(e2[1]===e1[1]) e2 = pick(M_EVENTS);
+    if(e1[1] > e2[1]) [e1,e2] = [e2,e1];
+    a = e2[1]-e1[1]; q = `¿Cuántos años pasaron entre ${e1[0]} y ${e2[0]}?`; u = "años";
+    n = `${e1[0][0].toUpperCase()+e1[0].slice(1)} fue en ${e1[1]} y ${e2[0]}, en ${e2[1]}.`;
+  } else if(t==="edad"){
+    const e = pick(M_EVENTS.filter(x=>x[1]>=1900 && x[1]<=2015)); const y = ri(e[1]+5, 2025);
+    a = y - e[1]; q = `Alguien nació el año de ${e[0]}. ¿Cuántos años cumplió en ${y}?`; u = "años";
+    n = `${e[0][0].toUpperCase()+e[0].slice(1)} fue en ${e[1]}: ${y} − ${e[1]} = ${a}.`;
+  } else if(t==="multi"){
+    const A = ri(11, Math.min(999, 25 + k*2)), B = ri(3, Math.min(99, 9 + Math.floor(k/4)));
+    a = A*B; q = `¿Cuánto es ${A} × ${B}?`; n = `${A} × ${B} = ${a}.`;
+  } else if(t==="porcentaje"){
+    const P = pick([5,10,15,20,25,30,40,50,60,75]); const N = 20*ri(2, Math.min(500, 10 + k));
+    a = N*P/100; q = `¿Cuánto es el ${P} % de ${N}?`; n = `El ${P} % de ${N} es ${N} × ${P} ÷ 100 = ${a}.`;
+  } else if(t==="tiempo"){
+    const v = pick(["hd","mh","sm","dw","hw"]);
+    if(v==="hd"){ const D = ri(2, 20 + k); a = D*24; q = `¿Cuántas horas hay en ${D} días?`; u = "horas"; n = `${D} × 24 = ${a}.`; }
+    if(v==="mh"){ const H = ri(2, 12 + Math.floor(k/2)), M = ri(1, 59); a = H*60+M; q = `¿Cuántos minutos son ${H} horas y ${M} minutos?`; u = "minutos"; n = `${H} × 60 + ${M} = ${a}.`; }
+    if(v==="sm"){ const M = ri(2, 30 + k); a = M*60; q = `¿Cuántos segundos hay en ${M} minutos?`; u = "segundos"; n = `${M} × 60 = ${a}.`; }
+    if(v==="dw"){ const W = ri(3, 30 + k); a = W*7; q = `¿Cuántos días son ${W} semanas?`; u = "días"; n = `${W} × 7 = ${a}.`; }
+    if(v==="hw"){ const W = ri(2, 10 + Math.floor(k/3)); a = W*168; q = `¿Cuántas horas hay en ${W} semanas?`; u = "horas"; n = `Una semana tiene 168 horas: ${W} × 168 = ${a}.`; }
+  } else if(t==="fechas"){
+    const m1 = ri(0, 9), m2 = ri(m1+1, 11), d1 = ri(1, M_MESES_DIAS[m1]), d2 = ri(1, M_MESES_DIAS[m2]);
+    const doy = (m,d) => M_MESES_DIAS.slice(0,m).reduce((s,x)=>s+x,0) + d;
+    a = doy(m2,d2) - doy(m1,d1);
+    q = `En un año que no es bisiesto, ¿cuántos días hay desde el ${d1} de ${MESES[m1]} hasta el ${d2} de ${MESES[m2]}?`; u = "días";
+    n = `El ${d1} de ${MESES[m1]} es el día ${doy(m1,d1)} del año y el ${d2} de ${MESES[m2]}, el día ${doy(m2,d2)}.`;
+  } else if(t==="ahorro"){
+    const X = 50*ri(2, 20 + Math.floor(k/2)), Wk = ri(4, 30 + Math.floor(k/2));
+    a = X*Wk; q = `Si ahorrás $${mFmt(X)} por semana, ¿cuánta plata juntás en ${Wk} semanas?`; u = "pesos"; n = `${mFmt(X)} × ${Wk} = ${mFmt(a)}.`;
+  } else {
+    const N = ri(10, Math.min(1000, 30 + k*2)); a = N*(N+1)/2;
+    q = `¿Cuánto da sumar todos los números del 1 al ${N}?`; n = `La fórmula es N × (N + 1) ÷ 2: ${N} × ${N+1} ÷ 2 = ${mFmt(a)}.`;
+  }
+  return Object.assign({q, a, u, n, tol:0, d:3, gen:true}, range(a, 1.6));
+}
+function mQuestion(L){ return L <= MDATA.length ? MDATA[M_ORDER[L-1]] : mGen(L); }
 
 
 /* ---------- micrófono ---------- */

@@ -40,17 +40,19 @@ El juego hace una pregunta cuya respuesta es un número y muestra entre qué val
 - Probás un número (escrito o con el micrófono) y el juego responde **"Es MAYOR ↑"** o **"Es MENOR ↓"**, en verde si estás muy cerca (a menos del 3 % del rango), amarillo si estás cerca (a menos del 15 %) o rojo si estás lejos.
 - Una **barra** muestra cuánto se fue achicando el rango donde puede estar la respuesta, con una marca por cada número que probaste.
 - Para los datos aproximados (distancias, alturas) se acepta un **margen**, que se avisa en la pregunta.
+- **Puntos:** cada pregunta arranca con **1000 puntos**. Cada número que no es la respuesta descuenta puntos (1000 ÷ (2 × ideal + 2), así las preguntas con rangos grandes no castigan de más), y una pista descuenta el doble. Si encontrás la respuesta, nunca bajás de 50 puntos; si te rendís, sumás 0. Se guarda tu mejor puntaje de cada nivel, y la suma es tu **puntaje total**. Las monedas y la XP dependen de los puntos.
 - **Estrellas:** el juego calcula cuántos intentos hacen falta yendo siempre a la mitad del rango (el "ideal"). 3 estrellas si lo lográs en esa cantidad, 2 con hasta 3 intentos más y 1 con más.
 - **Pista** (30, 50 y 80 monedas): achica el rango a la mitad, sin centrarlo en la respuesta. Con pistas, el máximo es 2 estrellas.
 - **Rendirse** muestra la respuesta y deja pasar a la pregunta siguiente.
 - Al terminar se ve la respuesta, un dato curioso y los números que probaste.
-- Hay **128 preguntas** en `data/mayor.js`, divididas en tres dificultades (cantidades conocidas, fechas y datos, y datos difíciles). Cada jugador las recibe en un orden distinto dentro de cada dificultad.
+- Primero vienen las **128 preguntas** escritas a mano en `data/mayor.js`, en tres dificultades (cantidades conocidas, fechas y datos, y datos difíciles). Cada jugador las recibe en un orden distinto dentro de cada dificultad.
+- **Después, los niveles no se terminan:** `src/mayor-gen.js` arma una pregunta nueva para cada nivel. Pueden ser años entre dos hechos conocidos, la edad de alguien nacido en una fecha, multiplicaciones, porcentajes, conversiones de tiempo, días entre dos fechas, ahorro semanal o sumas del 1 al N. La respuesta siempre se calcula, así que siempre es correcta. Los números crecen a medida que avanzás.
 
 ## Cadena: progresión de niveles
 
 Durante la secuencia, cada número aparece dentro de un círculo y el signo de la operación se muestra solo, entre un número y el siguiente (1, +, 2, −, 1…).
 
-Son 300 niveles, agrupados en etapas de 20. La cuenta se resuelve en orden, como en una calculadora (5 + 6 × 2 = 22).
+**Los niveles no se terminan nunca**, agrupados en etapas de 20. Hasta el 300 la dificultad sube como muestra la tabla; después las cuentas siguen creciendo hasta 30 números de hasta 9.999, a 0,38 s cada uno. La cuenta se resuelve en orden, como en una calculadora (5 + 6 × 2 = 22).
 
 | Niveles | Operaciones | Rango de números |
 |---|---|---|
@@ -95,7 +97,9 @@ Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre 
 
 **Las palabras escondidas son al azar.** Cada jugador recibe su propio orden: la primera vez que abre la app se genera una semilla, y con ella se mezclan las palabras dentro de cada tramo de dificultad (1–20, 21–40, 41–60, 61–100, 101–150 y 151–200). Así nadie sabe de antemano cuál es la palabra de un nivel, y la dificultad igual va subiendo. Si repetís un nivel, te toca otra palabra al azar del mismo tramo.
 
-Son 200 niveles, en 10 etapas de 20:
+**Los niveles no se terminan nunca.** Los primeros 200 son los armados (tabla de abajo). Después, cualquier sustantivo del vocabulario (casi 1.900) puede ser la palabra escondida, en un orden distinto para cada jugador. Cuando se terminan, se vuelven a mezclar.
+
+Los primeros 200, en 10 etapas de 20:
 
 | Niveles | Dificultad | 3 estrellas | 2 estrellas |
 |---|---|---|---|
@@ -144,6 +148,7 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/cadena-duelo.js`: el duelo de Cadena.
 - `src/ayuda.js`: las explicaciones de cómo se juega.
 - `src/mayor.js`: el juego Mayor o menor.
+- `src/mayor-gen.js`: las preguntas generadas de Mayor o menor (niveles sin fin).
 - `data/mayor.js`: las preguntas de Mayor o menor.
 - `src/diaria.js`: la Palabra del día, el calendario y el aviso diario.
 - `sw.js`: el service worker de los avisos.

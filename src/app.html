@@ -80,6 +80,18 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .game.g-mayor{--g1:var(--c4);--g2:var(--c5)}
 .game.wide{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px}
 .game.wide > div:last-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.mpts{position:relative;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-radius:18px;padding:10px 14px;background:var(--surface);border:2px solid var(--c4)}
+.mpts span{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mpts b{font-family:var(--f-display);font-size:30px;font-weight:700;color:var(--c4);line-height:1}
+.mpts small{flex-basis:100%;font-size:12px;color:var(--muted)}
+.mpts.low{border-color:var(--bad)} .mpts.low b{color:var(--bad)}
+.mminus{position:absolute;right:16px;top:8px;font-family:var(--f-display);font-weight:700;font-size:22px;color:var(--bad)!important;letter-spacing:0!important;animation:minus .9s ease-out forwards}
+@keyframes minus{from{transform:none;opacity:1}to{transform:translateY(-24px);opacity:0}}
+.mscore{display:flex;flex-direction:column;align-items:center}
+.mscore b{font-family:var(--f-display);font-size:44px;font-weight:700;line-height:1;color:var(--ink)}
+.mscore span{font-size:13px;color:var(--muted)}
+.mtotal{margin:6px 0 0;font-weight:600}
+.mtotal b{color:var(--c4);font-size:18px}
 .mplay{display:flex;flex-direction:column;gap:12px}
 .mq{border-radius:22px;padding:16px;color:var(--ink-on);background:linear-gradient(135deg, var(--c4), var(--c5));display:flex;flex-direction:column;gap:6px}
 .mq .kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
@@ -329,7 +341,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 <!--ESCONDIDA_DATA-->
 <script>
 (function(){
-const TOTAL_LEVELS = 300;
+const TOTAL_LEVELS = Infinity;   // los niveles no se terminan: la dificultad sigue subiendo
 const ANSWER_TIME = 10;
 const RANKS = [
   ["Novato",0],["Aprendiz",400],["Contador",1200],["Calculista",3000],["Veloz",6500],
@@ -359,11 +371,11 @@ function highest(store){ store = store || cleared(); let h=0; for(const k in sto
 /* ---------- generador de niveles ---------- */
 function cfg(L){
   return {
-    count: Math.min(3 + Math.floor((L-1)/7), 20),
-    max: L<=10?9 : L<=30?15 : L<=60?25 : L<=110?50 : L<=180?99 : L<=240?250 : 999,
+    count: L<=300 ? Math.min(3 + Math.floor((L-1)/7), 20) : Math.min(30, 20 + Math.floor((L-300)/40)),
+    max: L<=10?9 : L<=30?15 : L<=60?25 : L<=110?50 : L<=180?99 : L<=240?250 : L<=400?999 : L<=600?2500 : 9999,
     min: L>110?10 : 1,
     ops: L<=5?["+"] : L<=40?["+","-"] : L<=90?["+","-","×"] : ["+","-","×","÷"],
-    speed: Math.max(520, 1650 - L*6),
+    speed: L<=300 ? Math.max(520, 1650 - L*6) : Math.max(380, 520 - Math.floor((L-300)/5)),
     neg: L>70
   };
 }
@@ -402,7 +414,7 @@ function stageLabel(s){
   const ops = c2.ops.join(" ");
   return `${c.count}–${c2.count} números · hasta ${c2.max} · ${ops}`;
 }
-const STAGE_NAMES = ["Primeros pasos","Calentando","Restas en juego","Ritmo","Doble dígito","Entra el ×","Cadena larga","Sin red","Todo vale","Cuatro operaciones","Centenas","Velocidad","Mente fría","Elite","Leyenda"];
+const STAGE_NAMES = ["Primeros pasos","Calentando","Restas en juego","Ritmo","Doble dígito","Entra el ×","Cadena larga","Sin red","Todo vale","Cuatro operaciones","Centenas","Velocidad","Mente fría","Elite","Leyenda","Miles","Turbo","Sin respiro","Maratón","Mente de acero"];
 
 /* ---------- utilidades ---------- */
 const $app = document.getElementById("app");
@@ -452,20 +464,20 @@ function home(){
       <span class="bubble"></span>
       <div class="ic">5+6</div>
       <div><h3>Cadena</h3><p>Sumá, restá y multiplicá de cabeza mientras pasan los números.</p></div>
-      <div class="prog"><span class="pbar"><i style="width:${hc/TOTAL_LEVELS*100}%"></i></span><span class="num">${hc}/${TOTAL_LEVELS}</span></div>
+      <div class="prog"><span class="pbar"><i style="width:${hc%20/20*100}%"></i></span><span class="num">Nivel ${hc+1}</span></div>
     </button></div>
     <div class="gwrap">${howBtn("palabra")}<button class="game g-palabra" data-go="wlevels">
       <span class="bubble"></span>
       <div class="ic">A?</div>
       <div><h3>Palabra escondida</h3><p>Probá palabras y acercate a la secreta.</p></div>
-      <div class="prog"><span class="pbar"><i style="width:${hw/WDATA.length*100}%"></i></span><span class="num">${hw}/${WDATA.length}</span></div>
+      <div class="prog"><span class="pbar"><i style="width:${hw%20/20*100}%"></i></span><span class="num">Nivel ${hw+1}</span></div>
     </button></div>
   </div>
     <div class="gwrap wide">${howBtn("mayor")}<button class="game g-mayor wide" data-go="mlevels">
       <span class="bubble"></span>
       <div class="ic">↑↓</div>
       <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
-      <div class="prog"><span class="pbar"><i style="width:${hm/MDATA.length*100}%"></i></span><span class="num">${hm}/${MDATA.length}</span></div></div>
+      <div class="prog"><span class="pbar"><i style="width:${hm%20/20*100}%"></i></span><span class="num">Nivel ${hm+1} · ${mFmt(mTotal())} pts</span></div></div>
     </button></div>
   </div>
   <h2 class="sec-title">Muy pronto</h2>
@@ -481,8 +493,8 @@ function levelMap(o){
   const h = highest(o.store); const stages = Math.ceil(o.total/20);
   let html = `${topBar("home")}<div class="hello"><div class="titlerow"><h1>${o.title}</h1>${o.how?howBtn(o.how):""}</div><p>${o.desc}</p></div><div class="levels">`;
   for(let s=0;s<stages;s++){
-    if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} a ${stages}</h2><span>Se desbloquean a medida que avanzás</span></div></div>`; break; }
-    html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s]||"Etapa"}</h2><span>${o.label(s)}</span></div><div class="grid">`;
+    if(s*20+1 > h+21 && s>0){ html += `<div class="stage"><div class="stage-head"><h2>${isFinite(stages)?`Etapa ${s+1} a ${stages}`:`Etapa ${s+1} y más`}</h2><span>${isFinite(stages)?"Se desbloquean a medida que avanzás":"Los niveles no se terminan nunca: siempre hay uno más"}</span></div></div>`; break; }
+    html += `<div class="stage"><div class="stage-head"><h2>Etapa ${s+1} · ${o.names[s] || o.names[s % o.names.length] + " " + (Math.floor(s/o.names.length)+1)}</h2><span>${o.label(s)}</span></div><div class="grid">`;
     for(let L=s*20+1; L<=Math.min(o.total, s*20+20); L++){
       const st = o.store[L];
       if(st!==undefined) html += `<button class="lv" data-${o.attr}="${L}">${L}<span class="st">${st?"★".repeat(st):"–"}</span></button>`;

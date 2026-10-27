@@ -111,8 +111,8 @@ const wDiff = L => L<=60 ? {s3:12, s2:30, name:"fácil"} : L<=120 ? {s3:18, s2:4
 
 function wlevels(){
   levelMap({title:"Palabra escondida", desc:`Escribí palabras. Cada una tiene su puesto entre las ${VOCAB.length.toLocaleString("es-AR")} del juego. La escondida es la número 1.`,
-    store:S.games.escondida, total:WDATA.length, names:W_STAGES, attr:"wlv", how:"palabra",
-    label:s=>{ const d = wDiff(s*20+1); return `nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
+    store:S.games.escondida, total:Infinity, names:W_STAGES, attr:"wlv", how:"palabra",
+    label:s=>{ const d = wDiff(s*20+1); return `${s*20+1 > WDATA.length ? "todo el vocabulario · " : ""}nivel ${d.name} · 3 estrellas con hasta ${d.s3} intentos`; }});
 }
 
 /* orden de las palabras: distinto para cada jugador, mezclado dentro de cada tramo de dificultad */
@@ -126,7 +126,34 @@ W_TIERS.forEach(([a,b],k)=>{
   idx.forEach((v,j)=>{ W_ORDER[a-1+j] = v; });
 });
 const wTier = L => W_TIERS.find(([a,b])=>L>=a && L<=b) || W_TIERS[0];
+/* niveles sin fin: después de los 200 niveles armados, cualquier sustantivo del vocabulario puede ser la escondida */
+const WPOOL = (()=>{
+  const used = new Set(WDATA.map(l=>l.si));
+  const skipDom = new Set(["acciones"]);
+  return VOCAB.map((v,i)=>i).filter(i=>{
+    const v = VOCAB[i];
+    if(used.has(i) || v.n.length < 4 || v.inferred) return false;
+    if(!v.mem.length || v.mem.some(m=>skipDom.has(m.d) || /acciones|cualidades|sabores|medidas|números/.test(m.s))) return false;
+    if(/(ar|er|ir)$/.test(v.n) && !/(lugar|mar|altar|collar|azúcar|azucar|mujer|placer|taller|alfiler|cráter|crater|bar|hogar|dólar|dolar|militar|nivel)$/.test(v.n)) return false;
+    return true;
+  });
+})();
+const W_CYCLES = {};
+function wIdxFor(L){
+  if(L <= WDATA.length) return W_ORDER[L-1];
+  const n = L - WDATA.length - 1, P = WPOOL.length, c = Math.floor(n / P);
+  if(!W_CYCLES[c]){ const idx = [...Array(P).keys()]; const r = mulberry32(S.wseed + 50000 + c*7919);
+    for(let i=idx.length-1;i>0;i--){ const j = Math.floor(r()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; } W_CYCLES[c] = idx; }
+  return WDATA.length + W_CYCLES[c][n % P];
+}
+const W_EXTRA = {};
+function wLv(idx){
+  if(idx < WDATA.length) return WDATA[idx];
+  const vi = WPOOL[idx - WDATA.length]; if(vi===undefined) return null;
+  return W_EXTRA[idx] || (W_EXTRA[idx] = {w:VOCAB[vi].w, si:vi, A:[], B:[]});
+}
 function wPractice(L){
+  if(L > WDATA.length){ const cur = W && W.idx; let i; do{ i = WDATA.length + Math.floor(Math.random()*WPOOL.length); }while(i===cur); return wplay(L, null, i); }
   // otra palabra al azar del mismo tramo de dificultad
   const [a,b] = wTier(L); const cur = W && W.idx;
   let i; do{ i = a-1 + Math.floor(Math.random()*(Math.min(b,WDATA.length)-a+1)); }while(i===cur && b>a);
@@ -138,8 +165,8 @@ const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" str
 function wplay(L, duel, forceIdx, opts){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  const idx = forceIdx!=null ? forceIdx : W_ORDER[L-1];
-  const lv = WDATA[idx];
+  const idx = forceIdx!=null ? forceIdx : wIdxFor(L);
+  const lv = wLv(idx);
   W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null, daily:(opts&&opts.daily)||null}, wRanking(lv));
   $app.innerHTML = `${topBar(W.daily ? "daily" : "wlevels")}
   <div class="wplay">
@@ -254,8 +281,8 @@ function wEnd(ok){
     ${ok?`<p class="hint">Nivel ${wDiff(W.L).name}: 3 estrellas con hasta ${wDiff(W.L).s3} intentos, 2 con hasta ${wDiff(W.L).s2}. Con pistas, máximo 2.</p>`:""}
     <div class="chainbox"><h2>Las más cercanas</h2><div class="wchips">${chips}</div></div>
     <div class="actions">
-      ${ok && W.L<WDATA.length?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
-      ${!ok && W.L<WDATA.length && S.games.escondida[W.L]?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
+      ${ok?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
+      ${!ok && S.games.escondida[W.L]?`<button class="btn primary" data-wlv="${W.L+1}">Nivel ${W.L+1}</button>`:""}
       ${ok?`<button class="btn" data-wpractice="${W.L}">Jugar otra palabra de este nivel</button>`:`<button class="btn primary" data-wpractice="${W.L}">Probar con otra palabra</button>`}
       <button class="btn" data-go="wlevels">Ver niveles</button>
     </div>
@@ -280,7 +307,7 @@ function duelDecode(text){
     const p = JSON.parse(new TextDecoder().decode(bytes));
     if(p.v!==1 || !p.a) return null;
     if(p.g==="c"){ if(!(p.L>=1 && p.L<=TOTAL_LEVELS) || !p.seed) return null; }
-    else if(!WDATA[p.w]) return null;
+    else if(!wLv(p.w)) return null;
     return p;
   }catch(e){ return null; }
 }
@@ -447,7 +474,7 @@ function duelShowResult(p){
   <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
     <div class="verdict">
       <h1>${verdict}</h1>
-      <p>La palabra era <b>${esc(WDATA[p.w].w)}</b></p>
+      <p>La palabra era <b>${esc(wLv(p.w).w)}</b></p>
       ${duelVs(me, rival, res)}
     </div>
     <div class="actions"><button class="btn primary" data-duel="new">Revancha con otra palabra</button><button class="btn" data-go="wlevels">Volver</button></div>

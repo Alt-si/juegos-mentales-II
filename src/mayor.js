@@ -17,21 +17,29 @@ const mFmt = n => Number(n).toLocaleString("es-AR").replace("-", "−");
 // cuántos intentos haría falta yendo siempre a la mitad
 const mPar = x => Math.max(1, Math.ceil(Math.log2((x.hi - x.lo) / (2*x.tol + 1) + 1)));
 const M_HINT_COST = [30, 50, 80];
+// puntaje: arrancás con 1000 y cada número que no es la respuesta descuenta puntos (más en las preguntas de rango chico)
+const M_START = 1000, M_MIN = 50;
+const mPenalty = par => Math.max(25, Math.round(M_START / (2*par + 2)));
+S.mbest = S.mbest || {};
+const mTotal = () => Object.values(S.mbest).reduce((s,v)=>s+v, 0);
 
 function mlevels(){
   levelMap({title:"Mayor o menor", desc:"Te hacemos una pregunta con respuesta numérica. Probá números: te decimos si el dato es mayor o menor hasta que lo encuentres.",
-    store:S.games.mayor, total:MDATA.length, names:M_STAGES, attr:"mlv", how:"mayor",
-    label:s=>{ const L = s*20+1; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
+    store:S.games.mayor, total:Infinity, names:M_STAGES, attr:"mlv", how:"mayor",
+    label:s=>{ const L = s*20+1; if(L > MDATA.length) return "preguntas nuevas: fechas, cuentas y tiempo"; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
+  const h = $app.querySelector(".hello"); if(h) h.insertAdjacentHTML("beforeend", `<p class="mtotal">Tu puntaje total: <b class="num">${mFmt(mTotal())}</b> puntos</p>`);
 }
 
 let M = null;
 function mplay(L){
   clearTimers(); G = null; W = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  const x = MDATA[M_ORDER[L-1]];
-  M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x)};
+  const x = mQuestion(L);
+  M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x), pts:M_START};
+  M.pen = mPenalty(M.par);
   $app.innerHTML = `${topBar("mlevels")}
   <div class="mplay">
+    <div class="mpts" id="mpts"><span>Puntos</span><b class="num" id="mptsv">${mFmt(M.pts)}</b><small>cada número que no es la respuesta resta ${M.pen}</small></div>
     <div class="hud"><span>Nivel <b>${L}</b></span><span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
     <div class="mq">
       <span class="kicker">Pregunta</span>
@@ -91,6 +99,7 @@ function mGuess(text){
   if(!hit){ if(dir>0) M.lo = Math.max(M.lo, v+1); else M.hi = Math.min(M.hi, v-1); }
   const g = {v, dir, tier: hit ? "good" : mTier(v), hint:false};
   M.guesses.push(g);
+  if(!hit) mLose(M.pen);
   if(inp){ inp.value=""; inp.focus(); }
   const f = document.getElementById("mfeed");
   f.className = `mfeed t-${g.tier} ${hit?"win":dir>0?"up":"down"}`;
@@ -112,7 +121,7 @@ function mHint(){
   const minLo = Math.max(M.lo, x.a - nw + 1), maxLo = Math.min(x.a, M.hi - nw);
   const nlo = minLo <= maxLo ? minLo + Math.floor(Math.random()*(maxLo-minLo+1)) : M.lo;
   const nhi = nlo + nw;
-  S.coins -= cost; M.hints++; save();
+  S.coins -= cost; M.hints++; save(); mLose(M.pen*2);
   document.querySelector(".coins .num").textContent = S.coins;
   const mc = document.getElementById("mhcost"); if(mc) mc.textContent = M_HINT_COST[Math.min(M.hints, M_HINT_COST.length-1)];
   if(nlo > M.lo){ M.guesses.push({v:nlo-1, dir:1, tier:mTier(nlo-1), hint:true}); M.lo = nlo; }
@@ -126,6 +135,16 @@ function mGiveUp(btn){
     timers.push(setTimeout(()=>{ if(document.body.contains(btn)){ delete btn.dataset.sure; btn.innerHTML=`Rendirse<small>ver la respuesta</small>`; } }, 3000)); return; }
   mEnd(false);
 }
+function mLose(p){
+  const before = M.pts; M.pts = Math.max(M_MIN, M.pts - p);
+  const box = document.getElementById("mpts"), v = document.getElementById("mptsv");
+  if(v) v.textContent = mFmt(M.pts);
+  if(box && before > M.pts){
+    box.insertAdjacentHTML("beforeend", `<span class="mminus">−${before - M.pts}</span>`);
+    const m = box.lastElementChild; timers.push(setTimeout(()=>m && m.remove(), 900));
+    box.classList.toggle("low", M.pts < 400);
+  }
+}
 function mEnd(ok){
   M.done = true; clearTimers();
   const x = M.x, n = M.guesses.filter(g=>!g.hint).length;
@@ -134,8 +153,9 @@ function mEnd(ok){
     stars = n <= M.par ? 3 : n <= M.par+3 ? 2 : 1;
     if(M.hints) stars = Math.min(stars, 2);
     const prev = S.games.mayor[M.L]||0;
-    coins = stars*3 + (prev?0:5) + Math.floor(M.L/10);
-    xp = (10 + M.L) * stars + (prev?0:20);
+    coins = Math.round(M.pts/80) + (prev?0:5);
+    xp = Math.round(M.pts/8) + (prev?0:20);
+    M.newBest = M.pts > (S.mbest[M.L]||0); if(M.newBest) S.mbest[M.L] = M.pts;
     if(stars>prev) S.games.mayor[M.L] = stars;
     S.coins += coins; S.xp += xp; save();
     beep(880,.12); setTimeout(()=>beep(1175,.15),130);
@@ -148,14 +168,14 @@ function mEnd(ok){
       <p>${esc(x.q)}</p>
       <div class="wordball num">${mFmt(x.a)}${x.u?` <small>${esc(x.u)}</small>`:""}</div>
       ${ok?`<div class="stars" aria-label="${stars} de 3 estrellas">${"★".repeat(stars)}<span class="off">${"★".repeat(3-stars)}</span></div>`:""}
+      ${ok?`<div class="mscore"><b class="num">${mFmt(M.pts)}</b><span>puntos${M.newBest && (n>1||M.hints) ? " · ¡tu mejor marca en este nivel!" : ""}</span></div>`:`<div class="mscore"><b class="num">0</b><span>puntos</span></div>`}
       ${ok?`<p>En <b class="num">${n}</b> ${n===1?"intento":"intentos"}. Yendo siempre a la mitad se puede en ${M.par}.</p>`:""}
     </div>
     ${x.n?`<p class="mfact">${esc(x.n)}</p>`:""}
     ${ok?`<div class="gains"><span><span class="coin"></span>+<span class="num">${coins}</span></span><span>+<span class="num">${xp}</span> XP</span></div>`:""}
     ${chips?`<div class="chainbox"><h2>Tus números</h2><div class="wchips">${chips}</div></div>`:""}
     <div class="actions">
-      ${ok && M.L<MDATA.length?`<button class="btn primary" data-mlv="${M.L+1}">Nivel ${M.L+1}</button>`:""}
-      ${!ok && M.L<MDATA.length?`<button class="btn primary" data-mlv="${M.L+1}">Siguiente pregunta</button>`:""}
+      <button class="btn primary" data-mlv="${M.L+1}">${ok?`Nivel ${M.L+1}`:"Siguiente pregunta"}</button>
       <button class="btn" data-go="mlevels">Ver niveles</button>
     </div>
   </div>`;

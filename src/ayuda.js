@@ -13,7 +13,7 @@ const HOWTO = {
     tips: [
       "Más estrellas cuanto más rápido respondas: 3 si usás menos del 40 % del tiempo.",
       "Ayudas con monedas: volver a ver la secuencia, 5 segundos más o elegir entre 3 opciones. Con ayudas, máximo 2 estrellas.",
-      "Hay 300 niveles: con cada uno hay más números, más grandes, más rápidos y aparecen nuevas operaciones.",
+      "Los niveles no se terminan nunca: con cada uno hay más números, más grandes, más rápidos y aparecen nuevas operaciones.",
       "Duelo: tu rival recibe las mismas 3 cuentas. Gana quien acierte más; si empatan, quien respondió más rápido.",
     ],
   },
@@ -28,6 +28,7 @@ const HOWTO = {
     ],
     tips: [
       "Pensá en el tema: si \"gato\" te da 8, la palabra puede ser otro animal o algo de mascotas.",
+      "Los niveles no se terminan nunca: después de los primeros 200, cualquier palabra del juego puede ser la escondida.",
       "Singular y plural cuentan como la misma palabra, y no importan los acentos.",
       "Si el juego no conoce una palabra, te avisa y ese intento no cuenta.",
       "La pista cuesta monedas y te acerca solo un poco. Con pistas, máximo 2 estrellas.",
@@ -59,7 +60,9 @@ const HOWTO = {
     ],
     tips: [
       "El truco: probá siempre el número del medio del rango que te queda. Así llegás en la menor cantidad de intentos.",
+      "Arrancás con 1000 puntos y cada número que no es la respuesta te descuenta puntos: cuantos menos intentos, más puntos. La pista también descuenta.",
       "3 estrellas si lo encontrás en la cantidad de intentos \"ideal\" que muestra el juego.",
+      "Los niveles no se terminan nunca: después de las preguntas de datos aparecen preguntas nuevas con fechas, cuentas y tiempo.",
       "En los datos aproximados, como distancias o alturas, se acepta un margen que se avisa en la pregunta.",
       "La pista achica el rango a la mitad. Si te rendís, ves la respuesta y pasás a la siguiente.",
     ],

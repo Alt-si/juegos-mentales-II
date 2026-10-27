@@ -116,7 +116,7 @@ function dailyEnd(ok){
 function dailyShareText(k, r){
   const d = keyDate(k), streak = dailyStreak();
   const link = canLink ? location.origin + location.pathname + "#hoy" : "";
-  return `Palabra del día ${d.getDate()}/${d.getMonth()+1} en MenteCuenta: ${r.ok ? `la encontré en ${r.t} ${r.t===1?"intento":"intentos"}${r.h?` (con ${r.h} ${r.h===1?"pista":"pistas"})`:""}` : "esta vez no la encontré"}.${streak>1?` Racha: ${streak} días.`:""} ¿Y vos?${link?"\n"+link:""}`;
+  return `Palabra del día ${d.getDate()}/${d.getMonth()+1} en Mente Despierta: ${r.ok ? `la encontré en ${r.t} ${r.t===1?"intento":"intentos"}${r.h?` (con ${r.h} ${r.h===1?"pista":"pistas"})`:""}` : "esta vez no la encontré"}.${streak>1?` Racha: ${streak} días.`:""} ¿Y vos?${link?"\n"+link:""}`;
 }
 function dailySummary(k, r, g){
   clearTimers();

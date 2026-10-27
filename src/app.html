@@ -1,4 +1,4 @@
-<title>MenteCuenta</title>
+<title>Mente Despierta</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600&family=Azeret+Mono:wght@500;700&display=swap">
@@ -47,13 +47,12 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .hello h1{font-size:34px;font-weight:800;letter-spacing:-.01em}
 .hello p{margin:6px 0 0;color:var(--muted);max-width:40ch}
 /* portada */
-.brand{display:flex;flex-direction:column;gap:6px;padding-top:4px}
-.logo{font-family:var(--f-display);font-weight:700;font-size:clamp(40px,13vw,58px);line-height:.95;letter-spacing:-.01em;display:flex;flex-wrap:wrap}
-.logo span{display:inline-block;animation:bob 3s ease-in-out infinite;animation-delay:calc(var(--i) * .12s)}
-.logo span:nth-child(5n+1){color:var(--c1)} .logo span:nth-child(5n+2){color:var(--c2)} .logo span:nth-child(5n+3){color:var(--c3)}
-.logo span:nth-child(5n+4){color:var(--c4)} .logo span:nth-child(5n+5){color:var(--c5)}
+.brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding-top:4px}
+.logo{font-family:var(--f-display);font-weight:700;font-size:clamp(40px,12vw,58px);line-height:1;letter-spacing:-.01em;display:flex;flex-wrap:wrap;justify-content:center;column-gap:.28em}
+.logo .lw{display:inline-flex}
+.logo .lw > span{display:inline-block;animation:bob 3s ease-in-out infinite;animation-delay:calc(var(--i) * .12s)}
 @keyframes bob{0%,100%{transform:none}50%{transform:translateY(-3px) rotate(-2deg)}}
-.brand p{margin:0;color:var(--muted);font-size:16px;font-weight:500}
+.brand p{margin:0;color:var(--muted);font-size:16px;font-weight:500;max-width:32ch;text-wrap:balance}
 .daycard{position:relative;overflow:hidden;border-radius:26px;padding:20px;color:var(--ink-on);text-align:left;display:flex;flex-direction:column;gap:12px;
   background:linear-gradient(135deg, var(--c3), var(--c3b));box-shadow:0 14px 30px color-mix(in srgb, var(--c3) 35%, transparent)}
 .daycard::after{content:"";position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.16)}
@@ -330,7 +329,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .sharebtns{display:flex;gap:8px}
 .sharebtns .btn{flex:1}
 .who .mark{font-size:11px;text-transform:none;letter-spacing:0;font-weight:500}
-@media (prefers-reduced-motion: reduce){.logo span,.cday.today{animation:none!important}}
+@media (prefers-reduced-motion: reduce){.logo .lw > span,.cday.today{animation:none!important}}
 @media (prefers-reduced-motion: reduce){.big.pop,.ball,.chain .sign,.wrow,.wordball,.wchip{animation:none!important}.bar i{transition:none}}
 </style>
 
@@ -445,9 +444,10 @@ function home(){
   clearTimers();
   const hc = highest(), hw = highest(S.games.escondida), hm = highest(S.games.mayor);
   const st = dailyStatus();
-  const logo = [..."MenteCuenta"].map((c,i)=>`<span style="--i:${i}">${c}</span>`).join("");
+  let li = 0;
+  const logo = "Mente Despierta".split(" ").map(w=>`<span class="lw">${[...w].map(c=>{ const i = li++; return `<span style="--i:${i};color:var(--c${i%5+1})">${c}</span>`; }).join("")}</span>`).join(" ");
   $app.innerHTML = `${topBar()}
-  <div class="brand"><h1 class="logo" aria-label="MenteCuenta">${logo}</h1><p>Entrená la cabeza jugando un ratito por día.</p></div>
+  <div class="brand"><h1 class="logo" aria-label="Mente Despierta">${logo}</h1><p>Entrená la cabeza jugando un ratito por día.</p></div>
   <div class="gwrap">${howBtn("dia")}
   <button class="daycard" data-go="daily">
     <span class="kicker">Desafío del día · ${prettyDay(st.k)}</span>

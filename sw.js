@@ -1,4 +1,4 @@
-// Service worker de MenteCuenta: aviso diario de la Palabra del día.
+// Service worker de Mente Despierta: aviso diario de la Palabra del día.
 // - "periodicsync": Chrome en Android, con la app instalada, lo dispara cada ~12-24 h (lo decide el sistema).
 // - "push": listo para cuando haya un servidor que mande el aviso a una hora fija (por ejemplo, Firebase Cloud Messaging).
 

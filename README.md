@@ -1,4 +1,4 @@
-# MenteCuenta
+# Mente Despierta
 
 App de juegos mentales para celulares. Cada juego suma experiencia a un **rango general** y da **monedas** para pedir ayudas.
 

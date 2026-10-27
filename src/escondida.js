@@ -411,7 +411,7 @@ function duelEnd(ok){
   if(W.duel.role==="a"){
     const p = {v:1, g:"w", id:W.duel.id, w:W.idx, a:me};
     const token = duelEncode(p), link = duelLink(token);
-    const text = `${S.name} te desafía en Palabra escondida (MenteCuenta): ${ok?`encontré la palabra en ${markTxt(me)}`:"no pude encontrar la palabra"}. ¿Podés con menos?\n${link?link+"\n":""}Código: ${token}`;
+    const text = `${S.name} te desafía en Palabra escondida (Mente Despierta): ${ok?`encontré la palabra en ${markTxt(me)}`:"no pude encontrar la palabra"}. ¿Podés con menos?\n${link?link+"\n":""}Código: ${token}`;
     if(ok){ S.coins += 5; save(); }
     $app.innerHTML = `${topBar("wlevels")}
     <div class="result mood-${ok?"good":"bad"}">

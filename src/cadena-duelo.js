@@ -65,7 +65,7 @@ function cDuelEnd(d){
     const p = {v:1, g:"c", id:d.id, L:d.L, seed:d.seed, a:me};
     const token = duelEncode(p), link = duelLink(token);
     S.coins += me.ok*2; save();
-    const text = `${S.name} te desafía en Cadena (MenteCuenta): hice ${cMark(me)} en el nivel ${d.L}. ¿Podés superarlo?\n${link?link+"\n":""}Código: ${token}`;
+    const text = `${S.name} te desafía en Cadena (Mente Despierta): hice ${cMark(me)} en el nivel ${d.L}. ¿Podés superarlo?\n${link?link+"\n":""}Código: ${token}`;
     $app.innerHTML = `${topBar("levels")}
     <div class="result mood-${me.ok===C_ROUNDS?"good":me.ok>0?"warn":"bad"}">
       <div class="verdict">

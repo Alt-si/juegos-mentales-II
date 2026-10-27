@@ -8,6 +8,7 @@ App de juegos mentales para celulares. Cada juego suma experiencia a un **rango 
 |---|---|---|
 | Cadena | Jugable | Los números aparecen de a uno con su operación. Al terminar, tenés 10 segundos para dar el resultado. |
 | Palabra escondida | Jugable | Hay que encontrar una palabra secreta. Cada palabra que probás recibe un número según qué tan cerca está. |
+| Secuencia | Jugable | Luces de colores con sonido: hay que repetir la secuencia en el mismo orden. Cada acierto suma una luz. |
 | Tablas relámpago | Pendiente | Multiplicaciones contra reloj durante 60 segundos. |
 | Mayor o menor | Jugable | Una pregunta con respuesta numérica (años, metros, cantidades). Probás números y el juego te dice si el dato es mayor o menor. |
 
@@ -47,6 +48,19 @@ El juego hace una pregunta cuya respuesta es un número y muestra entre qué val
 - Al terminar se ve la respuesta, un dato curioso y los números que probaste.
 - Primero vienen las **128 preguntas** escritas a mano en `data/mayor.js`, en tres dificultades (cantidades conocidas, fechas y datos, y datos difíciles). Cada jugador las recibe en un orden distinto dentro de cada dificultad.
 - **Después, los niveles no se terminan:** `src/mayor-gen.js` arma una pregunta nueva para cada nivel. Pueden ser años entre dos hechos conocidos, la edad de alguien nacido en una fecha, multiplicaciones, porcentajes, conversiones de tiempo, días entre dos fechas, ahorro semanal o sumas del 1 al N. La respuesta siempre se calcula, así que siempre es correcta. Los números crecen a medida que avanzás.
+
+## Secuencia
+
+Es un juego de memoria al estilo Simón. Los botones son porciones de un círculo, cada uno con su color y su nota musical.
+
+- El juego enciende una secuencia de luces con sonido y el jugador la repite tocando los botones en el mismo orden (también con las teclas 1 a 8).
+- **Cada ronda que acertás agrega una luz más** al final de la secuencia. Si te equivocás o pasan 6 segundos sin tocar, termina la partida y se muestra cuál era el botón correcto.
+- **Botones:** se arranca con 4. Cuando la partida llega a **1.500 puntos** aparece el 5.º botón (alrededor de la ronda 17), a los **4.000** el 6.º, a los **8.000** el 7.º y a los **14.000** el 8.º. El botón nuevo entra directamente en la secuencia.
+- **Puntos por ronda:** largo de la secuencia × 10 × (botones − 3). Así, las rondas largas y con más botones valen mucho más.
+- **Rondas especiales:** desde la ronda 10, cada 5 rondas hay que repetir la secuencia **al revés**, y la ronda vale el doble.
+- **Velocidad:** cada luz dura 560 ms al principio y baja hasta 220 ms.
+- **Ayudas:** «Ver de nuevo» repite la secuencia (20 monedas, una vez por ronda; esa ronda vale la mitad). Después de un error se puede **seguir jugando** una vez por partida por 50 monedas.
+- Se guardan el récord de puntos, la mejor ronda, la mayor cantidad de botones alcanzada y las partidas jugadas. Las monedas y la XP dependen del puntaje.
 
 ## Cadena: progresión de niveles
 
@@ -146,6 +160,7 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/app.html`: la app (pantallas, Cadena, estilos).
 - `src/escondida.js`: la lógica de Palabra escondida y de los duelos.
 - `src/cadena-duelo.js`: el duelo de Cadena.
+- `src/secuencia.js`: el juego Secuencia.
 - `src/ayuda.js`: las explicaciones de cómo se juega.
 - `src/mayor.js`: el juego Mayor o menor.
 - `src/mayor-gen.js`: las preguntas generadas de Mayor o menor (niveles sin fin).

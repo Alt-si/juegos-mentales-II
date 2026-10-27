@@ -19,7 +19,7 @@
   --bg:#E9EDF5; --surface:#FFFFFF; --ink:#141A2B; --muted:#5B6479; --line:#D3D9E6;
   --accent:#2343D6; --accent-ink:#FFFFFF; --coin:#D99A0B; --good:#18A156; --bad:#E0352B; --warn:#F2B705; --on-warn:#2A1E00; --on-mood:#FFFFFF;
   --lock:#C7CEDC;
-  --c1:#FF6A3D; --c1b:#FF9F1C; --c2:#7B3FF2; --c2b:#E04BC9; --c3:#00A88F; --c3b:#3DCCF2; --c4:#FF4F8B; --c5:#FFC233; --ink-on:#FFFFFF;
+  --c1:#FF6A3D; --c1b:#FF9F1C; --c2:#7B3FF2; --c2b:#E04BC9; --c3:#00A88F; --c3b:#3DCCF2; --c4:#FF4F8B; --c5:#FFC233; --c6:#2F6BFF; --ink-on:#FFFFFF;
   --f-display:"Fredoka", "Trebuchet MS", system-ui, sans-serif;
   --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-num:"Azeret Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -27,12 +27,12 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0D1222; --surface:#161D33; --ink:#E8ECF7; --muted:#9AA4BE; --line:#28314C;
   --accent:#6A84FF; --accent-ink:#0D1222; --coin:#F2B531; --good:#2FD27A; --bad:#FF5A4E; --warn:#FFCB2E; --lock:#2C3552;
-  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D;
+  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0D1222; --surface:#161D33; --ink:#E8ECF7; --muted:#9AA4BE; --line:#28314C;
   --accent:#6A84FF; --accent-ink:#0D1222; --coin:#F2B531; --good:#2FD27A; --bad:#FF5A4E; --warn:#FFCB2E; --lock:#2C3552;
-  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D;
+  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF;
   color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
@@ -88,6 +88,41 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .game .prog .pbar i{display:block;height:100%;background:var(--ink-on);border-radius:6px}
 .game .bubble{position:absolute;right:-26px;bottom:-26px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
 .game.g-mayor{--g1:var(--c4);--g2:var(--c5)}
+.game.g-secuencia{--g1:var(--c6);--g2:var(--c3b)}
+.game .ic.sqic{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px;box-sizing:border-box}
+.sqic i{border-radius:50%;display:block;width:15px;height:15px}
+.sqboard{position:relative;width:min(100%,340px);aspect-ratio:1;max-width:100%;margin:0 auto}
+.sqboard svg{width:100%;height:100%;display:block;touch-action:manipulation;overflow:visible}
+.sqpad{fill:var(--pc);opacity:.4;stroke:var(--bg);stroke-width:5;stroke-linejoin:round;cursor:pointer;transition:opacity .07s, filter .07s;outline:none}
+.sqpad:focus-visible{stroke:var(--ink)}
+.sqpad.on{opacity:1;filter:brightness(1.18) drop-shadow(0 0 12px var(--pc))}
+.sqboard.wait .sqpad{cursor:default}
+.sqboard.idle{cursor:pointer}
+.sqboard.idle .sqpad{opacity:.75}
+.sqboard.shake{animation:shake .45s}
+.sqcenter{position:absolute;inset:30.5%;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;
+  box-shadow:0 0 0 4px var(--bg), 0 6px 18px rgba(0,0,0,.12)}
+.sqcenter b{font-family:var(--f-display);font-size:clamp(28px,10vw,40px);font-weight:700;line-height:1;color:var(--ink)}
+.sqcenter span{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.sqplay{display:flex;flex-direction:column;gap:12px}
+.sqmsg{min-height:2.6em;margin:0}
+.sqbanner{border-radius:16px;padding:10px 14px;font-size:14px;text-align:center}
+.sqbanner.rev{background:color-mix(in srgb, var(--c5) 30%, var(--surface));border:2px solid var(--c5)}
+.sqbanner.new{background:color-mix(in srgb, var(--c6) 18%, var(--surface));border:2px solid var(--c6)}
+.sqgoalbar{display:flex;flex-direction:column;gap:6px}
+.sqgtxt{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);font-weight:600}
+.sqgoalbar .bar i{background:linear-gradient(90deg, var(--c6), var(--c3b))}
+.sqctl{display:flex;justify-content:center}
+.sqctl .help{min-width:160px}
+.sqrevive{display:flex;gap:8px;width:100%}
+.sqrevive .btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.sqrevive .btn small{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600}
+.sqrevive .btn small .coin{width:12px;height:12px}
+.dstats.sqstats b{color:var(--c6)}
+.sqgoal{margin:0}
+.sqdots{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:100%}
+.sqdots i{width:14px;height:14px;border-radius:50%;animation:land .35s both;animation-delay:calc(var(--i) * 30ms)}
+@media (prefers-reduced-motion: reduce){.sqboard.shake,.sqdots i{animation:none}}
 .game.wide{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px}
 .game.wide > div:last-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .mpts{position:relative;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-radius:18px;padding:10px 14px;background:var(--surface);border:2px solid var(--c4)}
@@ -979,7 +1014,7 @@ function topBar(back){
 
 /* ---------- pantallas ---------- */
 let timers = [];
-function clearTimers(){ const cf=document.getElementById("confetti"); if(cf) cf.remove(); timers.forEach(t=>{clearTimeout(t);clearInterval(t)}); timers=[]; stopMic(); }
+function clearTimers(){ if(Q){ Q.phase = Q.phase==="end" ? "end" : "off"; } const cf=document.getElementById("confetti"); if(cf) cf.remove(); timers.forEach(t=>{clearTimeout(t);clearInterval(t)}); timers=[]; stopMic(); }
 
 function home(){
   clearTimers();
@@ -1019,6 +1054,12 @@ function home(){
       <div class="ic">↑↓</div>
       <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
       <div class="prog"><span class="pbar"><i style="width:${hm%20/20*100}%"></i></span><span class="num">Nivel ${hm+1} · ${mFmt(mTotal())} pts</span></div></div>
+    </button></div>
+    <div class="gwrap wide">${howBtn("secuencia")}<button class="game g-secuencia wide" data-go="secuencia">
+      <span class="bubble"></span>
+      <div class="ic sqic"><i style="background:#22C55E"></i><i style="background:#EF4444"></i><i style="background:#3B82F6"></i><i style="background:#FACC15"></i></div>
+      <div><h3>Secuencia</h3><p>Repetí la secuencia de luces y sonidos. Cada acierto suma una luz más.</p>
+      <div class="prog"><span class="pbar"><i style="width:${S.simon.best ? Math.min(100, S.simon.best/((sqNextGoal(S.simon.best)||{at:S.simon.best}).at)*100) : 0}%"></i></span><span class="num">${S.simon.best ? `Récord ${mFmt(S.simon.best)} pts` : "¡Probalo!"}</span></div></div>
     </button></div>
   </div>
   <h2 class="sec-title">Muy pronto</h2>
@@ -1278,6 +1319,24 @@ const HOWTO = {
       "Si la encontrás varios días seguidos, armás una racha y ganás más monedas.",
       "En el calendario ves los días que jugaste. Los que te perdiste se pueden jugar después, pero no suman a la racha.",
       "Activá el recordatorio para que te avise cuando hay palabra nueva.",
+    ],
+  },
+  secuencia: {
+    title: "Secuencia", color: "var(--c6)",
+    intro: "El juego enciende luces de colores, cada una con su sonido. Repetí la secuencia tocando los botones en el mismo orden.",
+    steps: [
+      "Mirá y escuchá: los botones se encienden uno por uno, cada uno con su nota.",
+      "Cuando aparece «Tu turno», tocá los botones en el mismo orden.",
+      "Si acertás, la secuencia se repite con una luz más al final. Si te equivocás, termina la partida.",
+      "Arrancás con 4 botones. Cuando juntás muchos puntos en una partida se suma otro botón, hasta llegar a 8.",
+    ],
+    tips: [
+      "Cada ronda da más puntos cuanto más larga es la secuencia y cuantos más botones hay en juego.",
+      "Nuevos botones: el 5.º a los 1.500 puntos, el 6.º a los 4.000, el 7.º a los 8.000 y el 8.º a los 14.000.",
+      "Desde la ronda 10, cada 5 rondas hay una ronda especial: hay que repetir la secuencia al revés, y vale el doble.",
+      "Las luces pasan cada vez más rápido. Tenés 6 segundos para cada toque.",
+      "Ayudas: «Ver de nuevo» repite la secuencia (20 monedas; esa ronda vale la mitad). Si te equivocás, podés seguir una vez por 50 monedas.",
+      "Con teclado también se juega: las teclas 1 a 8 son los botones.",
     ],
   },
   mayor: {
@@ -2402,6 +2461,251 @@ function mGen(L){
 }
 function mQuestion(L){ return L <= MDATA.length ? MDATA[M_ORDER[L-1]] : mGen(L); }
 
+/* ---------- Secuencia: luces de colores y sonidos ---------- */
+// El juego enciende una secuencia de botones, cada uno con su nota. Hay que repetirla en el mismo orden.
+// Con cada acierto se agrega una luz. Arranca con 4 botones; con muchos puntos en una partida se suman más, hasta 8.
+const SQ_COLORS = ["#22C55E","#EF4444","#FACC15","#3B82F6","#A855F7","#FB923C","#EC4899","#14B8A6"];
+const SQ_NAMES  = ["verde","rojo","amarillo","azul","violeta","naranja","rosa","turquesa"];
+const SQ_NOTES  = [329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00];
+const SQ_UNLOCK = [1500, 4000, 8000, 14000];          // puntos para el 5.º, 6.º, 7.º y 8.º botón
+const SQ_TIMEOUT = 6000;                              // tiempo máximo entre toque y toque
+const SQ_REPLAY = 20, SQ_REVIVE = 50;                 // costos en monedas
+S.simon = Object.assign({best:0, round:0, games:0, pads:4}, S.simon);
+let Q = null;
+
+function sqTone(i, ms){
+  try{
+    if(!actx) return;
+    const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+    o.type = "triangle"; o.frequency.value = SQ_NOTES[i];
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + ms/1000);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + ms/1000 + 0.05);
+  }catch(e){}
+}
+function sqBuzz(){
+  try{
+    if(!actx) return;
+    const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+    o.type = "sawtooth"; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(70, t + .45);
+    g.gain.setValueAtTime(0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + .5);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + .55);
+  }catch(e){}
+}
+function sqBoardHtml(n, center){
+  const R = 96, r = 40, rad = a => a*Math.PI/180;
+  let paths = "";
+  for(let i=0;i<n;i++){
+    const a0 = -90 + i*360/n, a1 = -90 + (i+1)*360/n, large = (a1-a0) > 180 ? 1 : 0;
+    const P = (rr, a) => `${(rr*Math.cos(rad(a))).toFixed(2)} ${(rr*Math.sin(rad(a))).toFixed(2)}`;
+    paths += `<path class="sqpad" data-sq="${i}" role="button" tabindex="0" aria-label="Botón ${SQ_NAMES[i]}, tecla ${i+1}" style="--pc:${SQ_COLORS[i]}"
+      d="M${P(R,a0)} A${R} ${R} 0 ${large} 1 ${P(R,a1)} L${P(r,a1)} A${r} ${r} 0 ${large} 0 ${P(r,a0)} Z"/>`;
+  }
+  return `<svg viewBox="-100 -100 200 200" aria-label="Tablero de ${n} botones">${paths}</svg>
+    <div class="sqcenter"><b id="sqc" class="num">${center||""}</b><span id="sqcs"></span></div>`;
+}
+function sqNextGoal(score){
+  const k = SQ_UNLOCK.findIndex(t => score < t);
+  return k < 0 ? null : {pad: 5 + k, at: SQ_UNLOCK[k], from: k ? SQ_UNLOCK[k-1] : 0};
+}
+
+/* pantalla de inicio del juego */
+function sqScreen(){
+  clearTimers(); G = null; W = null; M = null; Q = null;
+  const s = S.simon, goal = sqNextGoal(s.best);
+  $app.innerHTML = `${topBar("home")}
+  <div class="hello"><div class="titlerow"><h1>Secuencia</h1>${howBtn("secuencia")}</div>
+  <p>Mirá y escuchá la secuencia de luces, y repetila en el mismo orden. Cada vez que acertás se suma una luz más.</p></div>
+  <div class="dstats sqstats">
+    <div><b class="num">${mFmt(s.best)}</b><span>récord de puntos</span></div>
+    <div><b class="num">${s.round}</b><span>mejor ronda</span></div>
+    <div><b class="num">${s.pads}</b><span>botones alcanzados</span></div>
+    <div><b class="num">${s.games}</b><span>partidas</span></div>
+  </div>
+  <div class="sqboard idle">${sqBoardHtml(4, "▶")}</div>
+  <p class="hint sqgoal">${goal ? `Llegá a <b>${mFmt(goal.at)}</b> puntos en una partida para sumar el ${goal.pad}.º botón.` : "¡Ya llegaste a los 8 botones!"}</p>
+  <div class="actions"><button class="btn primary" data-sqa="start">Empezar</button></div>`;
+  const b = $app.querySelector(".sqboard"); if(b) b.addEventListener("click", ()=>sqStart());
+  howFirst("secuencia");
+}
+
+/* partida */
+function sqStart(){
+  clearTimers(); G = null; W = null; M = null;
+  if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  try{ actx && actx.state === "suspended" && actx.resume(); }catch(e){}
+  Q = {seq:[], pads:4, round:0, score:0, idx:0, phase:"show", revived:false, replayed:false, rev:false, t:[]};
+  $app.innerHTML = `${topBar("secuencia")}
+  <div class="sqplay">
+    <div class="hud"><span>Ronda <b id="sqround">0</b></span><span class="hudr"><span><b id="sqscore" class="num">0</b> puntos</span>${howBtn("secuencia")}</span></div>
+    <div class="sqbanner" id="sqbanner" hidden></div>
+    <div class="sqboard wait" id="sqboard"></div>
+    <p class="hint sqmsg" id="sqmsg">Mirá y escuchá…</p>
+    <div class="sqgoalbar" id="sqgoal"></div>
+    <div class="sqctl" id="sqctl"></div>
+  </div>`;
+  sqRenderBoard();
+  sqNext();
+}
+function sqT(fn, ms){ const id = setTimeout(fn, ms); Q.t.push(id); timers.push(id); return id; }
+function sqClearT(){ if(!Q) return; Q.t.forEach(clearTimeout); Q.t = []; }
+function sqRenderBoard(){
+  const b = document.getElementById("sqboard"); if(!b) return;
+  b.innerHTML = sqBoardHtml(Q.pads, Q.round || "");
+  b.classList.toggle("p8", Q.pads >= 7);
+  const svg = b.querySelector("svg");
+  svg.addEventListener("pointerdown", e => { const p = e.target.closest && e.target.closest("[data-sq]"); if(p){ e.preventDefault(); sqPress(+p.dataset.sq); } });
+  svg.addEventListener("keydown", e => { if((e.key==="Enter"||e.key===" ") && e.target.dataset && e.target.dataset.sq!==undefined){ e.preventDefault(); sqPress(+e.target.dataset.sq); } });
+}
+function sqCenter(big, small){
+  const c = document.getElementById("sqc"), s = document.getElementById("sqcs");
+  if(c && big!==undefined) c.textContent = big;
+  if(s) s.textContent = small || "";
+}
+function sqMsg(t){ const m = document.getElementById("sqmsg"); if(m) m.innerHTML = t; }
+function sqHud(){
+  const r = document.getElementById("sqround"), s = document.getElementById("sqscore");
+  if(r) r.textContent = Q.round; if(s) s.textContent = mFmt(Q.score);
+  const g = document.getElementById("sqgoal"), goal = sqNextGoal(Q.score);
+  if(g) g.innerHTML = goal
+    ? `<div class="sqgtxt"><span>Próximo botón (${goal.pad}.º)</span><span class="num">${mFmt(Q.score)} / ${mFmt(goal.at)}</span></div><div class="bar"><i style="width:${Math.min(100,(Q.score-goal.from)/(goal.at-goal.from)*100)}%"></i></div>`
+    : `<div class="sqgtxt"><span>¡Los 8 botones en juego!</span></div>`;
+  const ctl = document.getElementById("sqctl");
+  if(ctl && Q.phase !== "over") ctl.innerHTML = `<button class="help" data-sqa="replay" ${Q.phase!=="input"||Q.replayed||S.coins<SQ_REPLAY?"disabled":""}>Ver de nuevo<small><span class="coin"></span>${SQ_REPLAY}</small></button>`;
+}
+function sqLight(i, ms, sound=true){
+  const p = document.querySelector(`.sqpad[data-sq="${i}"]`); if(!p) return;
+  p.classList.add("on"); if(sound) sqTone(i, ms);
+  const id = setTimeout(()=>p.classList.remove("on"), ms); timers.push(id);
+}
+function sqNext(){
+  Q.round++; Q.idx = 0; Q.replayed = false;
+  const want = 4 + SQ_UNLOCK.filter(t => Q.score >= t).length;
+  let added = false;
+  if(want > Q.pads){ Q.pads = want; added = true; sqRenderBoard(); }
+  Q.seq.push(added ? Q.pads - 1 : Math.floor(Math.random()*Q.pads));     // un botón nuevo entra en la secuencia
+  Q.rev = Q.round >= 10 && Q.round % 5 === 0;
+  const ban = document.getElementById("sqbanner");
+  if(ban){
+    if(added){ ban.hidden = false; ban.className = "sqbanner new"; ban.innerHTML = `<b>¡Nuevo botón!</b> Ahora juegan ${Q.pads} colores y cada ronda vale más.`; beep(988,.1); setTimeout(()=>beep(1319,.12),110); }
+    else if(Q.rev){ ban.hidden = false; ban.className = "sqbanner rev"; ban.innerHTML = `<b>Ronda especial:</b> repetí la secuencia <b>AL REVÉS</b>. Vale el doble.`; }
+    else ban.hidden = true;
+  }
+  sqHud();
+  sqPlay(added || Q.rev ? 1500 : 650);
+}
+function sqSpeed(){ return {on: Math.max(220, 560 - Q.round*12), gap: Math.max(80, 200 - Q.round*4)}; }
+function sqPlay(delay){
+  sqClearT();
+  Q.phase = "show"; Q.idx = 0;
+  const b = document.getElementById("sqboard"); if(b) b.classList.add("wait");
+  sqCenter(Q.round, "mirá"); sqMsg("Mirá y escuchá…"); sqHud();
+  const {on, gap} = sqSpeed();
+  Q.seq.forEach((k, j) => sqT(()=>sqLight(k, on), delay + j*(on+gap)));
+  sqT(()=>{
+    Q.phase = "input";
+    if(b) b.classList.remove("wait");
+    sqCenter(Q.round, Q.rev ? "¡al revés!" : "tu turno");
+    sqMsg(Q.rev ? "Tocá los botones <b>al revés</b>: del último al primero." : "Tu turno: tocá los botones en el mismo orden.");
+    sqHud(); sqArmTimeout();
+  }, delay + Q.seq.length*(on+gap));
+}
+function sqArmTimeout(){
+  if(Q.to) clearTimeout(Q.to);
+  Q.to = sqT(function check(){
+    if(!Q || Q.phase !== "input") return;
+    const how = document.getElementById("howsheet");
+    if(how && !how.hidden){ Q.to = sqT(check, 1000); return; }      // con la ayuda abierta, no corre el reloj
+    sqFail(true);
+  }, SQ_TIMEOUT);
+}
+function sqPress(i){
+  if(!Q || Q.phase !== "input" || i >= Q.pads) return;
+  sqLight(i, 220);
+  const n = Q.seq.length, want = Q.rev ? Q.seq[n-1-Q.idx] : Q.seq[Q.idx];
+  if(i !== want) return sqFail(false, want);
+  Q.idx++;
+  if(Q.idx < n){ sqArmTimeout(); return; }
+  // ronda completa
+  sqClearT();
+  Q.phase = "ok";
+  let pts = n * 10 * (Q.pads - 3) * (Q.rev ? 2 : 1);
+  if(Q.replayed) pts = Math.round(pts/2);
+  Q.score += pts;
+  sqCenter("+" + pts, "¡bien!"); sqMsg(`¡Bien! La secuencia tiene ahora ${n+1} luces.`);
+  sqHud();
+  sqT(()=>sqNext(), 700);
+}
+function sqFail(timeout, want){
+  sqClearT();
+  Q.phase = "fail";
+  sqBuzz();
+  if(want !== undefined) sqT(()=>sqLight(want, 650, false), 250);
+  const b = document.getElementById("sqboard"); if(b){ b.classList.add("wait","shake"); sqT(()=>b.classList.remove("shake"), 500); }
+  sqCenter("✕", timeout ? "sin tiempo" : "¡uy!");
+  sqMsg(timeout ? "Se acabó el tiempo para tocar." : `Era el <b>${SQ_NAMES[want]}</b>.`);
+  const ctl = document.getElementById("sqctl");
+  if(!Q.revived && S.coins >= SQ_REVIVE && ctl){
+    Q.phase = "over";
+    ctl.innerHTML = `<div class="sqrevive">
+      <button class="btn primary" data-sqa="revive">Seguir jugando<small><span class="coin"></span>${SQ_REVIVE}</small></button>
+      <button class="btn" data-sqa="end">Terminar</button></div>`;
+    return;
+  }
+  sqT(()=>sqEnd(), 1300);
+}
+function sqEnd(){
+  sqClearT(); clearTimers();
+  const s = S.simon, rounds = Q.round - 1, score = Q.score;
+  const record = score > s.best;
+  s.games++; if(record) s.best = score; if(rounds > s.round) s.round = rounds; if(Q.pads > s.pads) s.pads = Q.pads;
+  const coins = Math.round(score/120) + rounds, xp = Math.round(score/15);
+  S.coins += coins; S.xp += xp; save();
+  Q.phase = "end";
+  if(record && score > 0){ beep(880,.12); setTimeout(()=>beep(1175,.15),130); }
+  $app.innerHTML = `${topBar("secuencia")}
+  <div class="result mood-${record && score>0 ? "good" : "warn"}">
+    <div class="verdict">
+      <h1>${record && score>0 ? "¡Nuevo récord!" : "Fin de la partida"}</h1>
+      <p>Llegaste a la ronda <b class="num">${Q.round}</b> con <b>${Q.pads}</b> botones</p>
+      <div class="mscore"><b class="num">${mFmt(score)}</b><span>puntos${record ? "" : ` · récord: ${mFmt(s.best)}`}</span></div>
+      <div class="sqdots">${Q.seq.map((k,j)=>`<i style="background:${SQ_COLORS[k]};--i:${j}" title="${SQ_NAMES[k]}"></i>`).join("")}</div>
+    </div>
+    <div class="gains"><span><span class="coin"></span>+<span class="num">${coins}</span></span><span>+<span class="num">${xp}</span> XP</span></div>
+    ${sqNextGoal(s.best) ? `<p class="hint">Llegá a ${mFmt(sqNextGoal(s.best).at)} puntos en una partida para jugar con ${sqNextGoal(s.best).pad} botones.</p>` : ""}
+    <div class="actions">
+      <button class="btn primary" data-sqa="start">Jugar de nuevo</button>
+      <button class="btn" data-go="home">Inicio</button>
+    </div>
+  </div>`;
+  if(record && score>0) confetti();
+}
+function sqAction(a){
+  if(a === "start") return sqStart();
+  if(!Q) return;
+  if(a === "replay"){
+    if(Q.phase !== "input" || Q.replayed || S.coins < SQ_REPLAY) return;
+    S.coins -= SQ_REPLAY; Q.replayed = true; save();
+    const c = document.querySelector(".coins .num"); if(c) c.textContent = S.coins;
+    toast("Te mostramos la secuencia otra vez. Esta ronda vale la mitad.");
+    return sqPlay(500);
+  }
+  if(a === "revive"){
+    if(Q.revived || S.coins < SQ_REVIVE) return;
+    S.coins -= SQ_REVIVE; Q.revived = true; save();
+    const c = document.querySelector(".coins .num"); if(c) c.textContent = S.coins;
+    const ctl = document.getElementById("sqctl"); if(ctl) ctl.innerHTML = "";
+    return sqPlay(700);
+  }
+  if(a === "end") return sqEnd();
+}
+document.addEventListener("keydown", e => {
+  if(!Q || Q.phase !== "input" || !/^[1-8]$/.test(e.key)) return;
+  const how = document.getElementById("howsheet"); if(how && !how.hidden) return;
+  sqPress(+e.key - 1);
+});
+
 
 /* ---------- micrófono ---------- */
 let rec=null;
@@ -2444,7 +2748,8 @@ function stopMic(){ try{ rec && rec.abort(); }catch(e){} rec=null; }
 /* ---------- eventos ---------- */
 $app.addEventListener("click", e => {
   const t = e.target.closest("button"); if(!t || t.disabled) return;
-  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen():levels(); return; }
+  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen(): g==="secuencia"?sqScreen():levels(); return; }
+  if(t.dataset.sqa){ sqAction(t.dataset.sqa); return; }
   if(t.dataset.mlv){ mplay(+t.dataset.mlv); return; }
   if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }
   if(t.dataset.daily){ dailyAction(t.dataset.daily); return; }

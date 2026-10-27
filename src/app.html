@@ -8,7 +8,7 @@
   --bg:#E9EDF5; --surface:#FFFFFF; --ink:#141A2B; --muted:#5B6479; --line:#D3D9E6;
   --accent:#2343D6; --accent-ink:#FFFFFF; --coin:#D99A0B; --good:#18A156; --bad:#E0352B; --warn:#F2B705; --on-warn:#2A1E00; --on-mood:#FFFFFF;
   --lock:#C7CEDC;
-  --c1:#FF6A3D; --c1b:#FF9F1C; --c2:#7B3FF2; --c2b:#E04BC9; --c3:#00A88F; --c3b:#3DCCF2; --c4:#FF4F8B; --c5:#FFC233; --ink-on:#FFFFFF;
+  --c1:#FF6A3D; --c1b:#FF9F1C; --c2:#7B3FF2; --c2b:#E04BC9; --c3:#00A88F; --c3b:#3DCCF2; --c4:#FF4F8B; --c5:#FFC233; --c6:#2F6BFF; --ink-on:#FFFFFF;
   --f-display:"Fredoka", "Trebuchet MS", system-ui, sans-serif;
   --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-num:"Azeret Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -16,12 +16,12 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0D1222; --surface:#161D33; --ink:#E8ECF7; --muted:#9AA4BE; --line:#28314C;
   --accent:#6A84FF; --accent-ink:#0D1222; --coin:#F2B531; --good:#2FD27A; --bad:#FF5A4E; --warn:#FFCB2E; --lock:#2C3552;
-  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D;
+  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0D1222; --surface:#161D33; --ink:#E8ECF7; --muted:#9AA4BE; --line:#28314C;
   --accent:#6A84FF; --accent-ink:#0D1222; --coin:#F2B531; --good:#2FD27A; --bad:#FF5A4E; --warn:#FFCB2E; --lock:#2C3552;
-  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D;
+  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF;
   color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
@@ -77,6 +77,41 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .game .prog .pbar i{display:block;height:100%;background:var(--ink-on);border-radius:6px}
 .game .bubble{position:absolute;right:-26px;bottom:-26px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
 .game.g-mayor{--g1:var(--c4);--g2:var(--c5)}
+.game.g-secuencia{--g1:var(--c6);--g2:var(--c3b)}
+.game .ic.sqic{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px;box-sizing:border-box}
+.sqic i{border-radius:50%;display:block;width:15px;height:15px}
+.sqboard{position:relative;width:min(100%,340px);aspect-ratio:1;max-width:100%;margin:0 auto}
+.sqboard svg{width:100%;height:100%;display:block;touch-action:manipulation;overflow:visible}
+.sqpad{fill:var(--pc);opacity:.4;stroke:var(--bg);stroke-width:5;stroke-linejoin:round;cursor:pointer;transition:opacity .07s, filter .07s;outline:none}
+.sqpad:focus-visible{stroke:var(--ink)}
+.sqpad.on{opacity:1;filter:brightness(1.18) drop-shadow(0 0 12px var(--pc))}
+.sqboard.wait .sqpad{cursor:default}
+.sqboard.idle{cursor:pointer}
+.sqboard.idle .sqpad{opacity:.75}
+.sqboard.shake{animation:shake .45s}
+.sqcenter{position:absolute;inset:30.5%;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;
+  box-shadow:0 0 0 4px var(--bg), 0 6px 18px rgba(0,0,0,.12)}
+.sqcenter b{font-family:var(--f-display);font-size:clamp(28px,10vw,40px);font-weight:700;line-height:1;color:var(--ink)}
+.sqcenter span{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.sqplay{display:flex;flex-direction:column;gap:12px}
+.sqmsg{min-height:2.6em;margin:0}
+.sqbanner{border-radius:16px;padding:10px 14px;font-size:14px;text-align:center}
+.sqbanner.rev{background:color-mix(in srgb, var(--c5) 30%, var(--surface));border:2px solid var(--c5)}
+.sqbanner.new{background:color-mix(in srgb, var(--c6) 18%, var(--surface));border:2px solid var(--c6)}
+.sqgoalbar{display:flex;flex-direction:column;gap:6px}
+.sqgtxt{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);font-weight:600}
+.sqgoalbar .bar i{background:linear-gradient(90deg, var(--c6), var(--c3b))}
+.sqctl{display:flex;justify-content:center}
+.sqctl .help{min-width:160px}
+.sqrevive{display:flex;gap:8px;width:100%}
+.sqrevive .btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.sqrevive .btn small{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600}
+.sqrevive .btn small .coin{width:12px;height:12px}
+.dstats.sqstats b{color:var(--c6)}
+.sqgoal{margin:0}
+.sqdots{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:100%}
+.sqdots i{width:14px;height:14px;border-radius:50%;animation:land .35s both;animation-delay:calc(var(--i) * 30ms)}
+@media (prefers-reduced-motion: reduce){.sqboard.shake,.sqdots i{animation:none}}
 .game.wide{grid-column:1 / -1;min-height:0;flex-direction:row;align-items:center;gap:14px}
 .game.wide > div:last-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .mpts{position:relative;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-radius:18px;padding:10px 14px;background:var(--surface);border:2px solid var(--c4)}
@@ -438,7 +473,7 @@ function topBar(back){
 
 /* ---------- pantallas ---------- */
 let timers = [];
-function clearTimers(){ const cf=document.getElementById("confetti"); if(cf) cf.remove(); timers.forEach(t=>{clearTimeout(t);clearInterval(t)}); timers=[]; stopMic(); }
+function clearTimers(){ if(Q){ Q.phase = Q.phase==="end" ? "end" : "off"; } const cf=document.getElementById("confetti"); if(cf) cf.remove(); timers.forEach(t=>{clearTimeout(t);clearInterval(t)}); timers=[]; stopMic(); }
 
 function home(){
   clearTimers();
@@ -478,6 +513,12 @@ function home(){
       <div class="ic">↑↓</div>
       <div><h3>Mayor o menor</h3><p>Adiviná el dato: años, metros, cantidades. Te decimos si es más o menos.</p>
       <div class="prog"><span class="pbar"><i style="width:${hm%20/20*100}%"></i></span><span class="num">Nivel ${hm+1} · ${mFmt(mTotal())} pts</span></div></div>
+    </button></div>
+    <div class="gwrap wide">${howBtn("secuencia")}<button class="game g-secuencia wide" data-go="secuencia">
+      <span class="bubble"></span>
+      <div class="ic sqic"><i style="background:#22C55E"></i><i style="background:#EF4444"></i><i style="background:#3B82F6"></i><i style="background:#FACC15"></i></div>
+      <div><h3>Secuencia</h3><p>Repetí la secuencia de luces y sonidos. Cada acierto suma una luz más.</p>
+      <div class="prog"><span class="pbar"><i style="width:${S.simon.best ? Math.min(100, S.simon.best/((sqNextGoal(S.simon.best)||{at:S.simon.best}).at)*100) : 0}%"></i></span><span class="num">${S.simon.best ? `Récord ${mFmt(S.simon.best)} pts` : "¡Probalo!"}</span></div></div>
     </button></div>
   </div>
   <h2 class="sec-title">Muy pronto</h2>
@@ -730,7 +771,8 @@ function stopMic(){ try{ rec && rec.abort(); }catch(e){} rec=null; }
 /* ---------- eventos ---------- */
 $app.addEventListener("click", e => {
   const t = e.target.closest("button"); if(!t || t.disabled) return;
-  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen():levels(); return; }
+  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen(): g==="secuencia"?sqScreen():levels(); return; }
+  if(t.dataset.sqa){ sqAction(t.dataset.sqa); return; }
   if(t.dataset.mlv){ mplay(+t.dataset.mlv); return; }
   if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }
   if(t.dataset.daily){ dailyAction(t.dataset.daily); return; }

@@ -49,6 +49,24 @@ const HOWTO = {
       "Activá el recordatorio para que te avise cuando hay palabra nueva.",
     ],
   },
+  secuencia: {
+    title: "Secuencia", color: "var(--c6)",
+    intro: "El juego enciende luces de colores, cada una con su sonido. Repetí la secuencia tocando los botones en el mismo orden.",
+    steps: [
+      "Mirá y escuchá: los botones se encienden uno por uno, cada uno con su nota.",
+      "Cuando aparece «Tu turno», tocá los botones en el mismo orden.",
+      "Si acertás, la secuencia se repite con una luz más al final. Si te equivocás, termina la partida.",
+      "Arrancás con 4 botones. Cuando juntás muchos puntos en una partida se suma otro botón, hasta llegar a 8.",
+    ],
+    tips: [
+      "Cada ronda da más puntos cuanto más larga es la secuencia y cuantos más botones hay en juego.",
+      "Nuevos botones: el 5.º a los 1.500 puntos, el 6.º a los 4.000, el 7.º a los 8.000 y el 8.º a los 14.000.",
+      "Desde la ronda 10, cada 5 rondas hay una ronda especial: hay que repetir la secuencia al revés, y vale el doble.",
+      "Las luces pasan cada vez más rápido. Tenés 6 segundos para cada toque.",
+      "Ayudas: «Ver de nuevo» repite la secuencia (20 monedas; esa ronda vale la mitad). Si te equivocás, podés seguir una vez por 50 monedas.",
+      "Con teclado también se juega: las teclas 1 a 8 son los botones.",
+    ],
+  },
   mayor: {
     title: "Mayor o menor", color: "var(--c4)",
     intro: "Una pregunta con respuesta numérica: un año, una altura, una cantidad. Adiviná el dato.",

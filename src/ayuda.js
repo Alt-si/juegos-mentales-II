@@ -49,6 +49,22 @@ const HOWTO = {
       "Activá el recordatorio para que te avise cuando hay palabra nueva.",
     ],
   },
+  bloques: {
+    title: "Bloques deslizantes", color: "var(--c7)",
+    intro: "Un tablero lleno de bloques. Mové los bloques para abrir camino y sacar el bloque rojo por la salida.",
+    steps: [
+      "Arrastrá un bloque con el dedo para deslizarlo. Los bloques acostados se mueven solo a los costados; los parados, solo para arriba y para abajo.",
+      "Los bloques no se pueden saltar ni girar: solo se deslizan por los lugares libres.",
+      "Abrí paso hasta que el bloque rojo llegue a la salida, en el borde derecho.",
+    ],
+    tips: [
+      "Cada nivel muestra el mínimo de movimientos con que se puede resolver. Deslizar un bloque cualquier distancia cuenta como un movimiento.",
+      "3 estrellas si lo resolvés con el mínimo. Deshacer es gratis y no suma movimientos.",
+      "La pista marca qué bloque mover y hasta dónde. Cuesta monedas y, con pistas, el máximo es 2 estrellas.",
+      "Los cuadrados rayados son paredes: no se mueven.",
+      "Los niveles no se terminan nunca y cada vez hacen falta más movimientos.",
+    ],
+  },
   secuencia: {
     title: "Secuencia", color: "var(--c6)",
     intro: "El juego enciende luces de colores, cada una con su sonido. Repetí la secuencia tocando los botones en el mismo orden.",

@@ -8,7 +8,7 @@
   --bg:#E9EDF5; --surface:#FFFFFF; --ink:#141A2B; --muted:#5B6479; --line:#D3D9E6;
   --accent:#2343D6; --accent-ink:#FFFFFF; --coin:#D99A0B; --good:#18A156; --bad:#E0352B; --warn:#F2B705; --on-warn:#2A1E00; --on-mood:#FFFFFF;
   --lock:#C7CEDC;
-  --c1:#FF6A3D; --c1b:#FF9F1C; --c2:#7B3FF2; --c2b:#E04BC9; --c3:#00A88F; --c3b:#3DCCF2; --c4:#FF4F8B; --c5:#FFC233; --c6:#2F6BFF; --ink-on:#FFFFFF;
+  --c1:#FF6A3D; --c1b:#FF9F1C; --c2:#7B3FF2; --c2b:#E04BC9; --c3:#00A88F; --c3b:#3DCCF2; --c4:#FF4F8B; --c5:#FFC233; --c6:#2F6BFF; --c7:#E5383B; --ink-on:#FFFFFF;
   --f-display:"Fredoka", "Trebuchet MS", system-ui, sans-serif;
   --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-num:"Azeret Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -16,12 +16,12 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0D1222; --surface:#161D33; --ink:#E8ECF7; --muted:#9AA4BE; --line:#28314C;
   --accent:#6A84FF; --accent-ink:#0D1222; --coin:#F2B531; --good:#2FD27A; --bad:#FF5A4E; --warn:#FFCB2E; --lock:#2C3552;
-  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF;
+  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF; --c7:#FF5A5F;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0D1222; --surface:#161D33; --ink:#E8ECF7; --muted:#9AA4BE; --line:#28314C;
   --accent:#6A84FF; --accent-ink:#0D1222; --coin:#F2B531; --good:#2FD27A; --bad:#FF5A4E; --warn:#FFCB2E; --lock:#2C3552;
-  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF;
+  --c1:#FF7A4D; --c1b:#FFB02E; --c2:#8F5CFF; --c2b:#F05BD6; --c3:#17C2A6; --c3b:#4FD5FF; --c4:#FF6B9E; --c5:#FFCF4D; --c6:#5B8CFF; --c7:#FF5A5F;
   color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
@@ -78,6 +78,38 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .game .bubble{position:absolute;right:-26px;bottom:-26px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
 .game.g-mayor{--g1:var(--c4);--g2:var(--c5)}
 .game.g-secuencia{--g1:var(--c6);--g2:var(--c3b)}
+.game.g-bloques{--g1:var(--c7);--g2:var(--c1b)}
+.game .ic.bkic{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;padding:10px;box-sizing:border-box;place-items:stretch}
+.bkic i{border-radius:4px;display:block}
+.bkic .a{grid-area:2 / 1 / 3 / 3;background:#E5383B}
+.bkic .b{grid-area:1 / 3 / 3 / 4;background:#3B82F6}
+.bkic .c{grid-area:3 / 2 / 4 / 4;background:#FACC15}
+.bkplay{display:flex;flex-direction:column;gap:12px}
+.bkframe{position:relative;width:min(100%,360px);margin:6px auto 0;padding:8px;border-radius:20px;box-sizing:border-box;
+  background:color-mix(in srgb, var(--ink) 82%, var(--c2));box-shadow:0 10px 26px rgba(0,0,0,.18)}
+.bkboard{position:relative;aspect-ratio:1;max-width:100%;border-radius:12px;touch-action:none;
+  background-color:color-mix(in srgb, var(--surface) 92%, var(--c2));
+  background-image:linear-gradient(color-mix(in srgb, var(--line) 80%, transparent) 1px, transparent 1px),linear-gradient(90deg, color-mix(in srgb, var(--line) 80%, transparent) 1px, transparent 1px);
+  background-size:calc(100% / 6) calc(100% / 6)}
+.bkexit{position:absolute;right:-6px;width:14px;top:calc(8px + (100% - 16px) * 2 / 6 + 4px);height:calc((100% - 16px) / 6 - 8px);border-radius:0 8px 8px 0;background:var(--c7)}
+.bkexit::after{content:"›";position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-on);font-weight:800;font-size:16px;line-height:1}
+.bkblk{position:absolute;padding:4px;box-sizing:border-box;border:0;background:none;cursor:grab;touch-action:none;transition:transform .14s ease-out;z-index:1}
+.bkblk::before{content:"";position:absolute;inset:4px;border-radius:10px;background:var(--bc);
+  box-shadow:inset 0 -5px 0 rgba(0,0,0,.18), inset 0 3px 0 rgba(255,255,255,.35), 0 3px 6px rgba(0,0,0,.18)}
+.bkblk.red{--bc:var(--c7)}
+.bkblk span{position:relative;display:grid;place-items:center;height:100%;color:#fff;font-size:22px;font-weight:700;pointer-events:none}
+.bkblk.drag{transition:none;z-index:3;cursor:grabbing}
+.bkblk.drag::before{filter:brightness(1.08)}
+.bkblk:focus-visible{outline:none}
+.bkblk:focus-visible::before{outline:3px solid var(--ink);outline-offset:1px}
+.bkblk.hint::before{animation:bkpulse 1s ease-in-out infinite}
+@keyframes bkpulse{50%{box-shadow:0 0 0 5px var(--c5), inset 0 -5px 0 rgba(0,0,0,.18)}}
+.bkblk.out{transition:transform .5s cubic-bezier(.5,0,.8,.4)}
+.bkghost{position:absolute;box-sizing:border-box;border:3px dashed var(--c5);border-radius:12px;pointer-events:none}
+.bkwall{position:absolute;width:calc(100% / 6);height:calc(100% / 6);padding:4px;box-sizing:border-box}
+.bkwall::before{content:"";position:absolute;inset:4px;border-radius:8px;background:repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink) 70%, transparent) 0 6px, color-mix(in srgb, var(--ink) 50%, transparent) 6px 12px)}
+.bkctl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media (prefers-reduced-motion: reduce){.bkblk,.bkblk.out{transition:none}.bkblk.hint::before{animation:none}}
 .game .ic.sqic{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px;box-sizing:border-box}
 .sqic i{border-radius:50%;display:block;width:15px;height:15px}
 .sqboard{position:relative;width:min(100%,340px);aspect-ratio:1;max-width:100%;margin:0 auto}
@@ -477,7 +509,7 @@ function clearTimers(){ if(Q){ Q.phase = Q.phase==="end" ? "end" : "off"; } cons
 
 function home(){
   clearTimers();
-  const hc = highest(), hw = highest(S.games.escondida), hm = highest(S.games.mayor);
+  const hc = highest(), hw = highest(S.games.escondida), hm = highest(S.games.mayor), hb = highest(S.games.bloques);
   const st = dailyStatus();
   let li = 0;
   const logo = "Mente Despierta".split(" ").map(w=>`<span class="lw">${[...w].map(c=>{ const i = li++; return `<span style="--i:${i};color:var(--c${i%5+1})">${c}</span>`; }).join("")}</span>`).join(" ");
@@ -519,6 +551,12 @@ function home(){
       <div class="ic sqic"><i style="background:#22C55E"></i><i style="background:#EF4444"></i><i style="background:#3B82F6"></i><i style="background:#FACC15"></i></div>
       <div><h3>Secuencia</h3><p>Repetí la secuencia de luces y sonidos. Cada acierto suma una luz más.</p>
       <div class="prog"><span class="pbar"><i style="width:${S.simon.best ? Math.min(100, S.simon.best/((sqNextGoal(S.simon.best)||{at:S.simon.best}).at)*100) : 0}%"></i></span><span class="num">${S.simon.best ? `Récord ${mFmt(S.simon.best)} pts` : "¡Probalo!"}</span></div></div>
+    </button></div>
+    <div class="gwrap wide">${howBtn("bloques")}<button class="game g-bloques wide" data-go="blevels">
+      <span class="bubble"></span>
+      <div class="ic bkic"><i class="a"></i><i class="b"></i><i class="c"></i></div>
+      <div><h3>Bloques deslizantes</h3><p>Deslizá los bloques y sacá el rojo por la salida.</p>
+      <div class="prog"><span class="pbar"><i style="width:${hb%20/20*100}%"></i></span><span class="num">Nivel ${hb+1}</span></div></div>
     </button></div>
   </div>
   <h2 class="sec-title">Muy pronto</h2>
@@ -771,7 +809,9 @@ function stopMic(){ try{ rec && rec.abort(); }catch(e){} rec=null; }
 /* ---------- eventos ---------- */
 $app.addEventListener("click", e => {
   const t = e.target.closest("button"); if(!t || t.disabled) return;
-  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen(): g==="secuencia"?sqScreen():levels(); return; }
+  if(t.dataset.go){ const g=t.dataset.go; g==="home"?home(): g==="wlevels"?wlevels(): g==="mlevels"?mlevels(): g==="daily"?dailyScreen(): g==="secuencia"?sqScreen(): g==="blevels"?blevels():levels(); return; }
+  if(t.dataset.blv){ bplay(+t.dataset.blv); return; }
+  if(t.dataset.bka){ bkAction(t.dataset.bka); return; }
   if(t.dataset.sqa){ sqAction(t.dataset.sqa); return; }
   if(t.dataset.mlv){ mplay(+t.dataset.mlv); return; }
   if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }

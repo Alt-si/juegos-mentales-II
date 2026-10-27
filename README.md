@@ -9,7 +9,7 @@ App de juegos mentales para celulares. Cada juego suma experiencia a un **rango 
 | Cadena | Jugable | Los números aparecen de a uno con su operación. Al terminar, tenés 10 segundos para dar el resultado. |
 | Palabra escondida | Jugable | Hay que encontrar una palabra secreta. Cada palabra que probás recibe un número según qué tan cerca está. |
 | Secuencia | Jugable | Luces de colores con sonido: hay que repetir la secuencia en el mismo orden. Cada acierto suma una luz. |
-| Tablas relámpago | Pendiente | Multiplicaciones contra reloj durante 60 segundos. |
+| Bloques deslizantes | Jugable | Tablero de 6×6 con bloques que se deslizan en su dirección: hay que sacar el bloque rojo por la salida. |
 | Mayor o menor | Jugable | Una pregunta con respuesta numérica (años, metros, cantidades). Probás números y el juego te dice si el dato es mayor o menor. |
 
 ## Cómo se juega
@@ -61,6 +61,24 @@ Es un juego de memoria al estilo Simón. Los botones son porciones de un círcul
 - **Velocidad:** cada luz dura 560 ms al principio y baja hasta 220 ms.
 - **Ayudas:** «Ver de nuevo» repite la secuencia (20 monedas, una vez por ronda; esa ronda vale la mitad). Después de un error se puede **seguir jugando** una vez por partida por 50 monedas.
 - Se guardan el récord de puntos, la mejor ronda, la mayor cantidad de botones alcanzada y las partidas jugadas. Las monedas y la XP dependen del puntaje.
+
+## Bloques deslizantes
+
+Es un juego al estilo Rush Hour o "Unblock Me". El tablero es de 6×6 y tiene la salida a la derecha de la tercera fila.
+
+- **Cómo se juega:** los bloques se arrastran con el dedo. Los horizontales se mueven solo a los costados y los verticales solo hacia arriba y hacia abajo. Hay que abrir camino para sacar el **bloque rojo** por la salida. También se puede jugar con teclado: Tab para elegir un bloque y flechas para moverlo.
+- **Movimientos:** deslizar un bloque cualquier distancia cuenta como **un** movimiento. Cada nivel muestra el **mínimo** posible.
+- **Estrellas:** 3 si se resuelve con el mínimo, 2 con hasta el mínimo + la mitad (al menos +2) y 1 con más. Con pistas, el máximo es 2.
+- **Deshacer** es gratis y resta el movimiento. **Reiniciar** vuelve el tablero al principio.
+- **Pista** (30, 50 y 80 monedas): el solucionador calcula la mejor jugada desde el tablero actual, marca el bloque que hay que mover y muestra con una silueta punteada hasta dónde.
+- **Paredes:** desde el nivel 40 aparecen tableros con cuadrados rayados fijos.
+- **Niveles sin fin:** cada nivel busca una dificultad (mínimo de movimientos) que sube rápido al principio y después más despacio. Cada jugador recibe los puzzles en otro orden. Cuando se usaron todos, empieza otra vuelta.
+
+### Cómo se arma el banco de puzzles
+
+- `tools/gen-bloques.js` arma tableros al azar. Para cada uno recorre **todos** los estados a los que se puede llegar y elige el que está más lejos de la solución, que es la versión más difícil de ese tablero.
+- `tools/pack-bloques.js` junta los resultados y vuelve a resolver cada puzzle con el mismo solucionador de la app, para confirmar que tiene solución y que el mínimo es correcto. Después escribe `data/bloques.js`.
+- Para sumar más puzzles: `node tools/gen-bloques.js 600 <semilla> banco.json` (600 segundos) y después `node tools/pack-bloques.js banco*.json`.
 
 ## Cadena: progresión de niveles
 
@@ -161,6 +179,9 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/escondida.js`: la lógica de Palabra escondida y de los duelos.
 - `src/cadena-duelo.js`: el duelo de Cadena.
 - `src/secuencia.js`: el juego Secuencia.
+- `src/bloques-core.js`, `src/bloques.js`: el juego Bloques deslizantes (motor y pantalla).
+- `data/bloques.js`: el banco de puzzles verificados.
+- `tools/gen-bloques.js`, `tools/pack-bloques.js`: generan y verifican el banco.
 - `src/ayuda.js`: las explicaciones de cómo se juega.
 - `src/mayor.js`: el juego Mayor o menor.
 - `src/mayor-gen.js`: las preguntas generadas de Mayor o menor (niveles sin fin).

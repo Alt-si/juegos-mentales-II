@@ -128,7 +128,7 @@ Abajo se muestra la cuenta completa: cada número en su círculo y el signo de l
 
 ## Palabra escondida
 
-Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre las ~3.300 palabras del vocabulario: la escondida es la número 1, y cuanto más chico es el número, más cerca estás. Todas tus palabras quedan ordenadas de la más cercana a la más lejana.
+Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre las ~4.300 palabras del vocabulario: la escondida es la número 1, y cuanto más chico es el número, más cerca estás. Todas tus palabras quedan ordenadas de la más cercana a la más lejana.
 
 - **Colores:** verde para los puestos 1 a 50, amarillo para 51 a 300 y rojo para más de 300.
 - **Singular y plural** cuentan como la misma palabra, y no importan los acentos ni las mayúsculas.
@@ -203,7 +203,7 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/diaria.js`: la Palabra del día, el calendario y el aviso diario.
 - `sw.js`: el service worker de los avisos.
 - `icon.svg`, `manifest.webmanifest`: el ícono y los datos para instalar la app.
-- `data/vocab-*.js`: el vocabulario con categorías (`vocab-4.js` es la ampliación con ~1.100 palabras más).
+- `data/vocab-*.js`: el vocabulario con categorías (`vocab-4.js` es la ampliación con casi 1.000 palabras más; en total, unas 4.300).
 - `data/escondida-*.js`: las listas a mano de los niveles 1 a 60.
 - `data/niveles-extra.js`: las palabras de los niveles 61 a 200.
 - `tools/build.py`: arma `index.html` juntando todo. Correlo después de cada cambio con `python3 tools/build.py`.

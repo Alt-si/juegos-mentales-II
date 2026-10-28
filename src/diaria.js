@@ -23,6 +23,7 @@ function dailyStreak(){
   while(S.daily[k] && S.daily[k].ok && !S.daily[k].late){ n++; const d = keyDate(k); d.setDate(d.getDate()-1); k = dayKey(d); }
   return n;
 }
+function dailyInProgress(k){ const p = S.wprog && S.wprog["d:" + k]; return p ? p.g.length : 0; }
 function dailyStatus(){
   const k = todayKey(), r = S.daily[k];
   return {k, r, streak: dailyStreak()};
@@ -41,8 +42,8 @@ function dailyScreen(){
     <div class="titlerow"><h1>Palabra del día</h1>${howBtn("dia")}</div>
     <p>Todos los días hay una palabra nueva, la misma para todos los jugadores. ¿La descubrís?</p>
     <div class="dtoday">
-      <div><b>${prettyDay(st.k)}</b><br>${st.r ? (st.r.ok ? `La encontraste en ${st.r.t} ${st.r.t===1?"intento":"intentos"}` : "Hoy te rendiste") : "Todavía no la jugaste"}</div>
-      <button class="btn ${st.r?"":"primary"} dplay" data-daily="day:${st.k}">${st.r ? "Ver resultado" : "Jugar la de hoy"}</button>
+      <div><b>${prettyDay(st.k)}</b><br>${st.r ? (st.r.ok ? `La encontraste en ${st.r.t} ${st.r.t===1?"intento":"intentos"}` : "Hoy te rendiste") : dailyInProgress(st.k) ? `La empezaste: llevás ${dailyInProgress(st.k)} ${dailyInProgress(st.k)===1?"intento":"intentos"}` : "Todavía no la jugaste"}</div>
+      <button class="btn ${st.r?"":"primary"} dplay" data-daily="day:${st.k}">${st.r ? "Ver resultado" : dailyInProgress(st.k) ? "Seguir jugando" : "Jugar la de hoy"}</button>
     </div>
   </div>
   <div class="dstats">
@@ -76,6 +77,7 @@ function calendarHtml(){
     if(future || before){ cls += " off"; label += before ? ", antes del lanzamiento" : ", todavía no disponible"; }
     else if(r && r.ok){ cls += " won"; sub = `${r.t}`; label += `, encontrada en ${r.t} intentos`; }
     else if(r){ cls += " lost"; sub = "✕"; label += ", te rendiste"; }
+    else if(dailyInProgress(k)){ cls += " inprog"; sub = "…"; label += `, empezada: ${dailyInProgress(k)} intentos`; }
     else if(k === tk){ cls += " today"; label += ", hoy, sin jugar"; }
     else { cls += " miss"; label += ", sin jugar"; }
     if(k === tk) cls += " is-today";

@@ -137,6 +137,7 @@ Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre 
 - Los avisos aparecen **arriba de la pantalla**, para que se vean aunque el teclado del celular esté abierto.
 - **Pistas con costo creciente** (30, 50, 80 y 120 monedas). Cada pista te acerca solo un poco: si estás lejos, te lleva al 60 % de tu mejor puesto; si estás cerca, avanza unos pocos puestos. Con tu mejor intento entre los 10 primeros ya no hay pistas.
 - **Rendirse:** muestra la palabra (hay que tocar dos veces).
+- **La partida en curso se guarda** en cada intento (palabras probadas, pistas usadas), en los niveles, en la Palabra del día y en los duelos. Si salís o cerrás la app, al volver seguís donde lo dejaste. En la Palabra del día, la portada y el calendario muestran "Seguir jugando" y los días empezados se marcan en amarillo.
 - Al terminar se muestran las 10 palabras más cercanas.
 
 ### Niveles y dificultad

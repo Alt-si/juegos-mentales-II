@@ -222,6 +222,27 @@ function wPractice(L){
 
 let W = null;
 const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>`;
+/* partida en curso: se guarda en cada intento, así al salir y volver no se pierde nada */
+S.wprog = S.wprog || {};
+function wProgKey(){ return !W ? null : W.daily ? "d:" + W.daily : W.duel ? "duel:" + (W.duel.id || (W.duel.p && W.duel.p.id)) + ":" + W.duel.role : "l:" + W.L + ":" + W.idx; }
+function wProgSave(){
+  const k = wProgKey(); if(!k || W.done) return;
+  S.wprog[k] = {g: W.guesses.map(g => [VOCAB[g.i].n, g.hint ? 1 : 0]), h: W.hints, t: Date.now()};
+  const keys = Object.keys(S.wprog);
+  if(keys.length > 40){ keys.sort((a,b)=>S.wprog[a].t - S.wprog[b].t).slice(0, keys.length - 40).forEach(x=>delete S.wprog[x]); }
+  save();
+}
+function wProgClear(){ const k = wProgKey(); if(k && S.wprog[k]){ delete S.wprog[k]; save(); } }
+function wProgLoad(){
+  const k = wProgKey(), p = k && S.wprog[k]; if(!p) return 0;
+  for(const [n, hint] of p.g){
+    const i = vFind(n); if(i < 0 || W.guesses.some(g=>g.i===i)) continue;
+    W.guesses.push({word: VOCAB[i].w, r: W.rank.get(i), i, hint: !!hint});
+  }
+  W.hints = p.h || 0; W.last = W.guesses[W.guesses.length-1] || null;
+  const hc = document.getElementById("whcost"); if(hc) hc.textContent = HINT_COST[Math.min(W.hints, HINT_COST.length-1)];
+  return W.guesses.length;
+}
 function wplay(L, duel, forceIdx, opts){
   clearTimers(); G = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
@@ -249,7 +270,9 @@ function wplay(L, duel, forceIdx, opts){
   document.getElementById("wform").addEventListener("submit", e => {
     e.preventDefault(); const inp = document.getElementById("wguess"); wGuess(inp.value);
   });
+  const back = wProgLoad();
   wRender();
+  if(back) toast(`Seguís donde lo dejaste: ${back} ${back===1?"intento":"intentos"}.`);
 }
 function wRow(g, last){
   const t = tierOf(g.r);
@@ -269,6 +292,7 @@ function wRender(){
 }
 function wAdd(g){
   W.guesses.push(g); W.last = g; wRender();
+  if(g.r !== 1) wProgSave();
   const t = tierOf(g.r); beep(t==="good"?880:t==="warn"?620:300, .07);
   if(g.r===1) timers.push(setTimeout(()=>wEnd(true), 450));
 }
@@ -319,6 +343,7 @@ function wGiveUp(btn){
   wEnd(false);
 }
 function wEnd(ok){
+  wProgClear();
   W.done = true; clearTimers();
   if(W.duel) return duelEnd(ok);
   if(W.daily) return dailyEnd(ok);

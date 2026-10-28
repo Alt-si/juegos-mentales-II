@@ -249,6 +249,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .cday.miss{border:2px dashed var(--line);background:transparent}
 .cday.won{background:var(--good);color:var(--on-mood)}
 .cday.lost{background:var(--bad);color:var(--on-mood)}
+.cday.inprog{background:var(--warn);color:var(--on-warn)}
 .cday.today{background:var(--c3);color:var(--ink-on);animation:glowday 1.6s ease-in-out infinite}
 .cday.is-today{outline:3px solid var(--c3);outline-offset:2px}
 @keyframes glowday{50%{box-shadow:0 0 0 6px color-mix(in srgb, var(--c3) 25%, transparent)}}
@@ -560,10 +561,10 @@ function home(){
   <button class="daycard" data-go="daily">
     <span class="kicker">Desafío del día · ${prettyDay(st.k)}</span>
     <h2>Palabra del día</h2>
-    <p>${st.r ? (st.r.ok ? `¡La encontraste en ${st.r.t} ${st.r.t===1?"intento":"intentos"}! Mañana hay otra.` : "Hoy no salió. Mañana hay una palabra nueva.") : "Una palabra nueva, la misma para todos. ¿La descubrís?"}</p>
+    <p>${st.r ? (st.r.ok ? `¡La encontraste en ${st.r.t} ${st.r.t===1?"intento":"intentos"}! Mañana hay otra.` : "Hoy no salió. Mañana hay una palabra nueva.") : dailyInProgress(st.k) ? `La empezaste: llevás ${dailyInProgress(st.k)} ${dailyInProgress(st.k)===1?"intento":"intentos"}. ¡Seguí!` : "Una palabra nueva, la misma para todos. ¿La descubrís?"}</p>
     <div class="row">
       <span class="chip">Racha: <b class="num">${st.streak}</b> ${st.streak===1?"día":"días"}</span>
-      <span class="go">${st.r ? "Ver calendario" : "Jugar ahora"}</span>
+      <span class="go">${st.r ? "Ver calendario" : dailyInProgress(st.k) ? "Seguir jugando" : "Jugar ahora"}</span>
     </div>
   </button></div>
   <h2 class="sec-title">Juegos</h2>

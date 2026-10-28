@@ -55,7 +55,8 @@ function dailyScreen(){
   <div class="dnotif">
     <div><b>Recordatorio diario</b><br><span>${S.notif ? "Activado: te avisamos cuando hay palabra nueva." : "Recibí un aviso cada día con la palabra nueva."}</span></div>
     <button class="btn ${S.notif?"":"primary"}" data-daily="notif">${S.notif ? "Probar aviso" : "Activar"}</button>
-  </div>`;
+  </div>
+  ${unknownCard()}`;
   howFirst("dia");
 }
 function calendarHtml(){
@@ -130,7 +131,7 @@ function dailySummary(k, r, g){
       ${streak ? `<p>Racha: <b class="num">${streak}</b> ${streak===1?"día":"días"} seguidos</p>` : ""}
     </div>
     ${g && g.coins ? `<div class="gains"><span><span class="coin"></span>+<span class="num">${g.coins}</span></span><span>+<span class="num">${g.xp}</span> XP</span></div>` : ""}
-    ${shareBox(dailyShareText(k, r), "Contale a tus amigos")}
+    ${shareBox(dailyShareText(k, r), "Contale a tus amigos", "")}
     <p class="hint">Mañana hay una palabra nueva.</p>
     <div class="actions">
       <button class="btn primary" data-go="daily">Ver el calendario</button>

@@ -132,7 +132,9 @@ Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre 
 
 - **Colores:** verde para los puestos 1 a 50, amarillo para 51 a 300 y rojo para más de 300.
 - **Singular y plural** cuentan como la misma palabra, y no importan los acentos ni las mayúsculas.
-- Si escribís una palabra que el juego no conoce, te avisa y **ese intento no cuenta**.
+- **Errores de tipeo:** si una palabra no está pero se parece mucho a una conocida (1 letra de diferencia en palabras de 5 a 7 letras, 2 en las de 8 o más), el juego toma la conocida y lo avisa. Por ejemplo, "rinhoseronte" → "rinoceronte".
+- Si escribís una palabra que el juego no conoce, te avisa y **ese intento no cuenta**. La palabra se guarda en una lista **"Palabras para sumar"**, que aparece en Palabra escondida y en la Palabra del día. Desde ahí se puede copiar, compartir o **enviar como issue a GitHub** (con la etiqueta `palabras`), para revisar si existen y sumarlas al vocabulario en una actualización.
+- Los avisos aparecen **arriba de la pantalla**, para que se vean aunque el teclado del celular esté abierto.
 - **Pistas con costo creciente** (30, 50, 80 y 120 monedas). Cada pista te acerca solo un poco: si estás lejos, te lleva al 60 % de tu mejor puesto; si estás cerca, avanza unos pocos puestos. Con tu mejor intento entre los 10 primeros ya no hay pistas.
 - **Rendirse:** muestra la palabra (hay que tocar dos veces).
 - Al terminar se muestran las 10 palabras más cercanas.
@@ -201,7 +203,7 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `src/diaria.js`: la Palabra del día, el calendario y el aviso diario.
 - `sw.js`: el service worker de los avisos.
 - `icon.svg`, `manifest.webmanifest`: el ícono y los datos para instalar la app.
-- `data/vocab-*.js`: el vocabulario con categorías.
+- `data/vocab-*.js`: el vocabulario con categorías (`vocab-4.js` es la ampliación con ~1.100 palabras más).
 - `data/escondida-*.js`: las listas a mano de los niveles 1 a 60.
 - `data/niveles-extra.js`: las palabras de los niveles 61 a 200.
 - `tools/build.py`: arma `index.html` juntando todo. Correlo después de cada cambio con `python3 tools/build.py`.

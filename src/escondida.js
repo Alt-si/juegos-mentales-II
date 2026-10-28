@@ -13,6 +13,66 @@ function vFind(n){
   for(const k of plurals(n)) if(VIDX.has(k)) return VIDX.get(k);
   return -1;
 }
+// palabra más parecida del vocabulario, para errores de tipeo (1 letra de diferencia en palabras medianas, 2 en largas)
+function lev(a, b, max){
+  if(Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({length:b.length+1}, (_,j)=>j);
+  for(let i=1;i<=a.length;i++){
+    const cur = [i]; let best = i;
+    for(let j=1;j<=b.length;j++){ cur[j] = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1] + (a[i-1]===b[j-1]?0:1)); if(cur[j] < best) best = cur[j]; }
+    if(best > max) return max + 1;
+    prev = cur;
+  }
+  return prev[b.length];
+}
+function vFuzzy(n){
+  const max = n.length >= 8 ? 2 : n.length >= 5 ? 1 : 0;
+  if(!max) return -1;
+  let best = -1, bd = max + 1, ties = 0;
+  for(let i=0;i<VOCAB.length;i++){
+    const d = lev(n, VOCAB[i].n, max);
+    if(d < bd){ bd = d; best = i; ties = 0; } else if(d === bd) ties++;
+  }
+  return bd <= max && !ties ? best : -1;          // si hay dos igual de parecidas, no adivinamos
+}
+/* palabras que el juego no conoce: se guardan para sumarlas en una actualización */
+S.unknown = S.unknown || {};
+function unknownAdd(raw){
+  const w = String(raw).toLowerCase().trim().slice(0, 30); if(!w) return;
+  S.unknown[w] = (S.unknown[w] || 0) + 1;
+  const keys = Object.keys(S.unknown); if(keys.length > 300) delete S.unknown[keys[0]];
+  save();
+}
+function unknownCard(){
+  const words = Object.keys(S.unknown);
+  if(!words.length) return "";
+  return `<div class="unkcard">
+    <div><b>Palabras para sumar al juego</b><span>${words.length} ${words.length===1?"palabra que el juego todavía no conoce":"palabras que el juego todavía no conoce"}: ${words.slice(-6).map(esc).join(", ")}${words.length>6?"…":""}</span></div>
+    <button class="btn" data-unk="send">Enviar</button>
+  </div>`;
+}
+function unknownSend(){
+  const words = Object.keys(S.unknown); if(!words.length) return;
+  const list = words.join(", ");
+  const title = "Palabras para sumar a Palabra escondida";
+  const body = "Palabras que el juego no conoció:\n\n" + words.map(w=>"- " + w).join("\n");
+  const gh = "https://github.com/Alt-si/juegos-mentales-II/issues/new?labels=palabras&title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body);
+  const text = `${title}: ${list}`;
+  clearTimers();
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="hello"><h1>Palabras para sumar</h1><p>Estas son las palabras que probaste y el juego todavía no conoce. Mandalas y en la próxima actualización revisamos cuáles existen para incluirlas.</p></div>
+  <div class="unklist">${words.map(w=>`<span class="wchip"><b>${S.unknown[w]}</b>${esc(w)}</span>`).join("")}</div>
+  ${shareBox(text, "Mandar la lista", "Copiala y mandala por WhatsApp o correo, o usá el botón de abajo.")}
+  <div class="actions">
+    <a class="btn primary linkbtn" href="${gh}" target="_blank" rel="noopener">Enviar al equipo del juego (GitHub)</a>
+    <button class="btn" data-unk="clear">Ya las mandé: vaciar la lista</button>
+    <button class="btn" data-go="wlevels">Volver</button>
+  </div>`;
+}
+function unknownAction(a){
+  if(a === "send") return unknownSend();
+  if(a === "clear"){ S.unknown = {}; save(); toast("Listo, vaciamos la lista."); return wlevels(); }
+}
 function vAdd(w, mem, tags){
   const n = norm(w); if(n.length<2 || STOP.has(n)) return -1;
   let i = vFind(n);
@@ -219,10 +279,16 @@ function wGuess(text){
   const inp = document.getElementById("wguess");
   const clear = () => { if(inp){ inp.value=""; refocus(inp); } };
   if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
-  const i = vFind(n);
-  if(i<0){ toast(`No conozco "${raw}". Probá con otra palabra; este intento no cuenta.`); clear(); return; }
+  let i = vFind(n), fixed = false;
+  if(i<0){ i = vFuzzy(n); fixed = i >= 0; }       // ¿lo escribió con un error de tipeo?
+  if(i<0){
+    unknownAdd(raw);
+    toast(`Todavía no conozco "${raw}". La guardamos para sumarla en una próxima actualización. Este intento no cuenta.`, "warn");
+    clear(); return;
+  }
   const dup = W.guesses.find(g=>g.i===i);
-  if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r}.`); clear(); return; }
+  if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r}.`, "warn"); clear(); return; }
+  if(fixed) toast(`Tomamos "${VOCAB[i].w}" (escribiste "${raw}").`);
   wAdd({word: VOCAB[i].w, r: W.rank.get(i), i, hint:false});
   clear();
 }
@@ -345,6 +411,7 @@ const _wlevels = wlevels;
 wlevels = function(){
   _wlevels();
   addDuelCard("new", "Jugá una palabra al azar y desafiá a un rival con la misma palabra. Gana quien la adivine en menos intentos.");
+  const u = unknownCard(); const d = $app.querySelector(".duelcard"); if(u && d) d.insertAdjacentHTML("afterend", u);
 };
 
 function duelAskName(next, back){
@@ -394,7 +461,7 @@ function duelInvite(p){
 }
 let duelPending = null;
 
-function shareBox(text, title){
+function shareBox(text, title, hint){
   return `<div class="share">
     <h2>${title}</h2>
     <textarea id="sharetxt" readonly aria-label="Mensaje para compartir">${esc(text)}</textarea>
@@ -402,7 +469,7 @@ function shareBox(text, title){
       <button class="btn primary" data-duel="copy">Copiar mensaje</button>
       ${navigator.share?`<button class="btn" data-duel="share">Compartir</button>`:""}
     </div>
-    <p class="hint">${canLink?"Tu rival abre el link y juega la misma palabra.":"Tu rival pega el código en Palabra escondida → Duelo → Abrir."}</p>
+    ${hint===""?"":`<p class="hint">${hint || (canLink?"Tu rival abre el link y juega la misma palabra.":"Tu rival pega el código en Palabra escondida → Duelo → Abrir.")}</p>`}
   </div>`;
 }
 function duelEnd(ok){

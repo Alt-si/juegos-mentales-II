@@ -196,6 +196,12 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
 .wordball small{font-size:.45em;font-weight:600}
 .mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
+.unkcard{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--surface);border:2px dashed var(--warn);border-radius:18px;padding:14px}
+.unkcard div{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.unkcard span{color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.unkcard .btn{height:44px;padding:0 18px}
+.unklist{display:flex;flex-wrap:wrap;gap:8px}
+.linkbtn{display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--accent-ink)}
 .titlerow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .howbtn{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:20px;
   background:var(--surface);color:var(--accent);border:2px solid currentColor;box-shadow:0 3px 0 color-mix(in srgb, currentColor 25%, transparent)}
@@ -393,8 +399,12 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .actions{display:flex;flex-direction:column;gap:10px;width:100%}
 .btn{height:54px;border-radius:16px;font-weight:700;font-size:16px;background:var(--surface);border:1px solid var(--line)}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);
-  padding:10px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);z-index:20}
+.toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:12px 16px;border-radius:14px;font-size:15px;font-weight:500;line-height:1.35;text-align:center;width:max-content;max-width:calc(100% - 32px);box-sizing:border-box;z-index:40;
+  box-shadow:0 10px 28px rgba(0,0,0,.25);animation:toastin .25s cubic-bezier(.2,1.3,.4,1)}
+@keyframes toastin{from{transform:translate(-50%,-14px);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.toast.warn{background:var(--warn);color:var(--on-warn)}
+@media (prefers-reduced-motion: reduce){.toast{animation:none}}
 /* palabra escondida */
 .wplay{display:flex;flex-direction:column;gap:12px}
 .wform{display:flex;gap:8px}
@@ -981,6 +991,98 @@ acciones/relaciones/relaciones|sociedad,amor: amar querer abrazar besar beso abr
 `);
 
 </script>
+<script>
+// Vocabulario de Palabra escondida — parte 4: ampliación (palabras que faltaban).
+// Mismo formato que vocab-1..3. Las líneas con la misma ruta se suman a la subcategoría que ya existe.
+window.__vocabAdd(`
+animales/mamíferos/granja|animal,campo,granja: cebú novillo vaquillona becerro vaquilla yegua padrillo pony pollino asno borrego oveja merino capón cabrito chivito marrana jabalí
+animales/mamíferos/salvajes|animal,salvaje: ñu yak hiena chacal suricata mangosta okapi tapir oso polar oso pardo oso hormiguero perezoso coatí zorro gris lobo marino puma pecarí antílope impala gacela gnu caribú ciervo rojo huemul pudú venado de las pampas zorrillo hurón tejón glotón lince boreal
+animales/mamíferos/pequeños|animal: rata topo musaraña lirón jerbo cobayo conejillo marmota chinchilla tuco-tuco cuis mara ardilla voladora puercoespín ornitorrinco equidna zarigüeya comadreja colorada mofeta
+animales/mamíferos/primates|animal,selva: macaco tití carayá mono aullador mono capuchino bonobo gibón
+animales/mamíferos/marinos|animal,mar,agua: narval beluga marsopa elefante marino león marino nutria marina dugongo
+animales/aves/comunes|animal,aire,cielo: urraca cuervo grajo mirlo estornino jilguero gorrión ruiseñor alondra petirrojo cotorra carpintero pájaro carpintero chingolo tordo mixto cabecita negra
+animales/aves/rapaces|animal,aire,salvaje: búho real lechuzón caburé milano cernícalo halconcito harpía quebrantahuesos
+animales/aves/acuáticas|animal,agua,mar: gallareta biguá macá chajá cigüeñuela espátula ibis martín pescador gaviotín petrel pato real
+animales/aves/coloridas|animal,selva: quetzal cacatúa periquito agapornis loro hablador
+animales/peces/peces|animal,agua,mar: bacalao lenguado corvina abadejo besugo mero palometa boga tararira bonito caballa anchoa anchoíta arenque pez payaso pez globo morena barracuda pejerrey
+animales/mar/invertebrados|animal,mar,agua: sepia vieira berberecho percebe centolla krill anémona caracola cangrejo ermitaño ostión
+animales/insectos/insectos|animal,campo,pequeño: chicharra cigarra mamboretá mantis tábano jején polilla abejorro avispón hormiga roja gorgojo pulgón oruga larva crisálida capullo cascarudo bicho canasto moscardón
+animales/reptiles/reptiles|animal,salvaje: tortuga marina galápago monstruo de gila dragón de komodo tuátara camaleón geco salamanquesa culebra de agua serpiente de cascabel coral mamba pitón
+animales/anfibios/anfibios|animal,agua: tritón ajolote escuerzo rana toro
+animales/extintos/extintos|animal,historia,ciencia: dinosaurio tiranosaurio velociraptor triceratops brontosaurio diplodocus pterodáctilo estegosaurio mamut gliptodonte megaterio dientes de sable fósil
+animales/partes/partes|animal,cuerpo: crin crines lomo hocico morro belfo cresta espolón buche plumaje melena cascabel aguijón antena antenas tentáculo ventosa concha caparazón pinza pinzas
+plantas/árboles/árboles|planta,naturaleza,bosque: tilo castaño abedul haya acacia aromo ciprés palo borracho espinillo coihue lenga ñire alerce timbó tipa sauce llorón olivo almendro cerezo manzano peral limonero naranjo higuera parra vid magnolia ceibo palmera yatay
+plantas/flores/flores|planta,naturaleza,color: dalia gardenia azalea begonia crisantemo gladiolo jacinto narciso lila glicina flor de lis malvón alelí pensamiento retama loto nenúfar camelia rosa china
+plantas/otras/plantas|planta,naturaleza: suculenta aloe áloe ortiga cardo diente de león trébol de cuatro hojas totora pajonal espartillo liana bromelia orquídea silvestre alfalfa
+plantas/frutas/frutas|comida,planta,dulce: grosella guinda zarzamora lima maracuyá mburucuyá guayaba papaya chirimoya níspero caqui tuna dátil pasas ciruela pasa nectarina pelón
+plantas/verduras/verduras|comida,planta: puerro hinojo nabo alcaucil alcachofa espárrago escarola rúcula radicheta berro endibia kale palmito champiñón hongo portobello mandioca yuca jengibre echalote ají morrón verde
+plantas/granos/granos|comida,planta,campo: quinoa quínoa mijo sorgo amaranto chía lino sésamo semilla de girasol pistacho
+comida/platos/argentina|comida,hogar,fiesta: chipá revuelto gramajo bife de chorizo chinchulines molleja choripán vitel toné pastel de papa tortilla de papa fainá carbonada chimichurri salsa criolla
+comida/platos/general|comida: paella risotto lasaña tacos burrito sushi ramen pizza napolitana croqueta albóndiga canelón gratinado guiso de lentejas sopa crema empanadilla quiche wok
+comida/panadería/panadería|comida,dulce: chipa scon pan dulce panettone rosca de pascua bizcochuelo magdalena muffin brownie cupcake donut dona churro tostado de miga galleta de agua bola de fraile cañoncito
+comida/dulces/dulces|comida,dulce,niños: mazapán garrapiñada praliné caramelo masticable chocolate blanco cacao frutilla con crema arroz con leche budín de pan natilla tiramisú cheesecake lemon pie marquise
+comida/bebidas/bebidas|comida,agua: tereré mate cocido submarino capuchino batido malteada kéfir agua tónica agua mineral agua con gas
+comida/bebidas/alcohol|comida,fiesta: sangría clericó vermut gancia ginebra tequila coñac sidra champaña espumante licor de huevo
+comida/cocina/utensilios|comida,cocina,hogar: cucharita cucharón espumadera pinza de cocina mortero palo de amasar fuente de horno budinera tartera bowl compotera azucarera salero pimentero aceitera vinagrera panera sartén de hierro olla a presión
+comida/lugares/lugares|comida,ciudad,lugar: fiambrería pescadería dietética vinoteca chocolatería cervecería pulpería fonda cantina comedor buffet
+cuerpo/partes/cabeza|cuerpo: sien coronilla párpado pupila iris retina lagrimal fosa nasal tabique encía paladar muela colmillo incisivo amígdalas garganta nuez de adán mandíbula pómulo
+cuerpo/partes/tronco|cuerpo: abdomen tórax clavícula esternón omóplato axila pelvis riñones
+cuerpo/partes/extremidades|cuerpo: antebrazo palma nudillo meñique índice anular dedo gordo pantorrilla gemelo canilla empeine planta del pie
+cuerpo/órganos/órganos|cuerpo,salud: páncreas vesícula bazo tiroides vejiga útero laringe tráquea esófago diafragma médula tendón ligamento cartílago glóbulo plaqueta hormona
+salud/enfermedad/enfermedades|salud,cuerpo: angina sarampión varicela paperas hepatitis neumonía bronquitis sinusitis otitis gastritis anemia hipertensión colesterol esguince luxación quemadura insolación calambre contractura caries
+salud/medicina/medicina|salud: antibiótico analgésico ibuprofeno paracetamol aspirina antitérmico pomada crema gotas suero yeso férula muleta silla de ruedas termómetro tensiómetro estetoscopio jeringa gasa algodón alcohol barbijo
+personas/familia/familia|familia,hogar,amor: bisabuelo bisabuela tatarabuelo hermanastro hermanastra padrastro madrastra ahijado ahijada yerno nuera consuegro gemelo gemela mellizo mellizos huérfano viudo viuda
+personas/profesiones/oficios|trabajo,hogar: tapicero vidriero soldador tornero hojalatero techista pintor de obra fumigador afilador colchonero relojero orfebre joyero sastre talabartero
+personas/profesiones/servicios|trabajo,ciudad: barista sommelier bartender cadete mensajero niñera empleada doméstica portero encargado conserje botones guía turístico agente de viajes
+personas/profesiones/oficina|trabajo,dinero: escribano notario auditor analista consultor tesorero corredor martillero agente de bolsa administrador
+personas/profesiones/campo|trabajo,campo: tambero arriero domador resero esquilador puestero baqueano hachero cosechero ordeñador
+personas/profesiones/otros|trabajo: bombero voluntario paracaidista buzo minero marino navegante explorador arqueólogo astrónomo meteorólogo geólogo biólogo químico físico matemático filósofo historiador traductor intérprete
+hogar/objetos/objetos|hogar,casa: perchero paragüero felpudo tapete mantel servilleta individual posavasos portarretrato florero jarrón candelabro farol linterna encendedor fósforos destapador abrelatas tijera cinta adhesiva pegamento
+hogar/muebles/muebles|hogar,casa: diván chaise longue puf mecedora reposera banquito biblioteca baja mesa ratona mesa de luz modular botinero zapatero vajillero
+hogar/electrodomésticos/electro|hogar,tecnología,casa: lavavajillas extractor purificador deshumidificador termotanque calefón caloventor radiador estufa a leña anafe eléctrico freidora sandwichera yogurtera
+construcción/materiales/materiales|construcción,trabajo: hormigón concreto adobe ladrillo hueco viga columna losa revoque membrana aislante durlock tablón tirante varilla malla alambre
+construcción/herramientas/herramientas|construcción,trabajo: cincel formón cepillo de carpintero escuadra plomada llana cuchara de albañil fratacho balde de albañil hormigonera amoladora soldadora morsa tenaza mazo maza barreta
+ropa/prendas/superior|ropa: chomba polera musculosa top cárdigan rompeviento parka poncho ruana capa cazadora
+ropa/prendas/inferior|ropa: bombacha de campo babucha pantalón cargo culotte minifalda
+ropa/accesorios/accesorios|ropa: boina gorra de lana pasamontañas vincha hebilla tiradores pañuelo de cuello chal pashmina riñonera morral maletín portafolio
+lugares/ciudad/ciudad|ciudad,lugar: callejón pasaje diagonal bulevar costanera peatonal plazoleta rotonda manzana barrio cerrado country villa miseria conventillo
+lugares/edificios/edificios|ciudad,lugar: monasterio convento abadía mezquita sinagoga capilla basílica fortaleza fuerte faro molino granero silo tanque de agua
+lugares/servicios/públicos|ciudad,lugar,sociedad: juzgado registro civil ministerio embajada consulado aduana planetario observatorio acuario zoológico jardín botánico anfiteatro
+lugares/naturaleza/tierra|naturaleza,lugar: altiplano puna estepa tundra sabana oasis salina salar glaciar morena cañón garganta desfiladero acantilado gruta caverna volcán dormido cráter llanura pampeana monte chaqueño
+lugares/naturaleza/agua|naturaleza,lugar,agua: embalse dique represa presa acequia canal estuario fiordo ría albufera humedal bañado esteros cañada vertiente ojo de agua pozo aljibe lagunita pantano costa marina riachuelo afluente desembocadura delta cauce
+lugares/mundo/mundo|lugar,viaje: hemisferio ecuador trópico polo norte polo sur meridiano latitud longitud océano continente archipiélago istmo estrecho
+lugares/países/países|lugar,viaje: ecuador colombia venezuela cuba canadá portugal grecia holanda bélgica suiza austria suecia noruega irlanda australia egipto marruecos sudáfrica corea turquía israel
+transporte/tierra/vehículos|transporte,viaje,ciudad: furgoneta utilitario combi motorhome casa rodante cuatriciclo tractor sulky carreta carro sidecar scooter acoplado semirremolque grúa autobomba
+transporte/agua/barcos|transporte,viaje,agua,mar: catamarán trasatlántico carguero petrolero remolcador balsa piragua gomón moto de agua bote salvavidas buque escuela fragata acorazado portaaviones
+transporte/aire/aviones|transporte,viaje,aire,cielo: jet hidroavión zepelín dirigible ala delta parapente aladeltista transbordador satélite
+naturaleza/clima/clima|naturaleza,clima,cielo: ventarrón pampero zonda sudestada ráfaga remolino tornado tifón monzón ola de calor ola de polar nevisca aguanieve chubasco tormenta eléctrica nubarrón cielo despejado
+naturaleza/cielo/astronomía|naturaleza,cielo,noche,ciencia: neptuno urano plutón vía láctea nebulosa supernova estrella fugaz lluvia de estrellas aurora boreal cosmos órbita gravedad
+naturaleza/materiales/minerales|naturaleza,ciencia,dinero: cuarzo amatista esmeralda rubí zafiro ópalo turquesa jade ámbar granito basalto pizarra mármol caliza yeso grafito estaño plomo zinc níquel platino litio uranio
+naturaleza/ambiente/ambiente|naturaleza,sociedad: deforestación calentamiento global efecto invernadero sequía incendio forestal biodiversidad reserva natural parque nacional compost energía renovable
+tecnología/informática/informática|tecnología: celular smartphone pendrive disco rígido memoria ram procesador placa de video router módem contraseña usuario correo electrónico navegador buscador red social videollamada streaming podcast emoji
+tecnología/comunicación/comunicación|tecnología,comunicación: walkie-talkie radio portátil antena parabólica fax telégrafo megáfono altoparlante
+cultura/música/instrumentos|música,arte: quena sikus bombo legüero erke maracas pandereta triángulo xilofón marimba gaita armónica banjo mandolina laúd cítara tuba corno fagot oboe
+cultura/música/géneros|música,arte,fiesta: milonga candombe vals bolero chamamé cueca malambo carnavalito trap electrónica cumbia villera heavy metal punk reggae gospel
+cultura/arte/visual|arte,color: retrato paisaje naturaleza muerta caricatura historieta grafiti collage mosaico vitral cerámica tapiz
+cultura/literatura/literatura|arte,escuela,mente: ensayo crónica antología saga trilogía prólogo epílogo dedicatoria metáfora poesía gauchesca payada copla refrán adivinanza trabalenguas
+cultura/espectáculo/espectáculo|arte,fiesta: comedia drama tragedia musical ópera opereta murga títeres marionetas mimo malabarista acróbata trapecista equilibrista ventrílocuo
+cultura/juegos/juegos|juego,niños,diversión: truco chinchón escoba de quince generala canasta tutti frutti ta te ti batalla naval sudoku crucigrama sopa de letras yo-yo payana bolitas canicas balero escondidas
+deporte/deportes/deportes|deporte,juego: handball básquetbol beisbol béisbol softbol remo canotaje kayak escalada andinismo triatlón decatlón lucha esgrima arquería tiro con arco equitación pato bochas paleta frontón squash bádminton
+deporte/elementos/elementos|deporte,juego: tribuna platea vestuario palco silbato cronómetro pódium podio estadio techado tablero aro canasta
+educación/escuela/escuela|escuela,niños: abecedario mapamundi globo terráqueo cuaderno de comunicaciones boletín de calificaciones abrochadora sacapuntas resaltador fibrón marcador plasticola cartulina papel glasé
+ciencia/ciencia/ciencia|ciencia,mente: electrón protón neutrón ion isótopo bacteria virus microbio fotosíntesis evolución genética cromosoma neurona telescopio probeta tubo de ensayo mechero
+matemática/formas/formas|ciencia,arte: rombo trapecio pentágono hexágono octógono polígono óvalo elipse cilindro cono pirámide prisma diagonal radio diámetro perímetro
+sociedad/política/política|sociedad,ley: gobernador intendente concejal legislatura cámara de diputados senado decreto plebiscito referéndum campaña militante oposición oficialismo
+sociedad/justicia/justicia|sociedad,ley: estafa fraude secuestro homicidio hurto contrabando coima soborno abogado defensor querella demanda apelación fianza indulto
+sociedad/economía/economía|dinero,sociedad,trabajo: aguinaldo jubilación pensión cuota interés hipoteca alquiler expensas factura recibo presupuesto ganancia pérdida deuda externa devaluación exportación importación
+sociedad/religión/religión|sociedad,fe: rosario procesión peregrinación bautismo comunión confirmación casamiento por iglesia párroco obispo papa monje rabino imán
+mente/emociones/positivas|emoción,mente,alegría: euforia júbilo dicha gozo asombro admiración serenidad optimismo confianza ternura compasión empatía
+mente/emociones/negativas|emoción,mente,miedo: melancolía desánimo decepción desilusión frustración resentimiento rencor fastidio impaciencia desesperación inseguridad timidez
+mente/pensamiento/pensamiento|mente: intuición percepción reflexión análisis deducción hipótesis creencia prejuicio sabiduría ingenio curiosidad
+mente/valores/valores|mente,sociedad: tolerancia lealtad honradez gratitud perseverancia esfuerzo disciplina prudencia coherencia
+`);
+
+</script>
 
 <script>
 (function(){
@@ -1063,7 +1165,8 @@ const STAGE_NAMES = ["Primeros pasos","Calentando","Restas en juego","Ritmo","Do
 const $app = document.getElementById("app");
 const esc = s => String(s).replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let toastT;
-function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2600); }
+// los avisos aparecen arriba de la pantalla, así se ven aunque el teclado del celular esté abierto
+function toast(msg, kind, ms){ const t=document.getElementById("toast"); t.textContent=msg; t.className = "toast" + (kind ? " " + kind : ""); t.hidden=true; void t.offsetWidth; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, ms || Math.max(2600, msg.length*55)); }
 let actx=null;
 function beep(f=660,d=.06){ try{ if(!actx) return; const o=actx.createOscillator(), g=actx.createGain(); o.frequency.value=f; g.gain.value=.06; o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime+d);}catch(e){} }
 function fmt(n){ return n<0 ? "−"+Math.abs(n) : String(n); }
@@ -1523,6 +1626,66 @@ function vFind(n){
   for(const k of plurals(n)) if(VIDX.has(k)) return VIDX.get(k);
   return -1;
 }
+// palabra más parecida del vocabulario, para errores de tipeo (1 letra de diferencia en palabras medianas, 2 en largas)
+function lev(a, b, max){
+  if(Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({length:b.length+1}, (_,j)=>j);
+  for(let i=1;i<=a.length;i++){
+    const cur = [i]; let best = i;
+    for(let j=1;j<=b.length;j++){ cur[j] = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1] + (a[i-1]===b[j-1]?0:1)); if(cur[j] < best) best = cur[j]; }
+    if(best > max) return max + 1;
+    prev = cur;
+  }
+  return prev[b.length];
+}
+function vFuzzy(n){
+  const max = n.length >= 8 ? 2 : n.length >= 5 ? 1 : 0;
+  if(!max) return -1;
+  let best = -1, bd = max + 1, ties = 0;
+  for(let i=0;i<VOCAB.length;i++){
+    const d = lev(n, VOCAB[i].n, max);
+    if(d < bd){ bd = d; best = i; ties = 0; } else if(d === bd) ties++;
+  }
+  return bd <= max && !ties ? best : -1;          // si hay dos igual de parecidas, no adivinamos
+}
+/* palabras que el juego no conoce: se guardan para sumarlas en una actualización */
+S.unknown = S.unknown || {};
+function unknownAdd(raw){
+  const w = String(raw).toLowerCase().trim().slice(0, 30); if(!w) return;
+  S.unknown[w] = (S.unknown[w] || 0) + 1;
+  const keys = Object.keys(S.unknown); if(keys.length > 300) delete S.unknown[keys[0]];
+  save();
+}
+function unknownCard(){
+  const words = Object.keys(S.unknown);
+  if(!words.length) return "";
+  return `<div class="unkcard">
+    <div><b>Palabras para sumar al juego</b><span>${words.length} ${words.length===1?"palabra que el juego todavía no conoce":"palabras que el juego todavía no conoce"}: ${words.slice(-6).map(esc).join(", ")}${words.length>6?"…":""}</span></div>
+    <button class="btn" data-unk="send">Enviar</button>
+  </div>`;
+}
+function unknownSend(){
+  const words = Object.keys(S.unknown); if(!words.length) return;
+  const list = words.join(", ");
+  const title = "Palabras para sumar a Palabra escondida";
+  const body = "Palabras que el juego no conoció:\n\n" + words.map(w=>"- " + w).join("\n");
+  const gh = "https://github.com/Alt-si/juegos-mentales-II/issues/new?labels=palabras&title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body);
+  const text = `${title}: ${list}`;
+  clearTimers();
+  $app.innerHTML = `${topBar("wlevels")}
+  <div class="hello"><h1>Palabras para sumar</h1><p>Estas son las palabras que probaste y el juego todavía no conoce. Mandalas y en la próxima actualización revisamos cuáles existen para incluirlas.</p></div>
+  <div class="unklist">${words.map(w=>`<span class="wchip"><b>${S.unknown[w]}</b>${esc(w)}</span>`).join("")}</div>
+  ${shareBox(text, "Mandar la lista", "Copiala y mandala por WhatsApp o correo, o usá el botón de abajo.")}
+  <div class="actions">
+    <a class="btn primary linkbtn" href="${gh}" target="_blank" rel="noopener">Enviar al equipo del juego (GitHub)</a>
+    <button class="btn" data-unk="clear">Ya las mandé: vaciar la lista</button>
+    <button class="btn" data-go="wlevels">Volver</button>
+  </div>`;
+}
+function unknownAction(a){
+  if(a === "send") return unknownSend();
+  if(a === "clear"){ S.unknown = {}; save(); toast("Listo, vaciamos la lista."); return wlevels(); }
+}
 function vAdd(w, mem, tags){
   const n = norm(w); if(n.length<2 || STOP.has(n)) return -1;
   let i = vFind(n);
@@ -1729,10 +1892,16 @@ function wGuess(text){
   const inp = document.getElementById("wguess");
   const clear = () => { if(inp){ inp.value=""; refocus(inp); } };
   if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
-  const i = vFind(n);
-  if(i<0){ toast(`No conozco "${raw}". Probá con otra palabra; este intento no cuenta.`); clear(); return; }
+  let i = vFind(n), fixed = false;
+  if(i<0){ i = vFuzzy(n); fixed = i >= 0; }       // ¿lo escribió con un error de tipeo?
+  if(i<0){
+    unknownAdd(raw);
+    toast(`Todavía no conozco "${raw}". La guardamos para sumarla en una próxima actualización. Este intento no cuenta.`, "warn");
+    clear(); return;
+  }
   const dup = W.guesses.find(g=>g.i===i);
-  if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r}.`); clear(); return; }
+  if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r}.`, "warn"); clear(); return; }
+  if(fixed) toast(`Tomamos "${VOCAB[i].w}" (escribiste "${raw}").`);
   wAdd({word: VOCAB[i].w, r: W.rank.get(i), i, hint:false});
   clear();
 }
@@ -1855,6 +2024,7 @@ const _wlevels = wlevels;
 wlevels = function(){
   _wlevels();
   addDuelCard("new", "Jugá una palabra al azar y desafiá a un rival con la misma palabra. Gana quien la adivine en menos intentos.");
+  const u = unknownCard(); const d = $app.querySelector(".duelcard"); if(u && d) d.insertAdjacentHTML("afterend", u);
 };
 
 function duelAskName(next, back){
@@ -1904,7 +2074,7 @@ function duelInvite(p){
 }
 let duelPending = null;
 
-function shareBox(text, title){
+function shareBox(text, title, hint){
   return `<div class="share">
     <h2>${title}</h2>
     <textarea id="sharetxt" readonly aria-label="Mensaje para compartir">${esc(text)}</textarea>
@@ -1912,7 +2082,7 @@ function shareBox(text, title){
       <button class="btn primary" data-duel="copy">Copiar mensaje</button>
       ${navigator.share?`<button class="btn" data-duel="share">Compartir</button>`:""}
     </div>
-    <p class="hint">${canLink?"Tu rival abre el link y juega la misma palabra.":"Tu rival pega el código en Palabra escondida → Duelo → Abrir."}</p>
+    ${hint===""?"":`<p class="hint">${hint || (canLink?"Tu rival abre el link y juega la misma palabra.":"Tu rival pega el código en Palabra escondida → Duelo → Abrir.")}</p>`}
   </div>`;
 }
 function duelEnd(ok){
@@ -2196,7 +2366,8 @@ function dailyScreen(){
   <div class="dnotif">
     <div><b>Recordatorio diario</b><br><span>${S.notif ? "Activado: te avisamos cuando hay palabra nueva." : "Recibí un aviso cada día con la palabra nueva."}</span></div>
     <button class="btn ${S.notif?"":"primary"}" data-daily="notif">${S.notif ? "Probar aviso" : "Activar"}</button>
-  </div>`;
+  </div>
+  ${unknownCard()}`;
   howFirst("dia");
 }
 function calendarHtml(){
@@ -2271,7 +2442,7 @@ function dailySummary(k, r, g){
       ${streak ? `<p>Racha: <b class="num">${streak}</b> ${streak===1?"día":"días"} seguidos</p>` : ""}
     </div>
     ${g && g.coins ? `<div class="gains"><span><span class="coin"></span>+<span class="num">${g.coins}</span></span><span>+<span class="num">${g.xp}</span> XP</span></div>` : ""}
-    ${shareBox(dailyShareText(k, r), "Contale a tus amigos")}
+    ${shareBox(dailyShareText(k, r), "Contale a tus amigos", "")}
     <p class="hint">Mañana hay una palabra nueva.</p>
     <div class="actions">
       <button class="btn primary" data-go="daily">Ver el calendario</button>
@@ -3147,6 +3318,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.mhelp!==undefined || t.dataset.mgive!==undefined || t.dataset.mmic!==undefined){ mAction(t); return; }
   if(t.dataset.daily){ dailyAction(t.dataset.daily); return; }
   if(t.dataset.howto){ howTo(t.dataset.howto); return; }
+  if(t.dataset.unk){ unknownAction(t.dataset.unk); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }
   if(t.dataset.whelp!==undefined){ wHint(); return; }

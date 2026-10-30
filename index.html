@@ -1160,6 +1160,8 @@ const STAGE_NAMES = ["Primeros pasos","Calentando","Restas en juego","Ritmo","Do
 
 /* ---------- utilidades ---------- */
 const $app = document.getElementById("app");
+// cada pantalla nueva arranca desde arriba (si no, queda la altura de la pantalla anterior y se tapa el título)
+new MutationObserver(() => { try{ window.scrollTo(0, 0); }catch(e){} }).observe($app, {childList:true});
 const esc = s => String(s).replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let toastT;
 // los avisos aparecen arriba de la pantalla, así se ven aunque el teclado del celular esté abierto

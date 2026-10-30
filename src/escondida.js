@@ -43,9 +43,10 @@ function unknownAdd(raw){
   const keys = Object.keys(S.unknown); if(keys.length > 300) delete S.unknown[keys[0]];
   save();
 }
+const UNKNOWN_UI = false;   // la sección «Palabras para sumar» está apagada por ahora (las palabras se siguen guardando en silencio)
 function unknownCard(){
   const words = Object.keys(S.unknown);
-  if(!words.length) return "";
+  if(!UNKNOWN_UI || !words.length) return "";
   return `<div class="unkcard">
     <div><b>Palabras para sumar al juego</b><span>${words.length} ${words.length===1?"palabra que el juego todavía no conoce":"palabras que el juego todavía no conoce"}: ${words.slice(-6).map(esc).join(", ")}${words.length>6?"…":""}</span></div>
     <button class="btn" data-unk="send">Enviar</button>
@@ -307,7 +308,7 @@ function wGuess(text){
   if(i<0){ i = vFuzzy(n); fixed = i >= 0; }       // ¿lo escribió con un error de tipeo?
   if(i<0){
     unknownAdd(raw);
-    toast(`Todavía no conozco "${raw}". La guardamos para sumarla en una próxima actualización. Este intento no cuenta.`, "warn");
+    toast(`Todavía no conozco "${raw}". Probá con otra palabra; este intento no cuenta.`, "warn");
     clear(); return;
   }
   const dup = W.guesses.find(g=>g.i===i);

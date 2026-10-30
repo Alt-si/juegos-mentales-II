@@ -131,7 +131,7 @@ Escribís (o decís) una palabra y el juego te muestra su **puesto real** entre 
 - **Colores:** verde para los puestos 1 a 50, amarillo para 51 a 300 y rojo para más de 300.
 - **Singular y plural** cuentan como la misma palabra, y no importan los acentos ni las mayúsculas.
 - **Errores de tipeo:** si una palabra no está pero se parece mucho a una conocida (1 letra de diferencia en palabras de 5 a 7 letras, 2 en las de 8 o más), el juego toma la conocida y lo avisa. Por ejemplo, "rinhoseronte" → "rinoceronte".
-- Si escribís una palabra que el juego no conoce, te avisa y **ese intento no cuenta**. La palabra se guarda en una lista **"Palabras para sumar"**, que aparece en Palabra escondida y en la Palabra del día. Desde ahí se puede copiar, compartir o **enviar como issue a GitHub** (con la etiqueta `palabras`), para revisar si existen y sumarlas al vocabulario en una actualización.
+- Si escribís una palabra que el juego no conoce, te avisa y **ese intento no cuenta**. (La sección "Palabras para sumar" está apagada por ahora; se vuelve a activar con `UNKNOWN_UI = true` en `src/escondida.js`.)
 - Los avisos aparecen **arriba de la pantalla**, para que se vean aunque el teclado del celular esté abierto.
 - **Pistas con costo creciente** (30, 50, 80 y 120 monedas). Cada pista te acerca solo un poco: si estás lejos, te lleva al 60 % de tu mejor puesto; si estás cerca, avanza unos pocos puestos. Con tu mejor intento entre los 10 primeros ya no hay pistas.
 - **Rendirse:** muestra la palabra (hay que tocar dos veces).

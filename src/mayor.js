@@ -28,7 +28,7 @@ function mlevels(){
     store:S.games.mayor, total:Infinity, names:M_STAGES, attr:"mlv", how:"mayor",
     label:s=>{ const L = s*20+1; if(L > MDATA.length) return "preguntas nuevas: fechas, cuentas y tiempo"; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
   const h = $app.querySelector(".hello"); if(h) h.insertAdjacentHTML("beforeend", `<p class="mtotal">Tu puntaje total: <b class="num">${mFmt(mTotal())}</b> puntos</p>`);
-  addDuelCard("mnew", `Los dos responden las mismas ${MD_ROUNDS} preguntas, sin pistas. Gana quien junte más puntos; si empatan, quien usó menos intentos.`);
+  addDuelCard("mnew", `Los dos responden las mismas preguntas, sin pistas. Gana quien junte más puntos; si empatan, quien usó menos intentos.`);
 }
 
 let M = null;
@@ -41,7 +41,7 @@ function mplay(L, duel){
   $app.innerHTML = `${topBar("mlevels")}
   <div class="mplay">
     <div class="mpts" id="mpts"><span>Puntos</span><b class="num" id="mptsv">${mFmt(M.pts)}</b><small>cada número que no es la respuesta resta ${M.pen}</small></div>
-    <div class="hud">${duel ? `<span><b>Duelo</b> · pregunta <b>${duel.round+1}</b> de ${MD_ROUNDS}${duel.p?` · contra ${esc(duel.p.a.n)}`:""}</span>` : `<span>Nivel <b>${L}</b></span>`}<span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
+    <div class="hud">${duel ? `<span><b>Duelo</b> · pregunta <b>${duel.round+1}</b> de ${duel.qs.length}${duel.p?` · contra ${esc(duel.p.a.n)}`:""}</span>` : `<span>Nivel <b>${L}</b></span>`}<span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
     <div class="mq">
       <span class="kicker">Pregunta</span>
       <h2>${esc(x.q)}</h2>

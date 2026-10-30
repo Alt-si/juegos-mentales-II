@@ -22,6 +22,15 @@ En cada juego los niveles se muestran **una etapa a la vez**, en una cuadrícula
 - Al entrar se abre la etapa del próximo nivel. Se puede ver una etapa bloqueada más adelante, para saber qué viene.
 - El recuadro de **Duelo** está debajo.
 
+## Duelos: cantidad de partidas
+
+En los tres juegos con duelo (Cadena, Palabra escondida y Mayor o menor), el recuadro **Duelo** tiene la opción **"¿A cuántas partidas?"**: **3, 5, 8 o 10**. La elección queda guardada para la próxima vez.
+
+- **Cadena:** se juegan esa cantidad de cuentas del nivel en el que estás.
+- **Palabra escondida:** se juegan esa cantidad de palabras al azar. Gana quien encuentre más; si empatan, quien usó menos intentos en total; después, quien usó menos pistas.
+- **Mayor o menor:** se responden esa cantidad de preguntas, de fáciles a difíciles.
+- La cantidad viaja en el código, así que el rival juega exactamente las mismas partidas. Los códigos viejos, de una sola palabra o de 3 partidas, siguen funcionando.
+
 ## Cómo se juega
 
 Cada juego tiene un botón **?** que abre su explicación: en la portada (sobre cada tarjeta), en la pantalla de niveles y, en Palabra escondida y Mayor o menor, también durante la partida. La explicación aparece sola la primera vez que el jugador entra a cada juego. Los textos están en `src/ayuda.js`.

@@ -225,7 +225,7 @@ let W = null;
 const MIC_SVG = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3.5"/><path d="M8.5 21.5h7"/></svg>`;
 /* partida en curso: se guarda en cada intento, así al salir y volver no se pierde nada */
 S.wprog = S.wprog || {};
-function wProgKey(){ return !W ? null : W.daily ? "d:" + W.daily : W.duel ? "duel:" + (W.duel.id || (W.duel.p && W.duel.p.id)) + ":" + W.duel.role : "l:" + W.L + ":" + W.idx; }
+function wProgKey(){ return !W ? null : W.daily ? "d:" + W.daily : W.duel ? "duel:" + (W.duel.id || (W.duel.p && W.duel.p.id)) + ":" + W.duel.role + ":" + (W.duel.round||0) : "l:" + W.L + ":" + W.idx; }
 function wProgSave(){
   const k = wProgKey(); if(!k || W.done) return;
   S.wprog[k] = {g: W.guesses.map(g => [VOCAB[g.i].n, g.hint ? 1 : 0]), h: W.hints, t: Date.now()};
@@ -252,7 +252,7 @@ function wplay(L, duel, forceIdx, opts){
   W = Object.assign({L, idx, lv, guesses:[], last:null, hints:0, done:false, duel:duel||null, daily:(opts&&opts.daily)||null}, wRanking(lv));
   $app.innerHTML = `${topBar(W.daily ? "daily" : "wlevels")}
   <div class="wplay">
-    <div class="hud">${W.daily ? `<span><b>Palabra del día</b> · ${prettyDay(W.daily)}</span>` : duel ? `<span><b>Duelo</b>${duel.role==="b"?` contra ${esc(duel.p.a.n)} · su marca: <b>${duel.p.a.ok?duel.p.a.t:"✕"}</b>`:" · palabra al azar"}</span>` : `<span>Nivel <b>${L}</b></span>`}<span class="hudr"><span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span>${howBtn(W.daily?"dia":"palabra")}</span></div>
+    <div class="hud">${W.daily ? `<span><b>Palabra del día</b> · ${prettyDay(W.daily)}</span>` : duel ? `<span><b>Duelo</b> · palabra <b>${(duel.round||0)+1}</b> de ${duel.ws?duel.ws.length:1}${duel.role==="b"?` · contra ${esc(duel.p.a.n)}`:""}</span>` : `<span>Nivel <b>${L}</b></span>`}<span class="hudr"><span>Intentos: <b id="wcount">0</b> · ${VOCAB.length.toLocaleString("es-AR")} palabras</span>${howBtn(W.daily?"dia":"palabra")}</span></div>
     <form class="wform" id="wform" autocomplete="off">
       <input id="wguess" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="24" placeholder="Escribí una palabra" aria-label="Tu palabra">
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
@@ -399,27 +399,35 @@ function duelDecode(text){
     const p = JSON.parse(new TextDecoder().decode(bytes));
     if(p.v!==1 || !p.a) return null;
     if(p.g==="c"){ if(!(p.L>=1 && p.L<=TOTAL_LEVELS) || !p.seed) return null; }
-    else if(p.g==="m"){ if(!Array.isArray(p.qs) || p.qs.length!==MD_ROUNDS || p.qs.some(i=>!MDATA[i])) return null; }
-    else if(!wLv(p.w)) return null;
+    else if(p.g==="m"){ if(!Array.isArray(p.qs) || !p.qs.length || p.qs.length>10 || p.qs.some(i=>!MDATA[i])) return null; }
+    else { if(!Array.isArray(p.ws)) p.ws = [p.w]; if(!p.ws.length || p.ws.length > 10 || p.ws.some(i=>!wLv(i))) return null; wNorm(p.a); wNorm(p.b); }
     return p;
   }catch(e){ return null; }
 }
 const canLink = (()=>{ try{ return window.top === window && /^https?:$/.test(location.protocol); }catch(e){ return false; } })();
 function duelLink(token){ return canLink ? location.origin + location.pathname + "#" + token : ""; }
-// gana quien la encontró; entre dos que la encontraron, menos intentos; si empatan, menos pistas
+// duelo de palabras: gana quien encontró más palabras; si empatan, menos intentos en total; después, menos pistas
 function duelCompare(a, b){
-  if(a.ok && !b.ok) return 1; if(!a.ok && b.ok) return -1; if(!a.ok && !b.ok) return 0;
+  if(a.ok !== b.ok) return a.ok > b.ok ? 1 : -1;
+  if(!a.ok) return 0;
   if(a.t !== b.t) return a.t < b.t ? 1 : -1;
   if(a.h !== b.h) return a.h < b.h ? 1 : -1;
   return 0;
 }
-const markTxt = x => x.ok ? `${x.t} ${x.t===1?"intento":"intentos"}${x.h?` y ${x.h} ${x.h===1?"pista":"pistas"}`:""}` : "no la encontró";
-
+// códigos viejos (una sola palabra) usan ok: true/false
+function wNorm(x){ if(x && typeof x.ok === "boolean") x.ok = x.ok ? 1 : 0; if(x) x.of = x.of || 1; return x; }
+const markTxt = x => x.of > 1
+  ? `${x.ok} de ${x.of} palabras · ${x.t} ${x.t===1?"intento":"intentos"}${x.h?` · ${x.h} ${x.h===1?"pista":"pistas"}`:""}`
+  : x.ok ? `${x.t} ${x.t===1?"intento":"intentos"}${x.h?` y ${x.h} ${x.h===1?"pista":"pistas"}`:""}` : "no la encontró";
+const wBall = x => x.of > 1 ? `${x.ok}/${x.of}` : (x.ok ? x.t : "✕");
+const DUEL_ROUNDS = [3, 5, 8, 10];
+const duelRounds = () => DUEL_ROUNDS.includes(S.duelRounds) ? S.duelRounds : 3;
 function duelCard(){
   const d = S.duel;
   return `<div class="duelcard">
     <div class="duelhead"><h2>Duelo</h2><span class="hint">Ganados <b class="num">${d.w}</b> · Empates <b class="num">${d.e}</b> · Perdidos <b class="num">${d.l}</b></span></div>
     <p>Jugá una palabra al azar y desafiá a un rival con la misma palabra. Gana quien la adivine en menos intentos.</p>
+    <div class="drounds"><span>¿A cuántas partidas?</span><div>${DUEL_ROUNDS.map(n=>`<button class="dr ${n===duelRounds()?"on":""}" data-dround="${n}" aria-pressed="${n===duelRounds()}">${n}</button>`).join("")}</div></div>
     <button class="btn primary" data-duel="new">Desafiar a un rival</button>
     <form class="wform" id="duelopen" autocomplete="off">
       <input id="duelcode" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Pegá el código que te mandaron" aria-label="Código de desafío">
@@ -437,7 +445,7 @@ function addDuelCard(action, desc){
 const _wlevels = wlevels;
 wlevels = function(){
   _wlevels();
-  addDuelCard("new", "Jugá una palabra al azar y desafiá a un rival con la misma palabra. Gana quien la adivine en menos intentos.");
+  addDuelCard("new", "Jugá palabras al azar y desafiá a un rival con las mismas palabras. Gana quien encuentre más; si empatan, quien usó menos intentos.");
   const u = unknownCard(); const d = $app.querySelector(".duelcard"); if(u && d) d.insertAdjacentHTML("afterend", u);
 };
 
@@ -458,9 +466,13 @@ function duelAskName(next, back){
 }
 function duelNew(){
   if(!S.name) return duelAskName(duelNew);
-  const i = Math.floor(Math.random()*WDATA.length);
-  wplay(0, {role:"a", id: Math.random().toString(36).slice(2,8)}, i);
+  const n = duelRounds(), ws = [];
+  while(ws.length < n){ const i = Math.floor(Math.random()*WDATA.length); if(!ws.includes(i)) ws.push(i); }
+  const d = {role:"a", id: Math.random().toString(36).slice(2,8), ws, round:0, res:[]};
+  wplay(0, d, ws[0]);
 }
+function duelNextWord(){ if(!wRound) return; const d = wRound; wRound = null; d.round = d.res.length; wplay(0, d, d.ws[d.round]); }
+let wRound = null;
 function duelOpen(text){
   const p = duelDecode(text);
   if(!p){ toast("Ese código no es válido. Revisá que esté completo."); return; }
@@ -472,14 +484,15 @@ function duelOpen(text){
 }
 function duelInvite(p){
   clearTimers();
+  const n = p.ws.length;
   $app.innerHTML = `${topBar("wlevels")}
   <div class="result mood-warn">
     <div class="verdict">
       <h1>${esc(p.a.n)} te desafía</h1>
-      <p>${p.a.ok?`Encontró la palabra escondida en <b>${markTxt(p.a)}</b>.`:"No pudo encontrar la palabra escondida."} ¿Podés hacerlo mejor?</p>
-      <div class="ball hero">${p.a.ok?p.a.t:"✕"}</div>
+      <p>${n>1 ? `Encontró <b>${markTxt(p.a)}</b>.` : p.a.ok ? `Encontró la palabra escondida en <b>${markTxt(p.a)}</b>.` : "No pudo encontrar la palabra escondida."} ¿Podés hacerlo mejor?</p>
+      <div class="ball hero">${wBall(p.a)}</div>
     </div>
-    <p class="hint">Es la misma palabra que jugó ${esc(p.a.n)}. Gana quien la encuentre en menos intentos; si empatan, gana quien usó menos pistas.</p>
+    <p class="hint">${n>1 ? `Son las mismas ${n} palabras que jugó ${esc(p.a.n)}. Gana quien encuentre más; si empatan, quien usó menos intentos.` : `Es la misma palabra que jugó ${esc(p.a.n)}. Gana quien la encuentre en menos intentos; si empatan, gana quien usó menos pistas.`}</p>
     <div class="actions">
       <button class="btn primary" data-duel="accept">Aceptar el desafío</button>
       <button class="btn" data-go="wlevels">Ahora no</button>
@@ -501,51 +514,74 @@ function shareBox(text, title, hint){
   </div>`;
 }
 function duelEnd(ok){
-  const me = {n:S.name, t:W.guesses.length, h:W.hints, ok};
-  const word = esc(W.lv.w);
-  if(W.duel.role==="a"){
-    const p = {v:1, g:"w", id:W.duel.id, w:W.idx, a:me};
-    const token = duelEncode(p), link = duelLink(token);
-    const text = `${S.name} te desafía en Palabra escondida (Mente Despierta): ${ok?`encontré la palabra en ${markTxt(me)}`:"no pude encontrar la palabra"}. ¿Podés con menos?\n${link?link+"\n":""}Código: ${token}`;
-    if(ok){ S.coins += 5; save(); }
+  const d = W.duel;
+  if(!d.ws) d.ws = [W.idx];
+  d.res = d.res || [];
+  d.res.push({ok, t:W.guesses.length, h:W.hints, w:W.idx});
+  const n = d.ws.length, word = esc(W.lv.w);
+  if(d.res.length < n){
+    // pantalla entre palabra y palabra
+    if(ok){ beep(880,.12); } else beep(220,.25);
+    wRound = d;
+    const found = d.res.filter(r=>r.ok).length, tt = d.res.reduce((s,r)=>s+r.t,0);
     $app.innerHTML = `${topBar("wlevels")}
     <div class="result mood-${ok?"good":"bad"}">
       <div class="verdict">
-        <h1>${ok?"¡La encontraste!":"Te rendiste"}</h1>
-        <p>${ok?`Tu marca: <b>${markTxt(me)}</b>`:"La palabra era"}</p>
+        <h1>Palabra ${d.res.length} de ${n}: ${ok?"¡la encontraste!":"te rendiste"}</h1>
+        <p>${ok?`En <b class="num">${W.guesses.length}</b> ${W.guesses.length===1?"intento":"intentos"}`:"La palabra era"}</p>
         <div class="wordball">${word}</div>
+        <p>Llevás <b>${found}</b> ${found===1?"palabra encontrada":"palabras encontradas"} y <b>${tt}</b> ${tt===1?"intento":"intentos"}.</p>
       </div>
-      ${shareBox(text, "Ahora desafiá a tu rival")}
-      <div class="actions"><button class="btn" data-duel="new">Otro duelo</button><button class="btn" data-go="wlevels">Volver</button></div>
+      <div class="actions"><button class="btn primary" data-duel="wnext">Palabra ${d.res.length+1}</button></div>
     </div>`;
     if(ok) confetti();
     return;
   }
+  const me = {n:S.name, ok:d.res.filter(r=>r.ok).length, t:d.res.reduce((s,r)=>s+r.t,0), h:d.res.reduce((s,r)=>s+r.h,0), of:n};
+  const words = d.ws.map(i=>esc(wLv(i).w)).join(", ");
+  if(d.role==="a"){
+    const p = {v:1, g:"w", id:d.id, ws:d.ws, a:me};
+    const token = duelEncode(p), link = duelLink(token);
+    const text = `${S.name} te desafía en Palabra escondida (Mente Despierta): ${n>1 ? `encontré ${markTxt(me)}` : ok?`encontré la palabra en ${markTxt(me)}`:"no pude encontrar la palabra"}. ¿Podés hacerlo mejor?\n${link?link+"\n":""}Código: ${token}`;
+    if(me.ok){ S.coins += 5; save(); }
+    $app.innerHTML = `${topBar("wlevels")}
+    <div class="result mood-${me.ok===n?"good":me.ok?"warn":"bad"}">
+      <div class="verdict">
+        <h1>${n>1 ? "Tu marca" : ok?"¡La encontraste!":"Te rendiste"}</h1>
+        <p>${n>1 ? `<b>${markTxt(me)}</b>` : ok?`Tu marca: <b>${markTxt(me)}</b>`:"La palabra era"}</p>
+        ${n>1 ? `<div class="ball hero">${wBall(me)}</div><p>Las palabras eran: <b>${words}</b></p>` : `<div class="wordball">${word}</div>`}
+      </div>
+      ${shareBox(text, "Ahora desafiá a tu rival")}
+      <div class="actions"><button class="btn" data-duel="new">Otro duelo</button><button class="btn" data-go="wlevels">Volver</button></div>
+    </div>`;
+    if(me.ok===n) confetti();
+    return;
+  }
   // respuesta al desafío
-  const p = Object.assign({}, W.duel.p, {b:me});
+  const p = Object.assign({}, d.p, {b:me});
   const res = duelCompare(me, p.a);
   if(!S.duel.seen.includes(p.id+"b")){
     S.duel.seen.push(p.id+"b"); S.duel.seen = S.duel.seen.slice(-200);
-    if(res>0){ S.duel.w++; S.coins += 20; } else if(res<0){ S.duel.l++; if(ok) S.coins += 3; } else { S.duel.e++; S.coins += 8; }
+    if(res>0){ S.duel.w++; S.coins += 20; } else if(res<0){ S.duel.l++; if(me.ok) S.coins += 3; } else { S.duel.e++; S.coins += 8; }
     save();
   }
   const token = duelEncode(p), link = duelLink(token);
   const verdict = res>0 ? "¡Ganaste el duelo!" : res<0 ? `Ganó ${esc(p.a.n)}` : "¡Empate!";
-  const text = `Duelo de Palabra escondida: ${S.name} ${ok?`la encontró en ${markTxt(me)}`:"no la encontró"} y ${p.a.n} ${p.a.ok?`en ${markTxt(p.a)}`:"no la encontró"}. ${res>0?`Ganó ${S.name}.`:res<0?`Ganó ${p.a.n}.`:"Empate."}\n${link?link+"\n":""}Código: ${token}`;
+  const text = `Duelo de Palabra escondida: ${S.name} ${markTxt(me)} y ${p.a.n} ${markTxt(p.a)}. ${res>0?`Ganó ${S.name}.`:res<0?`Ganó ${p.a.n}.`:"Empate."}\n${link?link+"\n":""}Código: ${token}`;
   $app.innerHTML = `${topBar("wlevels")}
   <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
     <div class="verdict">
       <h1>${verdict}</h1>
-      <p>La palabra era <b>${word}</b></p>
-      ${duelVs(me, p.a, res)}
+      <p>${n>1 ? `Las palabras eran: <b>${words}</b>` : `La palabra era <b>${word}</b>`}</p>
+      ${duelVs(me, p.a, res, wBall)}
     </div>
     ${shareBox(text, `Mandale el resultado a ${esc(p.a.n)}`)}
-    <div class="actions"><button class="btn primary" data-duel="new">Revancha con otra palabra</button><button class="btn" data-go="wlevels">Volver</button></div>
+    <div class="actions"><button class="btn primary" data-duel="new">Revancha</button><button class="btn" data-go="wlevels">Volver</button></div>
   </div>`;
   if(res>0) confetti();
 }
 function duelVs(me, rival, res, ballTxt, markFn){
-  ballTxt = ballTxt || (x => x.ok ? x.t : "✕"); markFn = markFn || markTxt;
+  ballTxt = ballTxt || wBall; markFn = markFn || markTxt;
   const col = r => r>0 ? "var(--good)" : r<0 ? "var(--bad)" : "var(--warn)";
   const on = r => r===0 ? "var(--on-warn)" : "var(--on-mood)";
   const ball = (x, r) => `<div class="ball hero" style="--m:${col(r)};--on-m:${on(r)}">${ballTxt(x)}</div>`;
@@ -569,22 +605,23 @@ function duelShowResult(p){
   <div class="result mood-${res>0?"good":res<0?"bad":"warn"}">
     <div class="verdict">
       <h1>${verdict}</h1>
-      <p>La palabra era <b>${esc(wLv(p.w).w)}</b></p>
+      <p>${p.ws.length>1 ? `Las palabras eran: <b>${p.ws.map(i=>esc(wLv(i).w)).join(", ")}</b>` : `La palabra era <b>${esc(wLv(p.ws[0]).w)}</b>`}</p>
       ${duelVs(me, rival, res)}
     </div>
-    <div class="actions"><button class="btn primary" data-duel="new">Revancha con otra palabra</button><button class="btn" data-go="wlevels">Volver</button></div>
+    <div class="actions"><button class="btn primary" data-duel="new">Revancha</button><button class="btn" data-go="wlevels">Volver</button></div>
   </div>`;
   if(res>0 && iAmA) confetti();
 }
 function duelAction(a, btn){
   if(a==="new") return duelNew();
-  if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(0, {role:"b", p}, p.w); }
+  if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(0, {role:"b", id:p.id, ws:p.ws, round:0, res:[], p}, p.ws[0]); }
+  if(a==="wnext") return duelNextWord();
   if(a==="cnew") return cDuelNew();
   if(a==="mnew") return mdNew();
   if(a==="mnext") return mdNext();
   if(a==="maccept" && mdPending){ const p = mdPending; mdPending = null; return mplay(0, {role:"b", id:p.id, qs:p.qs, round:0, res:[], p}); }
   if(a==="cnext") return cDuelNext();
-  if(a==="caccept" && cPending){ const p = cPending; cPending = null; return play(p.L, {role:"b", id:p.id, L:p.L, seed:p.seed, round:0, res:[], p}); }
+  if(a==="caccept" && cPending){ const p = cPending; cPending = null; return play(p.L, {role:"b", id:p.id, L:p.L, seed:p.seed, round:0, res:[], n:p.r||C_ROUNDS, p}); }
   if(a==="copy"){
     const ta = document.getElementById("sharetxt"); if(!ta) return;
     const fallback = () => { ta.focus(); ta.select(); toast("Seleccioné el mensaje: copialo con el menú del teclado."); };

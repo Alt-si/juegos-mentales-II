@@ -185,6 +185,11 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
 .wordball small{font-size:.45em;font-weight:600}
 .mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
+.drounds{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.drounds > span{font-weight:600;font-size:14px}
+.drounds div{display:flex;gap:6px}
+.dr{width:46px;height:40px;border-radius:12px;background:var(--bg);border:2px solid var(--line);font-family:var(--f-display);font-weight:700;font-size:17px;color:var(--ink)}
+.dr.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .unkcard{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--surface);border:2px dashed var(--warn);border-radius:18px;padding:14px}
 .unkcard div{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
 .unkcard span{color:var(--muted);font-size:13px;overflow-wrap:anywhere}
@@ -663,7 +668,7 @@ function lmRender(dir){
 function levels(){
   levelMap({title:"Cadena", desc:"La cuenta se resuelve en orden, como en una calculadora: 5 + 6 × 2 = 22.",
     store:S.games.cadena, total:TOTAL_LEVELS, names:STAGE_NAMES, label:stageLabel, attr:"lv", how:"cadena"});
-  addDuelCard("cnew", `Los dos reciben las mismas ${C_ROUNDS} cuentas, del nivel en el que estás. Gana quien acierte más; si empatan, el que respondió más rápido.`);
+  addDuelCard("cnew", `Los dos reciben las mismas cuentas, del nivel en el que estás. Gana quien acierte más; si empatan, el que respondió más rápido.`);
 }
 
 /* ---------- partida ---------- */
@@ -674,7 +679,7 @@ function play(L, duel){
   G = Object.assign(genLevel(L, duel ? duel.seed + duel.round*101 : 0), {L, input:"", extra:0, used:{}, phase:"show", duel:duel||null});
   $app.innerHTML = `${topBar("levels")}
   <div class="play">
-    <div class="hud">${duel?`<span><b>Duelo</b> · ronda <b>${duel.round+1}</b> de ${C_ROUNDS}${duel.p?` · contra ${esc(duel.p.a.n)}`:""}</span>`:`<span>Nivel <b>${L}</b></span>`}<span><b>${G.items.length}</b> números · ${(G.cfg.speed/1000).toFixed(1)} s cada uno</span></div>
+    <div class="hud">${duel?`<span><b>Duelo</b> · ronda <b>${duel.round+1}</b> de ${duel.n||C_ROUNDS}${duel.p?` · contra ${esc(duel.p.a.n)}`:""}</span>`:`<span>Nivel <b>${L}</b></span>`}<span><b>${G.items.length}</b> números · ${(G.cfg.speed/1000).toFixed(1)} s cada uno</span></div>
     <div class="stagebox" id="box"></div>
     <div id="bottom"></div>
   </div>`;
@@ -893,6 +898,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.howto){ howTo(t.dataset.howto); return; }
   if(t.dataset.unk){ unknownAction(t.dataset.unk); return; }
   if(t.dataset.lmgo!==undefined){ lmGo(+t.dataset.lmgo); return; }
+  if(t.dataset.dround){ S.duelRounds = +t.dataset.dround; save(); document.querySelectorAll(".dr").forEach(b=>{ const on = +b.dataset.dround === S.duelRounds; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); }); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }
   if(t.dataset.whelp!==undefined){ wHint(); return; }

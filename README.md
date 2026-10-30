@@ -12,17 +12,15 @@ App de juegos mentales para celulares. Cada juego suma experiencia a un **rango 
 | Bloques deslizantes | Jugable | Tablero de 6×6 con bloques que se deslizan en su dirección: hay que sacar el bloque rojo por la salida. |
 | Mayor o menor | Jugable | Una pregunta con respuesta numérica (años, metros, cantidades). Probás números y el juego te dice si el dato es mayor o menor. |
 
-## Mapa de niveles
+## Pantalla de niveles
 
-En cada juego los niveles se muestran como un **camino en zigzag**:
+En cada juego los niveles se muestran **una etapa a la vez**, en una cuadrícula de 4 columnas:
 
-- Cada etapa de 20 niveles empieza con un **cartel de color** que muestra el nombre de la etapa, de qué se trata, cuántos niveles completaste y cuántas estrellas juntaste.
-- Los niveles **completados** se ven como círculos del color de la etapa, con sus estrellas abajo, y el tramo de camino recorrido queda pintado.
-- El camino se ve dentro de un **recuadro de altura fija** que muestra un tramo corto. Al entrar se centra en el próximo nivel, y deslizando hacia arriba o hacia abajo aparecen los demás. El cartel de la etapa queda fijo arriba mientras se desliza.
-- El **próximo nivel** es más grande, late y tiene un cartel "JUGAR".
-- El recuadro de **Duelo** está debajo del camino.
-- Los niveles **bloqueados** muestran un candado, y el camino hacia ellos es punteado.
-- Al final hay un aviso de que los niveles no se terminan nunca.
+- **Arriba**, un cartel del color de la etapa con su número y nombre, y flechas **‹ ›** para ir a la etapa anterior o a la siguiente. También se cambia **deslizando el dedo** hacia los costados sobre la cuadrícula, o tocando los puntitos de abajo.
+- Debajo hay un **anillo de progreso** con los niveles completados, las estrellas juntadas y de qué se trata la etapa.
+- Las **fichas** de los niveles completados son del color de la etapa y muestran sus estrellas. La del **próximo nivel** es blanca, con borde de color, late y dice "JUGAR". Las **bloqueadas** son punteadas y tienen candado.
+- Al entrar se abre la etapa del próximo nivel. Se puede ver una etapa bloqueada más adelante, para saber qué viene.
+- El recuadro de **Duelo** está debajo.
 
 ## Cómo se juega
 

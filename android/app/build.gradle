@@ -19,7 +19,7 @@ android {
         applicationId 'io.github.altsi.mentedespierta'
         minSdk 24
         targetSdk 36
-        versionCode 2
+        versionCode 10
         versionName '1.0.0'
 
         resValue 'string', 'appName', twa.name

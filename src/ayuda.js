@@ -99,6 +99,7 @@ const HOWTO = {
       "Los niveles no se terminan nunca: después de las preguntas de datos aparecen preguntas nuevas con fechas, cuentas y tiempo.",
       "En los datos aproximados, como distancias o alturas, se acepta un margen que se avisa en la pregunta.",
       "La pista achica el rango a la mitad. Si te rendís, ves la respuesta y pasás a la siguiente.",
+      "Duelo: tu rival responde las mismas 3 preguntas, sin pistas. Gana quien junte más puntos; si empatan, quien usó menos intentos.",
     ],
   },
 };

@@ -28,19 +28,20 @@ function mlevels(){
     store:S.games.mayor, total:Infinity, names:M_STAGES, attr:"mlv", how:"mayor",
     label:s=>{ const L = s*20+1; if(L > MDATA.length) return "preguntas nuevas: fechas, cuentas y tiempo"; const t = M_TIERS.findIndex(([a,b])=>L>=a && L<=b); return ["preguntas fáciles","fechas y datos","datos difíciles"][Math.max(0,t)] + " · 3 estrellas yendo a la mitad"; }});
   const h = $app.querySelector(".hello"); if(h) h.insertAdjacentHTML("beforeend", `<p class="mtotal">Tu puntaje total: <b class="num">${mFmt(mTotal())}</b> puntos</p>`);
+  addDuelCard("mnew", `Los dos responden las mismas ${MD_ROUNDS} preguntas, sin pistas. Gana quien junte más puntos; si empatan, quien usó menos intentos.`);
 }
 
 let M = null;
-function mplay(L){
+function mplay(L, duel){
   clearTimers(); G = null; W = null;
   if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-  const x = mQuestion(L);
-  M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x), pts:M_START};
+  const x = duel ? MDATA[duel.qs[duel.round]] : mQuestion(L);
+  M = {L, x, lo:x.lo, hi:x.hi, guesses:[], hints:0, done:false, par:mPar(x), pts:M_START, duel:duel||null};
   M.pen = mPenalty(M.par);
   $app.innerHTML = `${topBar("mlevels")}
   <div class="mplay">
     <div class="mpts" id="mpts"><span>Puntos</span><b class="num" id="mptsv">${mFmt(M.pts)}</b><small>cada número que no es la respuesta resta ${M.pen}</small></div>
-    <div class="hud"><span>Nivel <b>${L}</b></span><span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
+    <div class="hud">${duel ? `<span><b>Duelo</b> · pregunta <b>${duel.round+1}</b> de ${MD_ROUNDS}${duel.p?` · contra ${esc(duel.p.a.n)}`:""}</span>` : `<span>Nivel <b>${L}</b></span>`}<span class="hudr"><span>Intentos: <b id="mcount">0</b> · ideal: <b>${M.par}</b></span>${howBtn("mayor")}</span></div>
     <div class="mq">
       <span class="kicker">Pregunta</span>
       <h2>${esc(x.q)}</h2>
@@ -55,7 +56,7 @@ function mplay(L){
     </form>
     <p class="hint" id="micst">Escribí un número o tocá el micrófono</p>
     <div class="whelps">
-      <button class="help" data-mhelp>Pista<small><span class="coin"></span><span id="mhcost">${M_HINT_COST[0]}</span></small></button>
+      ${duel ? "" : `<button class="help" data-mhelp>Pista<small><span class="coin"></span><span id="mhcost">${M_HINT_COST[0]}</span></small></button>`}
       <button class="help" data-mgive>Rendirse<small>ver la respuesta</small></button>
     </div>
     <ol class="mlist" id="mlist"></ol>
@@ -147,6 +148,7 @@ function mLose(p){
 }
 function mEnd(ok){
   M.done = true; clearTimers();
+  if(M.duel) return mdEnd(ok);
   const x = M.x, n = M.guesses.filter(g=>!g.hint).length;
   let stars=0, coins=0, xp=0;
   if(ok){

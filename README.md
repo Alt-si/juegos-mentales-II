@@ -59,6 +59,13 @@ El juego hace una pregunta cuya respuesta es un número y muestra entre qué val
 - Primero vienen las **128 preguntas** escritas a mano en `data/mayor.js`, en tres dificultades (cantidades conocidas, fechas y datos, y datos difíciles). Cada jugador las recibe en un orden distinto dentro de cada dificultad.
 - **Después, los niveles no se terminan:** `src/mayor-gen.js` arma una pregunta nueva para cada nivel. Pueden ser años entre dos hechos conocidos, la edad de alguien nacido en una fecha, multiplicaciones, porcentajes, conversiones de tiempo, días entre dos fechas, ahorro semanal o sumas del 1 al N. La respuesta siempre se calcula, así que siempre es correcta. Los números crecen a medida que avanzás.
 
+### Duelo de Mayor o menor
+
+- En la pantalla de niveles hay un recuadro **Duelo**. Se juegan **3 preguntas** (una fácil, una media y una difícil, elegidas al azar), **sin pistas**.
+- El código lleva las preguntas, así que tu rival responde **exactamente las mismas**.
+- **Gana quien junte más puntos** (cada pregunta arranca con 1000 y baja con cada error; rendirse da 0). Si empatan, gana quien usó menos intentos.
+- Entre pregunta y pregunta se ve la respuesta, el dato curioso y cuántos puntos llevás. El resultado se comparte con mensaje, link y código, como en los otros duelos.
+
 ## Secuencia
 
 Es un juego de memoria al estilo Simón. Los botones son porciones de un círculo, cada uno con su color y su nota musical.
@@ -197,6 +204,7 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 - `tools/gen-bloques.js`, `tools/pack-bloques.js`: generan y verifican el banco.
 - `src/ayuda.js`: las explicaciones de cómo se juega.
 - `src/mayor.js`: el juego Mayor o menor.
+- `src/mayor-duelo.js`: el duelo de Mayor o menor.
 - `src/mayor-gen.js`: las preguntas generadas de Mayor o menor (niveles sin fin).
 - `data/mayor.js`: las preguntas de Mayor o menor.
 - `src/diaria.js`: la Palabra del día, el calendario y el aviso diario.

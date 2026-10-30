@@ -399,6 +399,7 @@ function duelDecode(text){
     const p = JSON.parse(new TextDecoder().decode(bytes));
     if(p.v!==1 || !p.a) return null;
     if(p.g==="c"){ if(!(p.L>=1 && p.L<=TOTAL_LEVELS) || !p.seed) return null; }
+    else if(p.g==="m"){ if(!Array.isArray(p.qs) || p.qs.length!==MD_ROUNDS || p.qs.some(i=>!MDATA[i])) return null; }
     else if(!wLv(p.w)) return null;
     return p;
   }catch(e){ return null; }
@@ -464,6 +465,7 @@ function duelOpen(text){
   const p = duelDecode(text);
   if(!p){ toast("Ese código no es válido. Revisá que esté completo."); return; }
   if(p.g==="c"){ if(p.b) return cShowResult(p); if(!S.name) return duelAskName(()=>cInvite(p), "levels"); return cInvite(p); }
+  if(p.g==="m"){ if(p.b) return mdShowResult(p); if(!S.name) return duelAskName(()=>mdInvite(p), "mlevels"); return mdInvite(p); }
   if(p.b) return duelShowResult(p);
   if(!S.name) return duelAskName(()=>duelInvite(p));
   duelInvite(p);
@@ -495,7 +497,7 @@ function shareBox(text, title, hint){
       <button class="btn primary" data-duel="copy">Copiar mensaje</button>
       ${navigator.share?`<button class="btn" data-duel="share">Compartir</button>`:""}
     </div>
-    ${hint===""?"":`<p class="hint">${hint || (canLink?"Tu rival abre el link y juega la misma palabra.":"Tu rival pega el código en Palabra escondida → Duelo → Abrir.")}</p>`}
+    ${hint===""?"":`<p class="hint">${hint || (canLink?"Tu rival abre el link y juega lo mismo que vos.":"Tu rival pega el código en el recuadro Duelo del juego y toca Abrir. Cualquier código sirve en cualquier juego.")}</p>`}
   </div>`;
 }
 function duelEnd(ok){
@@ -578,6 +580,9 @@ function duelAction(a, btn){
   if(a==="new") return duelNew();
   if(a==="accept" && duelPending){ const p = duelPending; duelPending = null; return wplay(0, {role:"b", p}, p.w); }
   if(a==="cnew") return cDuelNew();
+  if(a==="mnew") return mdNew();
+  if(a==="mnext") return mdNext();
+  if(a==="maccept" && mdPending){ const p = mdPending; mdPending = null; return mplay(0, {role:"b", id:p.id, qs:p.qs, round:0, res:[], p}); }
   if(a==="cnext") return cDuelNext();
   if(a==="caccept" && cPending){ const p = cPending; cPending = null; return play(p.L, {role:"b", id:p.id, L:p.L, seed:p.seed, round:0, res:[], p}); }
   if(a==="copy"){

@@ -12,6 +12,10 @@ App de juegos mentales para celulares. Cada juego suma experiencia a un **rango 
 | Bloques deslizantes | Jugable | Tablero de 6×6 con bloques que se deslizan en su dirección: hay que sacar el bloque rojo por la salida. |
 | Mayor o menor | Jugable | Una pregunta con respuesta numérica (años, metros, cantidades). Probás números y el juego te dice si el dato es mayor o menor. |
 
+## App de Android (Google Play)
+
+La carpeta `android/` tiene la app de Android (Trusted Web Activity) que abre el juego publicado en GitHub Pages. La carpeta `play/` tiene todo lo necesario para la tienda: la guía paso a paso ([`play/GUIA-PRUEBA-CERRADA.md`](play/GUIA-PRUEBA-CERRADA.md)), los textos de la ficha, el ícono, el gráfico destacado, las capturas, el archivo de compilación para GitHub Actions y el `assetlinks.json`. La política de privacidad está en `privacidad.html`.
+
 ## Pantalla de niveles
 
 En cada juego los niveles se muestran **una etapa a la vez**, en una cuadrícula de 4 columnas:

@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.altsi.mentedespierta",
+      "sha256_cert_fingerprints": [
+        "0F:86:E1:87:B1:48:AE:06:1F:3E:FE:BB:34:16:82:36:FF:33:2D:10:5C:C1:72:1D:AB:B7:CF:69:B8:B6:77:85",
+        "PEGAR_ACA_LA_HUELLA_SHA-256_DE_LA_CLAVE_DE_FIRMA_DE_GOOGLE_PLAY"
+      ]
+    }
+  }
+]

@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Mente Despierta: app de Android que abre el juego publicado en GitHub Pages a pantalla completa
+// (Trusted Web Activity). Para una versión nueva en Play, subí versionCode y versionName.
+def twa = [
+    host      : 'alt-si.github.io',
+    launchUrl : 'https://alt-si.github.io/juegos-mentales-II/',
+    pathPrefix: '/juegos-mentales-II/',
+    name      : 'Mente Despierta',
+]
+
+android {
+    namespace 'io.github.altsi.mentedespierta'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'io.github.altsi.mentedespierta'
+        minSdk 23
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+
+        resValue 'string', 'appName', twa.name
+        resValue 'string', 'launcherName', twa.name
+        resValue 'string', 'launchUrl', twa.launchUrl
+        resValue 'string', 'hostName', twa.host
+        resValue 'string', 'assetStatements',
+            '[{ "relation": ["delegate_permission/common.handle_all_urls"], "target": {"namespace": "web", "site": "https://' + twa.host + '"}}]'
+        manifestPlaceholders = [hostName: twa.host, pathPrefix: twa.pathPrefix]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.3'
+}

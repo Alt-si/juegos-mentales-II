@@ -229,3 +229,4 @@ En la pantalla de niveles de Cadena también hay un recuadro **Duelo**.
 Abrí `index.html` en el navegador, o publicalo con GitHub Pages (Settings → Pages → rama `main`). En el celular se puede agregar a la pantalla de inicio.
 
 La respuesta por voz usa la Web Speech API (`es-AR`) y funciona en Chrome para Android. El progreso se guarda en `localStorage`.
+

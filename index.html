@@ -196,6 +196,10 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
 .wordball small{font-size:.45em;font-weight:600}
 .mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
+.wsugg{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:color-mix(in srgb, var(--warn) 22%, var(--surface));border:2px solid var(--warn);border-radius:16px;padding:10px 12px}
+.wsugg span{flex:1;min-width:0;font-size:15px}
+.wsugg .btn{height:40px;padding:0 14px;background:var(--ink);color:var(--bg);border:0;font-size:14px}
+.wsugg .wsx{width:32px;height:32px;border-radius:50%;background:transparent;color:var(--muted);font-size:16px}
 .drounds{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .drounds > span{font-weight:600;font-size:14px}
 .drounds div{display:flex;gap:6px}
@@ -1085,6 +1089,114 @@ mente/valores/valores|mente,sociedad: tolerancia lealtad honradez gratitud perse
 `);
 
 </script>
+<script>
+// Vocabulario de Palabra escondida — parte 5: gran ampliación de palabras de uso diario.
+window.__vocabAdd(`
+materiales/papel/papel|material,escuela,oficina: papel cartón cartulina papelito hoja folio sobre caja cajita envoltorio envase embalaje celofán papiro pergamino servilleta pañuelito rollo bolsa bolsita etiqueta
+materiales/plástico/plástico|material: plástico goma caucho látex nailon nylon acrílico silicona espuma telgopor poliéster vinilo resina pvc
+materiales/textil/textil|material,ropa: lana algodón seda lino cuero gamuza terciopelo raso tul encaje fieltro franela jersey hilo ovillo madeja retazo
+materiales/madera/madera|material,construcción: madera tabla tablón listón viga leño astilla aserrín viruta corcho bambú mimbre junco caña
+materiales/metal/metal|material,construcción: metal hierro acero aluminio cobre bronce latón estaño plomo zinc níquel chapa alambre lámina tornillo clavo bulón remache
+materiales/vidrio/vidrio|material,hogar: vidrio cristal espejo vitral botella frasco tarro ampolla lupa lente prisma
+juegos/azar/azar|juego,dinero,suerte: ruleta dado dados ficha fichas naipe naipes baraja carta casino apuesta lotería quiniela bingo sorteo rifa tómbola azar suerte premio pozo jackpot tragamonedas póker blackjack bolilla bolillero
+juegos/mesa/mesa|juego,niños,diversión: tablero ajedrez damas dominó ludo oca parchís monopolio estanciero scrabble rompecabezas puzle ficha peón alfil caballo torre rey reina jaque mate
+juegos/infancia/infancia|juego,niños: muñeca muñeco peluche pelota globo burbuja barrilete trompo yoyo balero bolita bolitas canica payana rayuela soga elástico hamaca tobogán subibaja calesita arenero triciclo patineta patines monopatín bloques
+juegos/videojuegos/videojuegos|juego,tecnología: videojuego consola joystick control mando partida nivel jefe vida vidas puntaje récord ranking misión personaje avatar mapa
+ciencia/física/física|ciencia: física fuerza energía masa peso gravedad velocidad aceleración presión temperatura calor flujo caudal corriente tensión voltaje resistencia potencia onda frecuencia vibración sonido eco luz reflejo sombra imán magnetismo electricidad átomo partícula
+ciencia/química/química|ciencia: química elemento compuesto mezcla solución sustancia molécula átomo ácido base sal reacción fórmula oxígeno hidrógeno nitrógeno carbono gas líquido sólido vapor cristal metal
+ciencia/biología/biología|ciencia,vida: biología célula tejido órgano organismo especie gen genética adn evolución bacteria virus hongo microbio parásito fósil embrión semilla polen
+ciencia/geografía/geografía|ciencia,lugar: geografía mapa plano brújula coordenada latitud longitud relieve clima región frontera límite territorio zona área superficie altura altitud
+ciencia/medidas/medidas|ciencia,matemática: medida metro centímetro milímetro kilómetro kilo gramo tonelada litro mililitro grado segundo minuto hora watt voltio caloría unidad escala regla balanza termómetro
+naturaleza/agua/agua|naturaleza,agua: agua gota chorro charco ola marea corriente remolino cascada torrente arroyo riachuelo río lago laguna mar océano espuma hielo vapor niebla rocío escarcha granizo nieve lluvia llovizna inundación
+naturaleza/tierra/suelo|naturaleza,campo: tierra suelo barro lodo arena polvo piedra roca canto guijarro grava terrón surco pozo hoyo zanja cueva grieta loma colina
+naturaleza/aire/aire|naturaleza,cielo: aire viento brisa ráfaga soplo aliento vendaval huracán tornado remolino tormenta trueno relámpago rayo nube nubarrón cielo atmósfera
+naturaleza/fuego/fuego|naturaleza,calor: fuego llama chispa brasa ceniza humo hoguera fogata fogón incendio vela antorcha mecha fósforo encendedor carbón leña
+hogar/cocina/objetos|hogar,cocina,comida: cocina horno hornalla heladera freezer olla sartén cacerola pava tetera cafetera jarra vaso copa taza plato platillo bowl cuenco fuente bandeja cubierto cuchara cucharita cuchillo tenedor cucharón espumadera colador rallador abrelatas sacacorchos tabla mantel servilleta repasador delantal guante agarradera
+hogar/baño/objetos|hogar,limpieza: baño ducha bañera inodoro bidé lavatorio canilla grifo espejo toalla toallón jabón jabonera champú esponja cepillo peine secador afeitadora maquinilla pasta dentífrico hilo dental algodón hisopo perfume colonia desodorante crema maquillaje
+hogar/dormitorio/objetos|hogar,descanso: cama colchón almohada almohadón sábana frazada manta acolchado edredón cubrecama funda colcha mesita velador lámpara despertador ropero placard cajón percha cómoda
+hogar/living/objetos|hogar,descanso: living sillón sofá butaca mesa ratona alfombra cortina persiana cuadro retrato florero maceta planta estante biblioteca televisor control remoto parlante radio chimenea estufa ventilador
+hogar/herramientas/hogar|hogar,construcción: herramienta martillo destornillador llave pinza tenaza alicate serrucho sierra taladro mecha lija lima cinta metro nivel escalera pala rastrillo azada tijera podadora manguera regadera balde carretilla
+hogar/limpieza/limpieza|hogar,limpieza: limpieza escoba escobillón trapo trapeador lampazo balde secador plumero aspiradora detergente lavandina desinfectante jabón polvo suciedad mancha basura tacho bolsa residuo reciclaje
+hogar/partes/estructura|hogar,construcción: casa hogar vivienda departamento edificio piso planta pared muro techo tejado teja cielorraso suelo baldosa cerámica azulejo puerta portón ventana vidrio marco umbral escalera escalón baranda balcón terraza patio jardín garaje cochera sótano altillo pasillo hall entrada salida
+oficina/útiles/útiles|oficina,escuela: lápiz lapicera birome bolígrafo pluma marcador resaltador fibra crayón tiza pizarra pizarrón goma borrador sacapuntas regla escuadra compás transportador tijera pegamento cola cinta abrochadora broche clip chinche carpeta cuaderno libreta agenda block hoja sobre sello calculadora
+oficina/trabajo/oficina|oficina,trabajo: oficina escritorio silla computadora pantalla teclado impresora fotocopiadora archivo documento expediente informe planilla formulario contrato firma reunión jefe empleado secretaria recepción
+comunicación/medios/medios|comunicación,sociedad: diario periódico revista noticia titular artículo columna entrevista reportaje crónica radio televisión canal programa noticiero emisora antena locutor periodista cronista
+comunicación/correo/correo|comunicación: correo carta sobre estampilla sello cartero buzón paquete encomienda envío postal telegrama mensaje aviso nota recado
+transporte/auto/partes|transporte,auto: auto coche volante motor rueda neumático goma llanta freno embrague acelerador palanca cambio caja asiento cinturón baúl capó paragolpes guardabarros parabrisas limpiaparabrisas espejo retrovisor faro luz bocina patente tanque nafta gasoil aceite batería radiador escape
+transporte/calle/calle|transporte,ciudad: calle avenida esquina cuadra vereda cordón senda peatón semáforo señal cartel bache badén rotonda cruce puente túnel autopista ruta camino peaje parada estación terminal garaje estacionamiento
+transporte/viaje/viaje|transporte,viaje: viaje pasaje boleto billete ticket valija maleta mochila equipaje bolso pasaporte documento visa aduana frontera aeropuerto puerto estación andén reserva hotel hostel alojamiento excursión turista guía mapa itinerario destino
+cuerpo/salud/síntomas|cuerpo,salud: dolor fiebre tos estornudo mareo náusea vómito diarrea picazón ardor hinchazón moretón chichón herida corte raspón ampolla quemadura cicatriz sangre fractura esguince calambre cansancio fatiga sueño insomnio
+cuerpo/acciones/acciones|cuerpo: respirar comer beber tragar masticar dormir despertar caminar correr saltar nadar bailar trepar sentarse pararse acostarse mirar ver oír escuchar oler tocar sentir hablar gritar cantar reír llorar sonreír bostezar estornudar toser
+cuerpo/aspecto/aspecto|cuerpo,persona: alto bajo flaco delgado gordo robusto fuerte débil joven viejo lindo feo rubio morocho pelirrojo canoso calvo pelado barbudo pecoso
+ropa/prendas/varias|ropa: ropa prenda vestimenta uniforme disfraz traje vestido pollera falda pantalón short bermuda remera camisa blusa chomba buzo campera abrigo saco chaleco sweater pulóver cárdigan poncho bufanda guante gorro gorra sombrero boina medias calcetín zapato zapatilla bota sandalia ojota pantufla cinturón corbata moño tirador cierre botón bolsillo manga cuello
+comida/varias/comida|comida: comida alimento plato menú receta ingrediente porción bocado merienda desayuno almuerzo cena colación vianda picada entrada postre sopa caldo guiso estofado ensalada salsa aderezo condimento especia
+comida/panadería/masas|comida,dulce: pan masa harina levadura miga corteza tostada galleta galletita bizcocho bizcochuelo torta tarta pastel budín factura medialuna churro bollo rosca alfajor empanada pizza fainá fideo tallarín ravioles ñoquis canelones lasaña
+comida/carne/carne|comida,asado: carne vacío asado costilla bife lomo nalga peceto matambre entraña colita molleja chinchulín chorizo morcilla salchicha jamón panceta salame pollo pechuga muslo ala pato pavo cerdo cordero pescado filete milanesa hamburguesa albóndiga
+comida/bebida/bebidas|comida,bebida: agua soda jugo gaseosa refresco limonada licuado batido leche café té mate cacao chocolatada vino cerveza sidra champán fernet whisky licor trago cóctel
+comida/sabores/sabores|comida,sentido: sabor gusto dulce salado amargo ácido agrio picante sabroso rico delicioso exquisito insulso soso crocante tierno jugoso cremoso fresco maduro podrido
+dinero/economía/economía|dinero,trabajo,sociedad: dinero plata efectivo billete moneda cambio vuelto precio costo valor oferta descuento promoción ganga cuota pago cobro deuda préstamo crédito débito tarjeta cuenta banco cajero ahorro inversión interés ganancia pérdida sueldo salario jornal aguinaldo impuesto factura recibo ticket presupuesto gasto
+dinero/comercio/comercio|dinero,ciudad: comercio negocio tienda local almacén kiosco supermercado mercado feria shopping vidriera mostrador caja cliente vendedor comprador dueño encargado mercadería producto marca stock envío pedido
+trabajo/oficios/oficios|trabajo,persona: oficio profesión trabajo empleo changa laburo tarea obra proyecto turno jornada horario sueldo jefe patrón empleado obrero aprendiz pasante colega compañero equipo sindicato gremio huelga paro despido renuncia jubilación
+trabajo/profesiones/más|trabajo,persona: albañil plomero gasista electricista carpintero pintor herrero mecánico chofer camionero taxista colectivero repartidor cartero mozo cocinero panadero carnicero verdulero almacenero peluquero barbero modista sastre costurera zapatero relojero joyero jardinero granjero pescador minero bombero policía soldado marinero piloto azafata médico enfermero dentista veterinario farmacéutico abogado juez escribano contador arquitecto ingeniero profesor maestro investigador científico periodista escritor poeta músico pintor actor bailarín fotógrafo diseñador programador
+personas/relaciones/relaciones|persona,sociedad,amor: amigo amiga novio novia pareja esposo esposa marido mujer vecino vecina compañero conocido desconocido rival enemigo socio cliente invitado anfitrión huésped visita
+personas/carácter/carácter|persona,mente: bueno malo amable simpático antipático generoso egoísta valiente cobarde tímido extrovertido alegre triste serio gracioso divertido aburrido inteligente tonto sabio ignorante curioso paciente impaciente responsable vago trabajador honesto mentiroso orgulloso humilde celoso envidioso cariñoso tierno
+mente/sentimientos/más|emoción,mente: sentimiento emoción alegría felicidad gozo placer risa sonrisa tristeza pena dolor llanto lágrima miedo susto temor pánico terror angustia ansiedad nervios estrés calma paz tranquilidad enojo bronca ira rabia furia odio amor cariño afecto ternura pasión deseo celos envidia vergüenza culpa orgullo esperanza ilusión nostalgia añoranza soledad aburrimiento sorpresa asombro
+mente/ideas/ideas|mente: idea pensamiento razón lógica memoria recuerdo olvido sueño fantasía imaginación ilusión creencia opinión duda pregunta respuesta problema solución misterio secreto enigma acertijo adivinanza clave pista plan proyecto objetivo meta propósito
+tiempo/momentos/más|tiempo: tiempo momento instante rato lapso período etapa época era siglo año mes semana día noche tarde mañana madrugada amanecer anochecer mediodía medianoche hora minuto segundo ayer hoy mañana pasado presente futuro antes después pronto tarde temprano nunca siempre
+tiempo/calendario/fiestas|tiempo,fiesta: cumpleaños aniversario feriado vacaciones fin de semana navidad nochebuena año nuevo reyes carnaval pascua semana santa día del niño día de la madre día del padre día del amigo
+lugares/ciudad/más|ciudad,lugar: ciudad pueblo barrio villa aldea capital provincia país plaza parque paseo costanera puerto muelle mercado feria iglesia catedral escuela colegio universidad hospital clínica farmacia banco correo comisaría cárcel juzgado municipalidad biblioteca museo teatro cine club estadio cancha gimnasio pileta cementerio
+lugares/campo/campo|campo,lugar,naturaleza: campo estancia chacra granja quinta rancho tambo corral establo galpón granero silo molino tranquera alambrado potrero pastizal sembrado cosecha cultivo huerta vivero monte bosque
+lugares/naturaleza/más|naturaleza,lugar: montaña cerro sierra cordillera volcán valle quebrada cañón meseta llanura pampa desierto selva jungla bosque playa costa orilla isla península bahía golfo cabo arrecife acantilado duna oasis glaciar
+animales/mascotas/mascotas|animal,hogar,mascota: perro gato perrito gatito cachorro conejo hámster tortuga loro canario pez pecera jaula correa collar cucha comedero bebedero alimento balanceado veterinario
+animales/campo/campo|animal,campo,granja: vaca toro ternero buey caballo yegua potro burro mula oveja cordero carnero cabra chivo cerdo chancho gallina gallo pollito pato ganso pavo conejo
+animales/salvajes/varios|animal,salvaje: león tigre leopardo jaguar puma oso lobo zorro hiena jirafa elefante rinoceronte hipopótamo cebra camello canguro koala panda gorila mono chimpancé ciervo alce búfalo cocodrilo serpiente iguana águila halcón cóndor búho lechuza
+animales/pequeños/bichos|animal,pequeño,campo: bicho insecto hormiga abeja avispa mosca mosquito mariposa polilla cucaracha grillo langosta escarabajo vaquita luciérnaga araña alacrán gusano lombriz caracol babosa garrapata pulga piojo
+plantas/jardín/jardín|planta,naturaleza,hogar: planta flor árbol arbusto pasto césped hierba yuyo maleza hoja rama tronco raíz semilla brote pétalo espina maceta tierra abono riego jardín huerta
+deporte/varios/deportes|deporte,juego: deporte fútbol básquet vóley tenis pádel rugby hockey natación atletismo ciclismo boxeo golf esquí surf remo karate judo yoga gimnasia equitación maratón carrera partido torneo campeonato copa liga gol punto set tiempo entretiempo árbitro jugador equipo hinchada camiseta pelota red arco cancha estadio
+música/varios/música|música,arte: música canción tema melodía ritmo letra estribillo coro voz nota acorde instrumento guitarra piano violín batería bajo flauta trompeta saxo acordeón bandoneón banda orquesta grupo cantante músico recital concierto disco álbum radio parlante auricular
+arte/varios/arte|arte,cultura: arte pintura dibujo cuadro retrato paisaje escultura estatua museo galería exposición artista pintor escultor pincel lienzo color tinta acuarela óleo boceto obra
+cultura/espectáculos/más|arte,fiesta,cultura: cine película serie actor actriz director escena guion cámara pantalla entrada butaca teatro obra función escenario telón público aplauso circo payaso mago malabarista acróbata títere show
+educación/escuela/más|escuela,niños: escuela colegio jardín primaria secundaria universidad facultad aula clase curso grado materia lección tarea deber examen prueba nota boletín recreo timbre patio maestro maestra profesor alumno alumna estudiante compañero director preceptor mochila cartuchera uniforme guardapolvo
+tecnología/varios/tecnología|tecnología: tecnología computadora notebook tablet celular teléfono pantalla teclado mouse cable cargador batería enchufe internet wifi red aplicación programa archivo carpeta foto video mensaje correo contraseña usuario cuenta perfil página sitio buscador nube robot máquina aparato dispositivo
+sociedad/política/más|sociedad,ley: gobierno estado nación país patria bandera himno escudo presidente ministro gobernador intendente diputado senador congreso ley decreto elección voto urna candidato partido campaña democracia república libertad derecho deber ciudadano
+sociedad/justicia/más|sociedad,ley: justicia ley juez juicio tribunal abogado fiscal testigo acusado culpable inocente delito crimen robo hurto estafa ladrón policía detective cárcel preso condena pena multa denuncia
+sociedad/guerra/más|sociedad,historia: guerra paz batalla combate ejército soldado general capitán sargento cuartel arma escudo espada lanza flecha arco cañón bomba tanque avión barco bandera tregua victoria derrota conquista invasión defensa
+sociedad/religión/más|sociedad,fe: religión dios fe creencia iglesia templo capilla catedral misa oración rezo cura sacerdote monja obispo papa santo ángel cielo infierno paraíso alma espíritu milagro bendición pecado perdón
+historia/varios/historia|historia,cultura: historia pasado antigüedad prehistoria imperio reino rey reina príncipe princesa emperador faraón pirámide castillo palacio caballero armadura conquista descubrimiento revolución independencia colonia virreinato prócer héroe leyenda mito
+fantasía/seres/seres|fantasía,niños,cuento: cuento fábula leyenda mito dragón unicornio hada duende gnomo elfo enano gigante ogro bruja brujo mago hechicero fantasma monstruo vampiro zombi sirena tritón pirata tesoro varita hechizo poción magia
+acciones/comunes/verbos|acción: hacer decir ir venir dar tener poner salir entrar llegar volver quedar pasar llevar traer buscar encontrar perder ganar pensar creer saber conocer querer poder deber necesitar esperar empezar terminar seguir abrir cerrar subir bajar comprar vender pagar cobrar trabajar estudiar aprender enseñar leer escribir dibujar pintar cocinar limpiar lavar planchar coser arreglar romper construir jugar ganar perder
+cualidades/tamaño/tamaño|cualidad,medida: grande pequeño chico enorme gigante diminuto largo corto ancho angosto alto bajo grueso fino gordo flaco pesado liviano lleno vacío
+cualidades/estado/estado|cualidad: nuevo viejo usado roto sano limpio sucio seco mojado caliente frío tibio duro blando suave áspero liso rugoso brillante opaco claro oscuro fuerte débil rápido lento fácil difícil simple complicado
+colores/varios/colores|color,arte: color rojo azul verde amarillo naranja violeta morado rosa rosado celeste blanco negro gris marrón beige dorado plateado turquesa lila fucsia bordó crema
+números/varios/números|número,matemática: número cero uno dos tres cuatro cinco seis siete ocho nueve diez once doce veinte treinta cien mil millón docena decena centena mitad doble triple cuarto tercio par impar suma resta multiplicación división resultado cuenta cálculo
+`);
+
+</script>
+<script>
+// Vocabulario de Palabra escondida — parte 6: más objetos y palabras cotidianas.
+window.__vocabAdd(`
+personas/bebés/bebés|niños,familia,hogar: bebé bebe recién nacido pañal chupete mamadera biberón babero cuna moisés cochecito andador sonajero mordillo talco papilla nana canción de cuna
+hogar/seguridad/cerraduras|hogar,seguridad: candado cerradura cerrojo pestillo picaporte manija bisagra llave llavero timbre alarma reja cadena traba tranca portero mirilla
+hogar/electricidad/electricidad|hogar,tecnología,electricidad: enchufe zapatilla alargue cable fusible tapón térmica disyuntor interruptor llave luz foco lamparita bombilla tubo led linterna pila batería cargador farol farola velador araña
+comida/almacén/almacén|comida,almacén: aceituna alcaparra pickles encurtido conserva lata enlatado polenta sémola avena salvado maicena almidón cereal copos granola pochoclo palomitas maní nuez almendra avellana castaña pistacho pasa ciruela seca dátil higo
+comida/dulces/golosinas|comida,dulce,niños: golosina caramelo chupetín chicle bombón chocolate turrón garrapiñada confite gomita malvavisco mermelada dulce de leche jalea flan budín helado palito cucurucho crema chantilly merengue almíbar
+comida/verdulería/más|comida,verdura,fruta: verdura fruta hortaliza puerro apio hinojo rabanito nabo rúcula radicheta repollo zapallito calabaza berro albahaca perejil cilantro romero tomillo laurel menta cedrón jengibre pomelo mandarina lima frambuesa arándano mora grosella cereza guinda membrillo pera manzana uva banana naranja limón coco papaya maracuyá granada caqui níspero
+hogar/costura/costura|hogar,ropa: costura aguja alfiler dedal hilo carretel botón ojal cierre velcro tijera cinta métrica máquina de coser bordado tejido crochet agujas lana patrón molde dobladillo remiendo parche
+hogar/objetos/varios|hogar: objeto cosa paraguas sombrilla bastón abanico reloj pulsera collar anillo aro arete cadenita dije broche billetera monedero cartera bolso mochila riñonera llavero encendedor fósforo vela portarretrato álbum adorno estatuilla jarrón cesto canasto canasta caja baúl cofre maletín perchero tendedero broche palillo
+hogar/lavadero/lavadero|hogar,limpieza: lavadero lavarropas secarropas pileta tender soga broches palangana fuentón jabón en polvo suavizante quitamanchas plancha tabla de planchar canasto
+salud/médico/más|salud,cuerpo: médico doctor hospital guardia ambulancia camilla consultorio turno receta remedio medicamento pastilla comprimido jarabe gotas pomada crema venda vendaje curita gasa algodón alcohol termómetro jeringa inyección vacuna análisis radiografía ecografía tomografía cirugía operación anestesia yeso muleta silla de ruedas marcapasos estetoscopio tensiómetro
+salud/enfermedades/enfermedades|salud,cuerpo: enfermedad gripe resfrío catarro alergia asma diabetes infección inflamación virus bacteria contagio epidemia pandemia fiebre tos varicela sarampión paperas anginas otitis gastritis migraña jaqueca
+cuerpo/partes/más|cuerpo: cabeza cara frente ceja pestaña párpado ojo oreja nariz boca labio diente muela lengua encía mejilla cachete mentón barbilla cuello nuca hombro brazo codo muñeca mano dedo uña pulgar palma espalda pecho panza barriga ombligo cintura cadera cola nalga pierna muslo rodilla tobillo talón pie planta piel pelo cabello barba bigote hueso músculo corazón pulmón hígado riñón estómago intestino cerebro sangre vena arteria
+naturaleza/cielo/astros|cielo,espacio: sol luna estrella planeta cometa meteorito asteroide galaxia universo constelación eclipse órbita satélite cohete astronauta nave telescopio tierra marte venus júpiter saturno mercurio urano neptuno
+vehículos/varios/vehículos|transporte: vehículo auto camioneta camión colectivo ómnibus micro tren subte metro tranvía taxi remís moto motocicleta bicicleta bici scooter avión avioneta helicóptero globo barco bote lancha velero canoa kayak balsa yate crucero submarino ambulancia patrullero grúa tractor carreta carro sulky
+música/instrumentos/más|música: tambor bombo redoblante platillo pandereta maraca triángulo xilofón arpa charango quena sikus guitarra criolla ukelele contrabajo violonchelo clarinete oboe fagot trombón tuba corneta armónica órgano teclado sintetizador micrófono
+oficios/lugares/lugares de trabajo|trabajo,ciudad: fábrica taller obra oficina local negocio consultorio estudio laboratorio depósito galpón almacén panadería carnicería verdulería ferretería librería juguetería zapatería mueblería peluquería lavandería tintorería farmacia kiosco heladería pizzería restaurante bar café confitería parrilla
+acciones/más/verbos|acción: mirar observar notar buscar encontrar esconder ocultar mostrar enseñar regalar prestar devolver robar guardar tirar empujar arrastrar levantar cargar soltar agarrar tomar atrapar lanzar patear golpear romper cortar pegar atar desatar doblar estirar apretar aflojar llenar vaciar mezclar revolver hervir freír hornear asar pelar picar rallar untar servir probar oler
+sentidos/percepción/sentidos|cuerpo,mente: vista oído olfato gusto tacto mirada ruido silencio grito susurro murmullo aroma olor perfume hedor textura sabor visión sonido
+clima/estaciones/estaciones|tiempo,clima: verano otoño invierno primavera estación clima calor frío humedad sequía helada ola de calor pronóstico temperatura sensación térmica
+`);
+
+</script>
 
 <script>
 (function(){
@@ -1875,6 +1987,7 @@ function wplay(L, duel, forceIdx, opts){
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
       <button type="submit" class="wsend">Probar</button>
     </form>
+    <div class="wsugg" id="wsugg" hidden></div>
     <p class="hint" id="micst">Escribí una palabra o tocá el micrófono</p>
     <div class="legend"><span class="t-good"><i></i>1–50 muy cerca</span><span class="t-warn"><i></i>51–300 cerca</span><span class="t-bad"><i></i>más de 300 lejos</span></div>
     <div id="wlast"></div>
@@ -1921,18 +2034,37 @@ function wGuess(text){
   const inp = document.getElementById("wguess");
   const clear = () => { if(inp){ inp.value=""; refocus(inp); } };
   if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
-  let i = vFind(n), fixed = false;
-  if(i<0){ i = vFuzzy(n); fixed = i >= 0; }       // ¿lo escribió con un error de tipeo?
+  wSuggestOff();
+  const i = vFind(n);
   if(i<0){
     unknownAdd(raw);
-    toast(`Todavía no conozco "${raw}". Probá con otra palabra; este intento no cuenta.`, "warn");
+    // si se parece a una palabra conocida, se ofrece; nunca se cambia sola (puede ser otra palabra real)
+    const f = vFuzzy(n);
+    if(f >= 0 && !W.guesses.some(g=>g.i===f)){
+      toast(`Todavía no conozco "${raw}". Este intento no cuenta.`, "warn");
+      wSuggest(raw, f);
+    } else {
+      toast(`Todavía no conozco "${raw}". Probá con otra palabra; este intento no cuenta.`, "warn");
+    }
     clear(); return;
   }
   const dup = W.guesses.find(g=>g.i===i);
   if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r}.`, "warn"); clear(); return; }
-  if(fixed) toast(`Tomamos "${VOCAB[i].w}" (escribiste "${raw}").`);
   wAdd({word: VOCAB[i].w, r: W.rank.get(i), i, hint:false});
   clear();
+}
+// sugerencia "¿Quisiste decir…?" debajo del campo: solo cuenta si el jugador la toca
+function wSuggest(raw, i){
+  const box = document.getElementById("wsugg"); if(!box) return;
+  box.innerHTML = `<span>¿Quisiste decir <b>${esc(VOCAB[i].w)}</b>?</span><button class="btn" data-wsugg="${i}">Probar ${esc(VOCAB[i].w)}</button><button class="wsx" data-wsugg="no" aria-label="No, cerrar">✕</button>`;
+  box.hidden = false;
+}
+function wSuggestOff(){ const box = document.getElementById("wsugg"); if(box){ box.hidden = true; box.innerHTML = ""; } }
+function wSuggestPick(v){
+  wSuggestOff();
+  if(v === "no" || !W || W.done) return;
+  const i = +v; if(!VOCAB[i] || W.guesses.some(g=>g.i===i)) return;
+  wAdd({word: VOCAB[i].w, r: W.rank.get(i), i, hint:false});
 }
 const HINT_COST = [30, 50, 80, 120];
 function wHint(){
@@ -3523,6 +3655,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.howto){ howTo(t.dataset.howto); return; }
   if(t.dataset.unk){ unknownAction(t.dataset.unk); return; }
   if(t.dataset.lmgo!==undefined){ lmGo(+t.dataset.lmgo); return; }
+  if(t.dataset.wsugg!==undefined){ wSuggestPick(t.dataset.wsugg); return; }
   if(t.dataset.dround){ S.duelRounds = +t.dataset.dround; save(); document.querySelectorAll(".dr").forEach(b=>{ const on = +b.dataset.dround === S.duelRounds; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); }); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }

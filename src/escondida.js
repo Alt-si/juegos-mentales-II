@@ -258,6 +258,7 @@ function wplay(L, duel, forceIdx, opts){
       <button type="button" class="wmic" data-wmic aria-label="Decir una palabra">${MIC_SVG}</button>
       <button type="submit" class="wsend">Probar</button>
     </form>
+    <div class="wsugg" id="wsugg" hidden></div>
     <p class="hint" id="micst">Escribí una palabra o tocá el micrófono</p>
     <div class="legend"><span class="t-good"><i></i>1–50 muy cerca</span><span class="t-warn"><i></i>51–300 cerca</span><span class="t-bad"><i></i>más de 300 lejos</span></div>
     <div id="wlast"></div>
@@ -304,18 +305,37 @@ function wGuess(text){
   const inp = document.getElementById("wguess");
   const clear = () => { if(inp){ inp.value=""; refocus(inp); } };
   if(n.length < 2){ toast("Escribí una palabra de al menos 2 letras."); return; }
-  let i = vFind(n), fixed = false;
-  if(i<0){ i = vFuzzy(n); fixed = i >= 0; }       // ¿lo escribió con un error de tipeo?
+  wSuggestOff();
+  const i = vFind(n);
   if(i<0){
     unknownAdd(raw);
-    toast(`Todavía no conozco "${raw}". Probá con otra palabra; este intento no cuenta.`, "warn");
+    // si se parece a una palabra conocida, se ofrece; nunca se cambia sola (puede ser otra palabra real)
+    const f = vFuzzy(n);
+    if(f >= 0 && !W.guesses.some(g=>g.i===f)){
+      toast(`Todavía no conozco "${raw}". Este intento no cuenta.`, "warn");
+      wSuggest(raw, f);
+    } else {
+      toast(`Todavía no conozco "${raw}". Probá con otra palabra; este intento no cuenta.`, "warn");
+    }
     clear(); return;
   }
   const dup = W.guesses.find(g=>g.i===i);
   if(dup){ toast(`Ya probaste "${dup.word}": está en el puesto ${dup.r}.`, "warn"); clear(); return; }
-  if(fixed) toast(`Tomamos "${VOCAB[i].w}" (escribiste "${raw}").`);
   wAdd({word: VOCAB[i].w, r: W.rank.get(i), i, hint:false});
   clear();
+}
+// sugerencia "¿Quisiste decir…?" debajo del campo: solo cuenta si el jugador la toca
+function wSuggest(raw, i){
+  const box = document.getElementById("wsugg"); if(!box) return;
+  box.innerHTML = `<span>¿Quisiste decir <b>${esc(VOCAB[i].w)}</b>?</span><button class="btn" data-wsugg="${i}">Probar ${esc(VOCAB[i].w)}</button><button class="wsx" data-wsugg="no" aria-label="No, cerrar">✕</button>`;
+  box.hidden = false;
+}
+function wSuggestOff(){ const box = document.getElementById("wsugg"); if(box){ box.hidden = true; box.innerHTML = ""; } }
+function wSuggestPick(v){
+  wSuggestOff();
+  if(v === "no" || !W || W.done) return;
+  const i = +v; if(!VOCAB[i] || W.guesses.some(g=>g.i===i)) return;
+  wAdd({word: VOCAB[i].w, r: W.rank.get(i), i, hint:false});
 }
 const HINT_COST = [30, 50, 80, 120];
 function wHint(){

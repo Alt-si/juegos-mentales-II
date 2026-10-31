@@ -185,6 +185,10 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .mfact{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--muted);text-align:left;width:100%;box-sizing:border-box}
 .wordball small{font-size:.45em;font-weight:600}
 .mchip b{background:var(--tc)!important;color:var(--on-tc)!important}
+.wsugg{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:color-mix(in srgb, var(--warn) 22%, var(--surface));border:2px solid var(--warn);border-radius:16px;padding:10px 12px}
+.wsugg span{flex:1;min-width:0;font-size:15px}
+.wsugg .btn{height:40px;padding:0 14px;background:var(--ink);color:var(--bg);border:0;font-size:14px}
+.wsugg .wsx{width:32px;height:32px;border-radius:50%;background:transparent;color:var(--muted);font-size:16px}
 .drounds{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .drounds > span{font-weight:600;font-size:14px}
 .drounds div{display:flex;gap:6px}
@@ -898,6 +902,7 @@ $app.addEventListener("click", e => {
   if(t.dataset.howto){ howTo(t.dataset.howto); return; }
   if(t.dataset.unk){ unknownAction(t.dataset.unk); return; }
   if(t.dataset.lmgo!==undefined){ lmGo(+t.dataset.lmgo); return; }
+  if(t.dataset.wsugg!==undefined){ wSuggestPick(t.dataset.wsugg); return; }
   if(t.dataset.dround){ S.duelRounds = +t.dataset.dround; save(); document.querySelectorAll(".dr").forEach(b=>{ const on = +b.dataset.dround === S.duelRounds; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); }); return; }
   if(t.dataset.wlv){ wplay(+t.dataset.wlv); return; }
   if(t.dataset.wpractice){ wPractice(+t.dataset.wpractice); return; }
